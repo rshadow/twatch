@@ -1,33 +1,37 @@
 
 VERSION = 0.0.1
-SVN = http://svn.rshadow.ru/twatch/trunk
+SVN = https://twatch.svn.sourceforge.net/svnroot/twatch/trunk
 
 
 all:
+	@echo "*** Full build ***"
 	make clean
 	make get && make orig && make doc && make build
 
 get:
-	@echo "Получение всех проектов twatch из svn"
+	@echo "*** Get project from svn ***"
 	svn export $(SVN)/twatch/ twatch-$(VERSION)
-	svn export $(SVN)/twatch-gtk twatch-gtk-$(VERSION)
+#	svn export $(SVN)/twatch-gtk twatch-gtk-$(VERSION)
 
 orig:
+	@echo "*** Create sorce archive ***"
 	tar -czvf twatch_$(VERSION).orig.tar.gz twatch-$(VERSION) \
 		--exclude debian/ 
-	tar -czvf twatch-gtk_$(VERSION).orig.tar.gz twatch-gtk-$(VERSION) \
-		--exclude debian/
+#	tar -czvf twatch-gtk_$(VERSION).orig.tar.gz twatch-gtk-$(VERSION) \
+#		--exclude debian/
 
 doc:
+	@echo "*** Create man pages ***"
 	pod2man twatch-$(VERSION)/twatch > twatch-$(VERSION)/man/twatch.man
 
 build:
+	@echo "*** Create deb package ***"
 	cd twatch-$(VERSION) && fakeroot debian/rules binary
 
 clean:
-	@echo "Удаление всех проектов twatch"
-	@echo "Пауза 5 секунд для принятия решения..."
+	@echo "*** Delete all twatch ***"
+	@echo "Pause 5 sec. You can stop it by press Ctrl+C..."
 	sleep 5
-	rm -fr ./twatch*
+	rm -fr ./*twatch*
 
-.PHONY: all get tar clean
+.PHONY: all get orig doc build clean
