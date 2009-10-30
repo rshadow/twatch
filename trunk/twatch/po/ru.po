@@ -1,0 +1,9 @@
+"Project-Id-Version: twatch\n"
+"Last-Translator: Roman V Nikolaev <rshadow@rambler.ru>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: twatch: translate part: #1
+msgid ""
+msgstr ""

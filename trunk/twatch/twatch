@@ -1,0 +1,75 @@
+#!/usr/bin/perl
+use warnings;
+use strict;
+use lib qw(lib);
+use utf8;
+use open qw(:utf8 :std);
+
+use vars qw($VERSION $PROGRAM);
+$VERSION    = '0.0.1';
+$PROGRAM    = 'twatch';
+
+use Getopt::Long;
+use Pod::Usage;
+
+use TWatch;
+use TWatch::Config;
+use TWatch::Plugin;
+
+################################################################################
+# Обработка командной строки
+################################################################################
+my ($help, $verbose);
+GetOptions('help|?' => \$help, 'verbose|?' => \$verbose) or pod2usage(2);
+pod2usage(1) if $help;
+
+################################################################################
+# Выполнение программы
+################################################################################
+
+print "Loading...\n"                                                if $verbose;
+# Создадим объект программы
+my $twatch = TWatch->new(verbose => $verbose)
+    or die "Can`t create Twatch object.";
+
+print "Execute projects...\n"                                         if $verbose;
+# Выполним закачки
+$twatch->run;
+
+print "Send notification mail...\n"                                 if $verbose;
+# Разошлем письма
+$twatch->send_mail;
+
+print "Execute plugins...\n"                                        if $verbose;
+#Запустим плагины постобработки
+my $plugins = TWatch::Plugin->new or die "Can`t create TWatch::Plugin object.";
+$plugins->post( $twatch );
+
+print "Complete\n"                                                  if $verbose;
+exit 0;
+
+__END__
+
+=head1 NAME
+
+twatch - watch torrent trackers and automatically download new torrents
+
+=head1 SYNOPSIS
+
+twatch [options]
+
+ Options:
+    -v|--verbose    - Verbose output
+    -h|--help       - Read this help and exit
+
+=head1 DESCRIPTION
+
+twatch is a simple and flexible watcher torrent trackers, based on regular
+expressons. It can download new torrent files and information about them by
+customizable filters.
+
+=head1 AUTHOR
+
+    Roman V. Nikolaev <rshadow@rambler.ru>
+
+=cut

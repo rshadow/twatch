@@ -1,0 +1,416 @@
+<?xml version="1.0"?>
+<interface>
+  <requires lib="gtk+" version="2.16"/>
+  <!-- interface-naming-policy toplevel-contextual -->
+  <!-- interface-local-resource-path /home/rubin/workspace/twatch/img -->
+  <object class="GtkTreeStore" id="maintreestore">
+    <columns>
+      <!-- column-name Статус -->
+      <column type="GdkPixbuf"/>
+      <!-- column-name Кнопка -->
+      <column type="GtkButtonsType"/>
+    </columns>
+  </object>
+  <object class="GtkWindow" id="main">
+    <property name="visible">True</property>
+    <property name="title" translatable="yes">TWatch</property>
+    <property name="role">Main</property>
+    <property name="window_position">center</property>
+    <property name="default_width">800</property>
+    <property name="default_height">600</property>
+    <property name="icon">twatch.png</property>
+    <signal name="destroy" handler="gtk_main_quit"/>
+    <child>
+      <object class="GtkVBox" id="vbox1">
+        <property name="visible">True</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkMenuBar" id="menubar1">
+            <property name="visible">True</property>
+            <child>
+              <object class="GtkMenuItem" id="menuitem1">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">_&#x424;&#x430;&#x439;&#x43B;</property>
+                <property name="use_underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu" id="menu1">
+                    <property name="visible">True</property>
+                    <child>
+                      <object class="GtkSeparatorMenuItem" id="separatormenuitem1">
+                        <property name="visible">True</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="imagemenuitem_exit">
+                        <property name="label">gtk-quit</property>
+                        <property name="visible">True</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                        <signal name="activate" handler="gtk_main_quit"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem" id="menuitem2">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">_&#x41F;&#x440;&#x430;&#x432;&#x43A;&#x430;</property>
+                <property name="use_underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu" id="menu2">
+                    <property name="visible">True</property>
+                    <child>
+                      <object class="GtkImageMenuItem" id="imagemenuitem_settings">
+                        <property name="label">gtk-preferences</property>
+                        <property name="visible">True</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                        <signal name="activate" handler="gtk_widget_show" object="settings"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem" id="menuitem4">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">_&#x421;&#x43F;&#x440;&#x430;&#x432;&#x43A;&#x430;</property>
+                <property name="use_underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu" id="menu3">
+                    <property name="visible">True</property>
+                    <child>
+                      <object class="GtkImageMenuItem" id="imagemenuitem_about">
+                        <property name="label">gtk-about</property>
+                        <property name="visible">True</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                        <signal name="activate" handler="gtk_widget_show" object="about"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkToolbar" id="toolbar">
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkHBox" id="hbox1">
+            <property name="visible">True</property>
+            <child>
+              <object class="GtkTreeView" id="treeview_projects">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="model">maintreestore</property>
+                <property name="search_column">6</property>
+                <child>
+                  <object class="GtkTreeViewColumn" id="col_status">
+                    <property name="sizing">fixed</property>
+                    <property name="fixed_width">24</property>
+                    <property name="min_width">24</property>
+                    <property name="max_width">24</property>
+                    <property name="title">&#x421;&#x442;&#x430;&#x442;&#x443;&#x441;</property>
+                    <property name="reorderable">True</property>
+                    <property name="sort_indicator">True</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkTreeViewColumn" id="col_project">
+                    <property name="resizable">True</property>
+                    <property name="title">&#x41F;&#x440;&#x43E;&#x435;&#x43A;&#x442;</property>
+                    <property name="expand">True</property>
+                    <property name="reorderable">True</property>
+                    <property name="sort_indicator">True</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkTreeViewColumn" id="col_update">
+                    <property name="resizable">True</property>
+                    <property name="title">&#x41E;&#x431;&#x43D;&#x43E;&#x432;&#x43B;&#x435;&#x43D;</property>
+                    <property name="expand">True</property>
+                    <property name="reorderable">True</property>
+                    <property name="sort_indicator">True</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkVButtonBox" id="vbuttonbox1">
+                <property name="visible">True</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">5</property>
+                <property name="homogeneous">True</property>
+                <property name="layout_style">start</property>
+                <child>
+                  <object class="GtkButton" id="p_add">
+                    <property name="label">gtk-add</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="use_stock">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="p_edit">
+                    <property name="label">gtk-edit</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="use_stock">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="p_delete">
+                    <property name="label">gtk-remove</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="use_stock">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="padding">5</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkHBox" id="hbox2">
+            <property name="visible">True</property>
+            <child>
+              <object class="GtkHButtonBox" id="hbuttonbox2">
+                <property name="visible">True</property>
+                <child>
+                  <object class="GtkButton" id="button_help">
+                    <property name="label">gtk-help</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="use_stock">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="padding">5</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkHButtonBox" id="hbuttonbox1">
+                <property name="visible">True</property>
+                <property name="spacing">3</property>
+                <property name="layout_style">end</property>
+                <child>
+                  <object class="GtkButton" id="button5">
+                    <property name="label" translatable="yes">button</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="button4">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="use_stock">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="padding">5</property>
+                <property name="pack_type">end</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="padding">5</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkAboutDialog" id="about">
+    <property name="border_width">5</property>
+    <property name="title" translatable="yes">About TWatch</property>
+    <property name="role">About</property>
+    <property name="modal">True</property>
+    <property name="window_position">center</property>
+    <property name="type_hint">normal</property>
+    <property name="skip_taskbar_hint">True</property>
+    <property name="skip_pager_hint">True</property>
+    <property name="transient_for">main</property>
+    <property name="has_separator">False</property>
+    <property name="program_name">TWatch</property>
+    <property name="version">0.0.1</property>
+    <property name="copyright" translatable="yes">Copyright &#xA9; 2009 Roman V. Nikolaev</property>
+    <property name="comments" translatable="yes">&#x41F;&#x440;&#x43E;&#x433;&#x440;&#x430;&#x43C;&#x43C;&#x430; &#x441;&#x43B;&#x435;&#x436;&#x435;&#x43D;&#x438;&#x44F; &#x437;&#x430; &#x442;&#x43E;&#x440;&#x440;&#x435;&#x43D;&#x442; &#x442;&#x440;&#x435;&#x43A;&#x435;&#x440;&#x430;&#x43C;&#x438;.</property>
+    <property name="license" translatable="yes">TWatch &#x2015; &#x441;&#x432;&#x43E;&#x431;&#x43E;&#x434;&#x43D;&#x43E;&#x435; &#x43F;&#x440;&#x43E;&#x433;&#x440;&#x430;&#x43C;&#x43C;&#x43D;&#x43E;&#x435; &#x43E;&#x431;&#x435;&#x441;&#x43F;&#x435;&#x447;&#x435;&#x43D;&#x438;&#x435;. &#x412;&#x44B; &#x43C;&#x43E;&#x436;&#x435;&#x442;&#x435; &#x440;&#x430;&#x441;&#x43F;&#x440;&#x43E;&#x441;&#x442;&#x440;&#x430;&#x43D;&#x44F;&#x442;&#x44C;
+&#x438;&#x43B;&#x438; &#x438;&#x437;&#x43C;&#x435;&#x43D;&#x44F;&#x442;&#x44C; &#x435;&#x433;&#x43E; &#x43F;&#x440;&#x438; &#x443;&#x441;&#x43B;&#x43E;&#x432;&#x438;&#x44F;&#x445; &#x441;&#x43E;&#x43E;&#x442;&#x432;&#x435;&#x442;&#x441;&#x442;&#x432;&#x438;&#x44F; GNU General Public License, &#x43E;&#x43F;&#x443;&#x431;&#x43B;&#x438;&#x43A;&#x43E;&#x432;&#x430;&#x43D;&#x43D;&#x43E;&#x439;
+Free Software Foundation; &#x43B;&#x438;&#x431;&#x43E; &#x432;&#x435;&#x440;&#x441;&#x438;&#x438; 2 &#x43B;&#x438;&#x446;&#x435;&#x43D;&#x437;&#x438;&#x438;, &#x43B;&#x438;&#x431;&#x43E;
+(&#x43D;&#x430; &#x432;&#x430;&#x448;&#x435; &#x443;&#x441;&#x43C;&#x43E;&#x442;&#x440;&#x435;&#x43D;&#x438;&#x435;) &#x43B;&#x44E;&#x431;&#x43E;&#x439; &#x431;&#x43E;&#x43B;&#x435;&#x435; &#x43F;&#x43E;&#x437;&#x434;&#x43D;&#x435;&#x439; &#x432;&#x435;&#x440;&#x441;&#x438;&#x438;.
+
+TWatch &#x440;&#x430;&#x441;&#x43F;&#x440;&#x43E;&#x441;&#x442;&#x440;&#x430;&#x43D;&#x44F;&#x435;&#x442;&#x441;&#x44F; &#x432; &#x43D;&#x430;&#x434;&#x435;&#x436;&#x434;&#x435; &#x43D;&#x430; &#x442;&#x43E;, &#x447;&#x442;&#x43E; &#x43F;&#x440;&#x438;&#x43B;&#x43E;&#x436;&#x435;&#x43D;&#x438;&#x435; &#x431;&#x443;&#x434;&#x435;&#x442; &#x43F;&#x43E;&#x43B;&#x435;&#x437;&#x43D;&#x43E;,
+&#x43D;&#x43E; &#x411;&#x415;&#x417; &#x412;&#x421;&#x42F;&#x41A;&#x418;&#x425; &#x413;&#x410;&#x420;&#x410;&#x41D;&#x422;&#x418;&#x419;; &#x43D;&#x435; &#x433;&#x430;&#x440;&#x430;&#x43D;&#x442;&#x438;&#x440;&#x443;&#x435;&#x442;&#x441;&#x44F; &#x434;&#x430;&#x436;&#x435; &#x41F;&#x420;&#x418;&#x413;&#x41E;&#x414;&#x41D;&#x41E;&#x421;&#x422;&#x42C; &#x438;&#x43B;&#x438; &#x421;&#x41E;&#x41E;&#x422;&#x412;&#x415;&#x421;&#x422;&#x412;&#x418;&#x415;
+&#x41A;&#x410;&#x41A;&#x418;&#x41C;-&#x41B;&#x418;&#x411;&#x41E; &#x422;&#x420;&#x415;&#x411;&#x41E;&#x412;&#x410;&#x41D;&#x418;&#x42F;&#x41C;. &#x414;&#x43B;&#x44F; &#x43F;&#x43E;&#x43B;&#x443;&#x447;&#x435;&#x43D;&#x438;&#x44F; &#x434;&#x43E;&#x43F;&#x43E;&#x43B;&#x43D;&#x438;&#x442;&#x435;&#x43B;&#x44C;&#x43D;&#x43E;&#x439; &#x438;&#x43D;&#x444;&#x43E;&#x440;&#x43C;&#x430;&#x446;&#x438;&#x438; &#x43E;&#x437;&#x43D;&#x430;&#x43A;&#x43E;&#x43C;&#x44C;&#x442;&#x435;&#x441;&#x44C;
+&#x441; GNU General Public License.
+
+&#x412;&#x44B; &#x434;&#x43E;&#x43B;&#x436;&#x43D;&#x44B; &#x431;&#x44B;&#x43B;&#x438; &#x43F;&#x43E;&#x43B;&#x443;&#x447;&#x438;&#x442;&#x44C; &#x43A;&#x43E;&#x43F;&#x438;&#x44E; GNU General Public License
+&#x432;&#x43C;&#x435;&#x441;&#x442;&#x435; &#x441; TWatch. &#x415;&#x441;&#x43B;&#x438; &#x44D;&#x442;&#x43E;&#x433;&#x43E; &#x43D;&#x435; &#x43F;&#x440;&#x43E;&#x438;&#x437;&#x43E;&#x448;&#x43B;&#x43E;, &#x43D;&#x430;&#x43F;&#x438;&#x448;&#x438;&#x442;&#x435; &#x432; Free Software Foundation, Inc.,
+51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA</property>
+    <property name="authors">Roman V. Nikolaev &lt;rshadow@rambler.ru&gt;
+Dmitry E. Oboukhov &lt;unera@debian.org&gt;	</property>
+    <property name="logo">twatch.png</property>
+    <signal name="close" handler="gtk_true"/>
+    <child internal-child="vbox">
+      <object class="GtkVBox" id="dialog-vbox1">
+        <property name="visible">True</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child>
+          <placeholder/>
+        </child>
+        <child internal-child="action_area">
+          <object class="GtkHButtonBox" id="dialog-action_area1">
+            <property name="visible">True</property>
+            <property name="homogeneous">True</property>
+            <property name="layout_style">end</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkDialog" id="settings">
+    <property name="border_width">5</property>
+    <property name="title" translatable="yes">Settings TWatch</property>
+    <property name="role">Settings</property>
+    <property name="modal">True</property>
+    <property name="window_position">center</property>
+    <property name="type_hint">normal</property>
+    <property name="skip_taskbar_hint">True</property>
+    <property name="skip_pager_hint">True</property>
+    <property name="transient_for">main</property>
+    <signal name="close" handler="gtk_widget_hide" object="settings"/>
+    <child internal-child="vbox">
+      <object class="GtkVBox" id="dialog-vbox2">
+        <property name="visible">True</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child>
+          <placeholder/>
+        </child>
+        <child internal-child="action_area">
+          <object class="GtkHButtonBox" id="dialog-action_area2">
+            <property name="visible">True</property>
+            <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="button1">
+                <property name="label">gtk-ok</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+                <signal name="activate" handler="gtk_true"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="button2">
+                <property name="label">gtk-close</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+                <signal name="activate" handler="gtk_widget_hide" object="settings"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="0">button1</action-widget>
+      <action-widget response="0">button2</action-widget>
+    </action-widgets>
+  </object>
+</interface>

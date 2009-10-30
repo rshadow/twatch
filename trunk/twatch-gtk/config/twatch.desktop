@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=TWatch
+Comment=Torrents watcher
+Exec=twatch
+Icon=twatch.png
+Terminal=false
+StartupNotify=true

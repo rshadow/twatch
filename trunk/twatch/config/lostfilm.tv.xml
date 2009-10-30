@@ -1,0 +1,138 @@
+<?xml version='1.0' standalone='yes'?>
+<project>
+    <name>LostFilm</name>
+    <url>http://lostfilm.tv</url>
+    <order>0</order>
+    <authtorization>
+        <login>
+            <name>FormLogin</name>
+            <value>rshadow</value>
+        </login>
+        <password>
+            <name>FormPassword</name>
+            <value>0jX0lET21r</value>
+        </password>
+    </authtorization>
+    <watches>
+        <watch>
+            <name>Star Wars: The Clone Wars</name>
+            <url>http://www.lostfilm.tv/browse.php?cat=96</url>
+            <order>1</order>
+            <reg>
+                <torrent><![CDATA[<a href=".*?/(Star\.Wars\.The\.Clone\.Wars.*?\.torrent)"[^>]*?class="a_download"]]></torrent>
+                <link><![CDATA[<a href="([^<]*?Star\.Wars\.The\.Clone\.Wars.*?)"[^>]*?class="a_download"]]></link>
+                <title><![CDATA[<td class="t_episode_title".*?>(.*?)\s*<]]></title>
+                <season><![CDATA[<a href=".*?Star\.Wars\.The\.Clone\.Wars\.s?(\d*?)\D.*?" class="a_download"]]></season>
+                <series><![CDATA[<a href=".*?Star\.Wars\.The\.Clone\.Wars\.s?\d*?\D(\d*?)\D.*?" class="a_download"]]></series>
+                <rating><![CDATA[<td class="t_episode_rating".*?<b>(.*?)</b>.*?/td>]]></rating>
+                <video><![CDATA[<td class="t_cell">.*?Видео:\s*(.*?);.*?</td>]]></video>
+                <translate><![CDATA[<td class="t_cell">.*?Перевод:\s*(.*?);.*?</td>]]></translate>
+                <size><![CDATA[<td class="t_cell">.*?Размер:\s*(.*?);.*?</td>]]></size>
+            </reg>
+            <filters>
+                <filter>
+                    <name>season</name>
+                    <value>2</value>
+                    <method>>=</method>
+                </filter>
+            </filters>
+        </watch>
+        <watch>
+            <name>House M.D.</name>
+            <url>http://www.lostfilm.tv/browse.php?cat=51</url>
+            <order>0</order>
+            <reg>
+                <torrent><![CDATA[<a href=".*?/(House\.M\.D.*?\.torrent)"[^>]*?class="a_download"]]></torrent>
+                <link><![CDATA[<a href="([^<]*?House\.M\.D.*?)"[^>]*?class="a_download"]]></link>
+                <title><![CDATA[<td class="t_episode_title".*?>(.*?)\s*<]]></title>
+                <season><![CDATA[<a href=".*?House\.M\.D\.s?(\d*?)\D.*?" class="a_download"]]></season>
+                <series><![CDATA[<a href=".*?House\.M\.D\.s?\d*?\D(\d*?)\D.*?" class="a_download"]]></series>
+                <rating><![CDATA[<td class="t_episode_rating".*?<b>(.*?)</b>.*?/td>]]></rating>
+                <video><![CDATA[<td class="t_cell">.*?Видео:\s*(.*?);.*?</td>]]></video>
+                <translate><![CDATA[<td class="t_cell">.*?Перевод:\s*(.*?);.*?</td>]]></translate>
+                <size><![CDATA[<td class="t_cell">.*?Размер:\s*(.*?);.*?</td>]]></size>
+            </reg>
+            <filters>
+                <filter>
+                    <name>season</name>
+                    <value>6</value>
+                    <method><![CDATA[>=]]></method>
+                </filter>
+            </filters>
+        </watch>
+        <watch>
+            <name>Stargate Universe</name>
+            <url>http://www.lostfilm.tv/browse.php?cat=109</url>
+            <order>1</order>
+            <reg>
+                <torrent><![CDATA[<a href=".*?/(Stargate\.Universe.*?\.torrent)"[^>]*?class="a_download"]]></torrent>
+                <link><![CDATA[<a href="([^<]*?Stargate\.Universe.*?)"[^>]*?class="a_download"]]></link>
+                <title><![CDATA[<td class="t_episode_title".*?>(.*?)\s*<]]></title>
+                <season><![CDATA[<a href=".*?Stargate\.Universe\.s?(\d*?)\D.*?" class="a_download"]]></season>
+                <series><![CDATA[<a href=".*?Stargate\.Universe\.s?\d*?\D(\d*?)\D.*?" class="a_download"]]></series>
+                <rating><![CDATA[<td class="t_episode_rating".*?<b>(.*?)</b>.*?/td>]]></rating>
+                <video><![CDATA[<td class="t_cell">.*?Видео:\s*(.*?);.*?</td>]]></video>
+                <translate><![CDATA[<td class="t_cell">.*?Перевод:\s*(.*?);.*?</td>]]></translate>
+                <size><![CDATA[<td class="t_cell">.*?Размер:\s*(.*?);.*?</td>]]></size>
+            </reg>
+            <filters>
+                <filter>
+                    <name>season</name>
+                    <value>1</value>
+                    <method>>=</method>
+                </filter>
+                <filter>
+                    <name>series</name>
+                    <value>4</value>
+                    <method>></method>
+                </filter>
+            </filters>
+        </watch>
+        <watch>
+            <name>The IT Crowd</name>
+            <url>http://www.lostfilm.tv/browse.php?cat=46</url>
+            <order>1</order>
+            <reg>
+                <torrent><![CDATA[<a href=".*?/(The\.IT\.Crowd.*?\.torrent)"[^>]*?class="a_download"]]></torrent>
+                <link><![CDATA[<a href="([^<]*?The\.IT\.Crowd.*?)"[^>]*?class="a_download"]]></link>
+                <title><![CDATA[<td class="t_episode_title".*?>(.*?)\s*<]]></title>
+                <season><![CDATA[<a href=".*?The\.IT\.Crowd\.s?(\d*?)\D.*?" class="a_download"]]></season>
+                <series><![CDATA[<a href=".*?The\.IT\.Crowd\.s?\d*?\D(\d*?)\D.*?" class="a_download"]]></series>
+                <rating><![CDATA[<td class="t_episode_rating".*?<b>(.*?)</b>.*?/td>]]></rating>
+                <video><![CDATA[<td class="t_cell">.*?Видео:\s*(.*?);.*?</td>]]></video>
+                <translate><![CDATA[<td class="t_cell">.*?Перевод:\s*(.*?);.*?</td>]]></translate>
+                <size><![CDATA[<td class="t_cell">.*?Размер:\s*(.*?);.*?</td>]]></size>
+            </reg>
+            <filters>
+                <filter>
+                    <name>season</name>
+                    <value>3</value>
+                    <method>></method>
+                </filter>
+            </filters>
+        </watch>
+        <watch>
+            <name>Eureka</name>
+            <url>http://www.lostfilm.tv/browse.php?cat=37</url>
+            <order>1</order>
+            <reg>
+                <torrent><![CDATA[<a href=".*?/(Eureka.*?\.torrent)"[^>]*?class="a_download"]]></torrent>
+                <link><![CDATA[<a href="([^<]*?Eureka.*?)"[^>]*?class="a_download"]]></link>
+                <title><![CDATA[<td class="t_episode_title".*?>(.*?)\s*<]]></title>
+                <season><![CDATA[<a href=".*?Eureka\.s?(\d*?)\D.*?" class="a_download"]]></season>
+                <series><![CDATA[<a href=".*?Eureka\.s?\d*?\D(\d*?)\D.*?" class="a_download"]]></series>
+                <rating><![CDATA[<td class="t_episode_rating".*?<b>(.*?)</b>.*?/td>]]></rating>
+                <video><![CDATA[<td class="t_cell">.*?Видео:\s*(.*?);.*?</td>]]></video>
+                <translate><![CDATA[<td class="t_cell">.*?Перевод:\s*(.*?);.*?</td>]]></translate>
+                <size><![CDATA[<td class="t_cell">.*?Размер:\s*(.*?);.*?</td>]]></size>
+            </reg>
+            <filters>
+                <filter>
+                    <name>season</name>
+                    <value>3</value>
+                    <method>></method>
+                </filter>
+            </filters>
+        </watch>
+    </watches>
+</project>
