@@ -1,3 +1,14 @@
+############################################################################
+#
+# Makefile for TWatch. 
+# Get progect from svn, create source code archive, generate documentation
+# and build deb package.
+#
+# Simple create directory "twatch"
+# copy this file in it
+# and execute: make all
+#
+############################################################################
 
 VERSION = 0.0.1
 SVN = https://twatch.svn.sourceforge.net/svnroot/twatch/trunk
@@ -26,10 +37,11 @@ doc:
 
 build:
 	@echo "*** Create deb package ***"
+	chmod -R a+x twatch-$(VERSION)/debian/rules
 	cd twatch-$(VERSION) && fakeroot debian/rules binary
 
 clean:
-	@echo "*** Delete all twatch ***"
+	@echo "*** Clean all twatch ***"
 	@echo "Pause 5 sec. You can stop it by press Ctrl+C..."
 	sleep 5
 	rm -fr ./*twatch*
