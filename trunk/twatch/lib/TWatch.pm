@@ -421,13 +421,6 @@ sub send_mail
         join( "\n", values %{$message->{data}} );
 
     } @messages;
-    for (@messages)
-    {
-
-            "\n".
-
-        $_
-    }
 
     # Отправим в рассылку
     {
@@ -436,7 +429,8 @@ sub send_mail
             To          =>  config->get('Email'),
             Subject     =>  sprintf( 'TWatch: %d messages', @messages),
             Type        =>  "text/plain; charset=utf-8",
-            Data        =>  encode( utf8 => join('\n', @messages) ),
+            Data        =>
+                encode( utf8 => join( (('#') x 50 ."\n"), @messages) ),
         );
 
         die Encode::decode(utf8 => $msg->body_as_string);
