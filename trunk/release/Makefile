@@ -20,7 +20,7 @@ all:
 	make get && make orig && make doc && make build
 
 get:
-	@echo "*** Get project from svn ***"
+	@echo "*** Get last from svn ***"
 	svn export $(SVN)/twatch/ twatch-$(VERSION)
 #	svn export $(SVN)/twatch-gtk twatch-gtk-$(VERSION)
 
@@ -41,7 +41,7 @@ build:
 	cd twatch-$(VERSION) && fakeroot debian/rules binary
 
 clean:
-	@echo "*** Clean all twatch ***"
+	@echo "*** Clean all ***"
 	@echo "Pause 5 sec. You can stop it by press Ctrl+C..."
 	sleep 5
 	rm -fr ./*twatch*
