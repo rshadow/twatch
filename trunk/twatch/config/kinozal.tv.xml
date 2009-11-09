@@ -17,18 +17,24 @@
         <watch>
             <name>Naruto</name>
             <url><![CDATA[http://kinozal.tv/browse.php?s=%CD%E0%F0%F3%F2%EE&c=20&v=0&y=&t=0&a=0&o=0]]></url>
-            <urlreg><![CDATA[(\Q/details.php?id=\E\d+)]]></urlreg>
+            <urlreg><![CDATA[(/details\.php\?id=\d+)]]></urlreg>
             <order>0</order>
             <reg>
                 <torrent><![CDATA[<a\s+.*?title="Скачать:.*?\s+.*?href=".*?/(Naruto.*?\.torrent)".*?>]]></torrent>
-                <link><![CDATA[<a\s+.*?title="Скачать:.*?\s+.*?href="(.*?)".*?>]]></link>
-                <title><![CDATA[Название:\s*<.*?>\s*(.*?)\s*<br]]></title>
+                <link><![CDATA[<a\s+.*?title="Скачать:.*?\s+.*?href="(download.php/\d+?/Naruto.*?\.torrent)".*?>]]></link>
+                <title><![CDATA[>\s*Название:\s*<.*?>\s*(.*?)\s*<br]]></title>
                 <season><![CDATA[]]></season>
                 <series><![CDATA[\(\s*(\d+)\s*серия\s*\)]]></series>
                 <info><![CDATA[<td class="templ">\s*(<.*?>Качество.*?)</td>]]></info>
                 <rating><![CDATA[]]></rating>
+                <quality><![CDATA[>\s*Качество:\s*<.*?>\s*(.*?)\s*<br]]></quality>
             </reg>
             <filters>
+                <filter>
+                    <name>quality</name>
+                    <value>HDTVRip</value>
+                    <method>eq</method>
+                </filter>
             </filters>
         </watch>
     </watches>

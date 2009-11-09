@@ -1,39 +1,39 @@
 <?xml version='1.0' standalone='yes'?>
 <project>
-    <name>LostFilm</name>
-    <url>http://lostfilm.tv</url>
-    <order>0</order>
+    <name>Kinozal</name>
+    <url>http://kinozal.tv</url>
+    <order>1</order>
     <authtorization>
         <login>
-            <name>FormLogin</name>
+            <name>username</name>
             <value>rshadow</value>
         </login>
         <password>
-            <name>FormPassword</name>
-            <value>0jX0lET21r</value>
+            <name>password</name>
+            <value>s4zj7u9EmV</value>
         </password>
     </authtorization>
     <watches>
         <watch>
-            <name>TEST: House M.D.</name>
-            <url>http://www.lostfilm.tv/browse.php?cat=51</url>
+            <name>Naruto</name>
+            <url><![CDATA[http://kinozal.tv/browse.php?s=%CD%E0%F0%F3%F2%EE&c=20&v=0&y=&t=0&a=0&o=0]]></url>
+            <urlreg><![CDATA[(/details\.php\?id=\d+)]]></urlreg>
             <order>0</order>
             <reg>
-                <torrent><![CDATA[<a href=".*?/(House\.M\.D.*?\.torrent)"[^>]*?class="a_download"]]></torrent>
-                <link><![CDATA[<a href="([^<]*?House\.M\.D.*?)"[^>]*?class="a_download"]]></link>
-                <title><![CDATA[<td class="t_episode_title".*?>(.*?)\s*<]]></title>
-                <season><![CDATA[<a href=".*?House\.M\.D\.s?(\d*?)\D.*?" class="a_download"]]></season>
-                <series><![CDATA[<a href=".*?House\.M\.D\.s?\d*?\D(\d*?)\D.*?" class="a_download"]]></series>
-                <rating><![CDATA[<td class="t_episode_rating".*?<b>(.*?)</b>.*?/td>]]></rating>
-                <video><![CDATA[<td class="t_cell">.*?Видео:\s*(.*?);.*?</td>]]></video>
-                <translate><![CDATA[<td class="t_cell">.*?Перевод:\s*(.*?);.*?</td>]]></translate>
-                <size><![CDATA[<td class="t_cell">.*?Размер:\s*(.*?);.*?</td>]]></size>
+                <torrent><![CDATA[<a\s+.*?title="Скачать:.*?\s+.*?href=".*?/(Naruto.*?\.torrent)".*?>]]></torrent>
+                <link><![CDATA[<a\s+.*?title="Скачать:.*?\s+.*?href="(download.php/\d+?/Naruto.*?\.torrent)".*?>]]></link>
+                <title><![CDATA[>\s*Название:\s*<.*?>\s*(.*?)\s*<br]]></title>
+                <season><![CDATA[]]></season>
+                <series><![CDATA[\(\s*(\d+)\s*серия\s*\)]]></series>
+                <info><![CDATA[<td class="templ">\s*(<.*?>Качество.*?)</td>]]></info>
+                <rating><![CDATA[]]></rating>
+                <quality><![CDATA[>\s*Качество:\s*<.*?>\s*(.*?)\s*<br]]></quality>
             </reg>
             <filters>
                 <filter>
-                    <name>season</name>
-                    <value>6</value>
-                    <method><![CDATA[>=]]></method>
+                    <name>quality</name>
+                    <value>HDTVRip</value>
+                    <method>eq</method>
                 </filter>
             </filters>
         </watch>

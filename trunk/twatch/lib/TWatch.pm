@@ -29,7 +29,7 @@ use Safe;
 
 use TWatch::Config;
 
-=head1 CONSTRUCTOR AND STARTUP
+=head1 CONSTRUCTOR AND MAIN
 
 =head2 new
 
@@ -64,6 +64,9 @@ sub run
     {
         $self->notify(sprintf 'Start project: %s (%s)',
             $proj->{name}, $proj->{url});
+        $self->notify(sprintf 'Total watches: %s',
+            scalar @{[ $self->get_watch($proj->{name}) ]} );
+
         $self->notify(sprintf 'Authtorization...');
 
         # Получим объект браузера с пройденной авторизацией на трекере
@@ -80,7 +83,7 @@ sub run
         for my $watch( $self->get_watch($proj->{name}) )
         {
             $self->notify(sprintf 'Start watch: %s', $watch->{name});
-            $self->notify(sprintf 'Get torrents list');
+            $self->notify(sprintf 'Get torrents list from %s', $watch->{url});
 
             # Получим страницу с сылками на торренты
             eval{ $browser->get( $watch->{url} ); };
@@ -93,137 +96,194 @@ sub run
                 next;
             }
 
-            # Получим контент
+            # Получим контент ср=траницы со списком торрентов
             my $content = $browser->content;
 
-            # TODO возможно придется добавить проверку и перекодирование для
-            # дибильных сайтов.
-    #        $content = decode cp1251 => $content unless is_utf8 $content;
-
-            $self->notify(sprintf 'Get fields by user regexp');
-
-            # С помощью пользовательских регулярников вытащим нужные поля
-            my %result;
-            for( keys %{ $watch->{reg} } )
+            # Получим ссылки на страницы описания торрентов и определим
+            # структуру хранения торрентов на трекере
+            my @links;
+            if ($watch->{urlreg})
             {
-                # Получим регулярное выражение и очистим его от пробелов
-                my $reg = $watch->{reg}{$_};
-                s/^\s+//, s/\s+$// for $reg;
-                # Используем регулярник на содержимом страницы
-                @{ $result{$_} } = $content =~ m/$reg/sgi;
+                # Если на трекере описание каждого торрента находиться на
+                # отдельной странице то считаем его древовидным.
+                # Это основной тип тракеров. Например: torrents.ru
+                $watch->{type} = 'tree';
+
+                # Получим ссылки на страницы с описаниями торрентов и ссылками
+                # для скачки файлов торрента
+                my $reg = $watch->{urlreg};
+                @links = $content =~ m/$reg/sgi;
+            }
+            else
+            {
+                # Если на трекере есть список с описаниями торрентов и ссылками
+                # на получение торрент файлов в этом списке то считаем его
+                # линейным.
+                # Как правило это трекеры с сериалами. Например: lostfilm.tv
+                $watch->{type} = 'linear';
+
+                # Текущая страница и есть страница со ссылками
+                @links = ($watch->{url});
             }
 
-            # Если ссылки не были найдены то обработку дальше не ведем
-            next unless @{ $result{link} };
+            $self->notify(sprintf 'Watch type: %s.', $watch->{type});
 
-            # Приведем к удобной форме хеша по ключу торренту
-            while (@{ $result{link} })
+            for my $url ( @links )
             {
-                my %res;
-                $res{$_} = shift @{$result{$_}} for keys %result;
-                # Очистим от тегов
-                ($res{$_}) ?() :next, $res{$_} =~ s/<\/?\s*br>/\n/g, $res{$_} =~ s/<.*?>//g for keys %res;
-                $watch->{result}{$res{torrent}} = \%res;
-            }
-
-            $self->notify(sprintf 'Drop completed torrents');
-
-            # Выбрасим уже загруженные торренты если таковые имеються
-            if( $watch->{complete} and @{$watch->{complete}} )
-            {
-                for( @{$watch->{complete}} )
+                # Получим страницу с описанием торрента/ов
+                if( $watch->{type} eq 'tree' )
                 {
-                    delete $watch->{result}{$_->{torrent}}
-                        if $watch->{result}{$_->{torrent}};
-                }
-            }
+                    $self->notify(sprintf 'Get info form: %s.', $url);
 
-            # Если все уже готово то перейдем к следующему заданию
-            next unless $watch->{result} and %{ $watch->{result} };
-
-            $self->notify(sprintf 'Filter torrents');
-
-            #Выбрасим тоттенты не походящие по фильтрам
-            if( $watch->{filters} and %{$watch->{filters}} )
-            {
-                # Создадим песочницу для вычисления фильтра
-                my $sandbox = Safe->new;
-
-                # Пройдемся по заданиям
-                for my $key ( keys %{$watch->{result}} )
-                {
-                    # Флаг - признак что фильтры стработали
-                    my $flag = 1;
-
-                    # Проверим все фильтры для задния
-                    for ( keys %{$watch->{filters}} )
+                    eval{ $browser->get( $url ); };
+                    # Проверка что контент получен
+                    if( !$browser->success or ($@ and $@ =~ m/Can't connect/) )
                     {
-                        # Удалим из закачки если в задании такое значение
-                        # не найдено
-                        $flag = 0, last unless $watch->{result}{$key}{$_};
-
-                        # Проверим фильтр
-                        $flag &&= $sandbox->reval(
-                            "$watch->{result}{$key}{$_}".
-                            " $watch->{filters}{$_}{method} ".
-                            "$watch->{filters}{$_}{value}");
-
-                        # Если пользователь что-то ввел не так то выведим
-                        # сообщение об ошибке
-                        die sprintf 'Can`t set filter in "%s" project,'.
-                            ' watch "%s", filter "%s"',
-                            $proj->{name}, $watch->{name}, $_ if $@;
-
-                        # Прекратим проверку если хоть один фильтр не совпадает
-                        last unless $flag;
+                        warn sprintf 'Can`t get content in "%s" project, watch "%s".',
+                            $proj->{name}, $watch->{name};
+                        next;
                     }
 
-                    # Если не соответствует фильтрам то удалим задание
-                    delete $watch->{result}{$key} unless $flag;
+                    # Получим контент сртраницы с торрентом
+                    $content = $browser->content;
                 }
-            }
 
-            # Если фильтры все отсеяли то перейдем к следующему заданию
-            next unless $watch->{result} and %{ $watch->{result} };
+                $self->notify(sprintf 'Get fields by user regexp');
 
-            $self->notify(sprintf 'Download *.torrents');
-
-            # Обработаем полученные данные о торрентах
-            for( keys %{ $watch->{result} } )
-            {
-                my $result = $watch->{result}{$_};
-                # Загрузим торрент файл
-                {{
-                    # Соберем путь для сохранения
-                    my $save = config->get('Save').'/'.$result->{torrent};
-                    # Пропустим уже загруженный торрент
-                    last if -f $save or -s _;
-                    # Загрузим торрент с сайта
-                    $browser->get( $result->{link}, ':content_file' => $save);
-                }}
-
-                # Если загрузка удачна, переместим торрент в готовые
-                if ($browser->success)
+                # С помощью пользовательских регулярников вытащим нужные поля
+                my %result;
+                for( keys %{ $watch->{reg} } )
                 {
-                    # Сохраним задание как выполненное
-                    $watch->{complete} = []
-                        unless exists $watch->{complete} or
-                               'ARRAY' eq ref $watch->{complete};
-                    push @{ $watch->{complete} }, $result;
-                    delete $watch->{result}{$_};
-
-                    # Добавим сообщение об удачной закачке
-                    $self->add_message(
-                        level   => 'info',
-                        message => sprintf('New *.torrent download complete.'),
-                        data    => $result);
+                    # Получим регулярное выражение и очистим его от пробелов
+                    my $reg = $watch->{reg}{$_};
+                    s/^\s+//, s/\s+$// for $reg;
+                    # Используем регулярник на содержимом страницы
+                    @{ $result{$_} } = $content =~ m/$reg/sgi;
                 }
-                else
+
+                # Если ссылки не были найдены то обработку дальше не ведем
+                $self->notify(sprintf 'Links not found'),
+                next
+                    unless @{ $result{link} };
+
+                # Приведем к удобной форме хеша по ключу торренту
+                while (@{ $result{link} })
                 {
-                    warn
-                        sprintf
-                            'Can`t get *.torrent in "%s" project, watch "%s" from %s',
-                            $proj->{name}, $watch->{name}, $result->{link};
+                    my %res;
+                    $res{$_} = shift @{$result{$_}} for keys %result;
+                    # Очистим от тегов
+                    ($res{$_}) ?() :next,
+                    $res{$_} =~ s/<\/?\s*br>/\n/g,
+                    $res{$_} =~ s/<.*?>//g for keys %res;
+
+                    $watch->{result}{$res{torrent}} = \%res;
+                }
+
+                $self->notify(sprintf 'Drop completed torrents');
+
+                # Выбрасим уже загруженные торренты если таковые имеються
+                if( $watch->{complete} and @{$watch->{complete}} )
+                {
+                    for( @{$watch->{complete}} )
+                    {
+                        delete $watch->{result}{$_->{torrent}}
+                            if $watch->{result}{$_->{torrent}};
+                    }
+                }
+
+                # Если все уже готово то перейдем к следующему заданию
+                $self->notify(sprintf 'New links not found'),
+                next
+                    unless $watch->{result} and %{ $watch->{result} };
+
+                $self->notify(sprintf 'Filter torrents');
+
+                #Выбрасим тоттенты не походящие по фильтрам
+                if( $watch->{filters} and %{$watch->{filters}} )
+                {
+                    # Создадим песочницу для вычисления фильтра
+                    my $sandbox = Safe->new;
+
+                    # Пройдемся по заданиям
+                    for my $key ( keys %{$watch->{result}} )
+                    {
+                        # Флаг - признак что фильтры стработали
+                        my $flag = 1;
+
+                        # Проверим все фильтры для задния
+                        for ( keys %{$watch->{filters}} )
+                        {
+                            # Удалим из закачки если в задании такое значение
+                            # не найдено
+                            $flag = 0, last unless $watch->{result}{$key}{$_};
+
+                            # Проверим фильтр
+                            $flag &&= $sandbox->reval(
+                                "$watch->{result}{$key}{$_}".
+                                " $watch->{filters}{$_}{method} ".
+                                "$watch->{filters}{$_}{value}");
+
+                            # Если пользователь что-то ввел не так то выведим
+                            # сообщение об ошибке
+                            die sprintf 'Can`t set filter in "%s" project,'.
+                                ' watch "%s", filter "%s"',
+                                $proj->{name}, $watch->{name}, $_ if $@;
+
+                            # Прекратим проверку если хоть один фильтр
+                            # не совпадает
+                            last unless $flag;
+                        }
+
+                        # Если не соответствует фильтрам то удалим задание
+                        delete $watch->{result}{$key} unless $flag;
+                    }
+                }
+
+                # Если фильтры все отсеяли то перейдем к следующему заданию
+                $self->notify(sprintf 'All links filtered'),
+                next
+                    unless $watch->{result} and %{ $watch->{result} };
+
+                $self->notify(sprintf 'Download *.torrents');
+
+                # Обработаем полученные данные о торрентах
+                for( keys %{ $watch->{result} } )
+                {
+                    my $result = $watch->{result}{$_};
+                    # Загрузим торрент файл
+                    {{
+                        # Соберем путь для сохранения
+                        my $save = config->get('Save').'/'.$result->{torrent};
+                        # Пропустим уже загруженный торрент
+                        last if -f $save or -s _;
+                        # Загрузим торрент с сайта
+                        $browser->get( $result->{link}, ':content_file' => $save);
+                    }}
+
+                    # Если загрузка удачна, переместим торрент в готовые
+                    if ($browser->success)
+                    {
+                        # Сохраним задание как выполненное
+                        $watch->{complete} = []
+                            unless exists $watch->{complete} or
+                                   'ARRAY' eq ref $watch->{complete};
+                        push @{ $watch->{complete} }, $result;
+                        delete $watch->{result}{$_};
+
+                        # Добавим сообщение об удачной закачке
+                        $self->add_message(
+                            level   => 'info',
+                            message => sprintf('New *.torrent download complete.'),
+                            data    => $result);
+                    }
+                    else
+                    {
+                        warn
+                            sprintf
+                                'Can`t get *.torrent in "%s" project,'.
+                                ' watch "%s" from %s',
+                                $proj->{name}, $watch->{name}, $result->{link};
+                    }
                 }
             }
 
@@ -521,13 +581,13 @@ sub get_auth_browser
         noproxy     => config->is_noproxy,
     );
 
-
     # Во многих сайтах есть защита от прихода извне, поэтому сначала зайдем
     # на сайт.
     eval{ $browser->get( $proj->{url} ); };
+
     if( !$browser->success or ($@ and $@ =~ m/Can't connect/) )
     {
-        warn sprintf 'Can`t conncect to link: %s.', $proj->{url};
+        warn sprintf 'Can`t connect to link: %s.', $proj->{url};
         return undef;
     }
 

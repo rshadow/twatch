@@ -26,13 +26,12 @@ pod2usage(1) if $help;
 ################################################################################
 # Выполнение программы
 ################################################################################
-
 print "Loading...\n"                                                if $verbose;
 # Создадим объект программы
 my $twatch = TWatch->new(verbose => $verbose)
     or die "Can`t create Twatch object.";
 
-print "Execute projects...\n"                                         if $verbose;
+print "Start execute projects...\n"                                 if $verbose;
 # Выполним закачки
 $twatch->run;
 
@@ -40,12 +39,13 @@ print "Send notification mail...\n"                                 if $verbose;
 # Разошлем письма
 $twatch->send_mail;
 
-print "Execute plugins...\n"                                        if $verbose;
+print "Execute post plugins...\n"                                   if $verbose;
 #Запустим плагины постобработки
-my $plugins = TWatch::Plugin->new or die "Can`t create TWatch::Plugin object.";
+my $plugins = TWatch::Plugin->new(verbose => $verbose)
+    or die "Can`t create TWatch::Plugin object.";
 $plugins->post( $twatch );
 
-print "Complete\n"                                                  if $verbose;
+print "Done\n"                                                      if $verbose;
 exit 0;
 
 __END__
