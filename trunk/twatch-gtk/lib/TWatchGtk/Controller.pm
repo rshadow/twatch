@@ -4,7 +4,7 @@ package TWatchGtk::Controller;
 use strict;
 use warnings;
 use utf8;
-use lib qw(lib ../lib ../../lib ../../../lib);
+use lib qw(..);
 
 use Glib qw(:constants);
 use Gtk2;
@@ -18,8 +18,8 @@ use TWatchGtk::Config;
 =cut
 sub new
 {
-    my ($class, $app) = @_;
-    my $self = bless {app => $app} ,$class;
+    my ($class, %opts) = @_;
+    my $self = bless \%opts, $class;
     return $self;
 }
 
@@ -60,10 +60,19 @@ sub gtk_widget_destroy
 {
     my ($self, $item, $window) = @_;
     $window->destroy;
+    $window->gtk_widget_hide_on_delete;
     return TRUE;
 }
 
-#sub show                { shift->app->show; return TRUE; }
+sub gtk_true
+{
+    gtk_widget_hide(@_);
+}
+
+sub gtk_false
+{
+    gtk_widget_hide(@_);
+}
 
 # Обработчики меню #############################################################
 #sub show_about
@@ -80,5 +89,9 @@ sub gtk_widget_destroy
 #    return TRUE;
 #}
 
+sub settings_save
+{
+    DieDumper @_;
+}
 
 1;

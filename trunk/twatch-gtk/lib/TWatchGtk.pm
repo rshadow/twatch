@@ -4,15 +4,14 @@ package TWatchGtk;
 use strict;
 use warnings;
 use utf8;
-use lib qw(../../lib ../lib);
 
 use Glib qw(:constants);
 use Gtk2;
 #use Gtk2::Ex::Simple::List;
 
 use TWatchGtk::Config;
-use TWatchGtk::Controller;
 use TWatch;
+use TWatchGtk::Controller::About;
 
 =head2 new
 
@@ -31,11 +30,28 @@ sub new
 
     my $self = bless {app => $builder, twatch => $twatch} ,$class;
 
-    $self->load_project_tree;
+    # Получим объекты
+    $self->{dlg}{main}{obj}     = $builder->get_object ('main');
+    $self->{dlg}{about}{obj}    = $builder->get_object ('about');
+    $self->{dlg}{settings}{obj} = $builder->get_object ('settings');
 
-    # Подсоединим сигналы
-    my $controller = TWatchGtk::Controller->new( $self->{app} );
-    $self->{app}->connect_signals (undef, $controller);
+    # Подсоединим к объектам  сигналы из одноименных модулей
+    for my $name (keys %{$self->{dlg}})
+    {
+        my $module = sprintf 'TWatchGtk::Controller::%s', ucfirst $name;
+        eval "require $module";
+        next if $@;
+        $self->{dlg}{$name}{ctrl} = $module->new(
+            app => $self->{app},
+            obj => $self->{dlg}{$name}{obj}
+        );
+        $self->{app}->connect_signals (undef, $self->{dlg}{$name}{ctrl} );
+    }
+
+#    DieDumper $self->{dlg};
+
+
+    $self->load_project_tree;
 
     return $self;
 }

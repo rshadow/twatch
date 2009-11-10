@@ -13,7 +13,6 @@ use Glib qw(:constants);
 use Gnome2;
 use Gtk2 -init;
 
-use TWatchGtk::Config;
 use TWatchGtk;
 
 # Создание окна

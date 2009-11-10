@@ -3,7 +3,6 @@ use strict;
 use warnings;
 use utf8;
 use open qw(:utf8 :std);
-use lib qw(../../lib);
 
 =head1 TWatchGtk::Config
 
@@ -48,7 +47,8 @@ sub new
     my %config;
 
     # Основные директории
-    $config{dir}{config} = '~/.twatch-gtk.conf';
+#    $config{dir}{config} = '~/.twatch-gtk.conf';
+    $config{dir}{config} = '/home/rubin/workspace/twatch/trunk/twatch-gtk/config/twatch-gtk.conf';
 
     my $self = bless \%config ,$class;
     return $self;

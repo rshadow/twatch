@@ -2,7 +2,7 @@
 <interface>
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy toplevel-contextual -->
-  <!-- interface-local-resource-path /home/rubin/workspace/twatch/img -->
+  <!-- interface-local-resource-path /home/rubin/workspace/twatch/trunk/twatch-gtk/img -->
   <object class="GtkTreeStore" id="maintreestore">
     <columns>
       <!-- column-name Статус -->
@@ -297,6 +297,7 @@
     <property name="role">About</property>
     <property name="modal">True</property>
     <property name="window_position">center</property>
+    <property name="destroy_with_parent">True</property>
     <property name="type_hint">normal</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="skip_pager_hint">True</property>
@@ -305,24 +306,20 @@
     <property name="program_name">TWatch</property>
     <property name="version">0.0.1</property>
     <property name="copyright" translatable="yes">Copyright &#xA9; 2009 Roman V. Nikolaev</property>
-    <property name="comments" translatable="yes">&#x41F;&#x440;&#x43E;&#x433;&#x440;&#x430;&#x43C;&#x43C;&#x430; &#x441;&#x43B;&#x435;&#x436;&#x435;&#x43D;&#x438;&#x44F; &#x437;&#x430; &#x442;&#x43E;&#x440;&#x440;&#x435;&#x43D;&#x442; &#x442;&#x440;&#x435;&#x43A;&#x435;&#x440;&#x430;&#x43C;&#x438;.</property>
-    <property name="license" translatable="yes">TWatch &#x2015; &#x441;&#x432;&#x43E;&#x431;&#x43E;&#x434;&#x43D;&#x43E;&#x435; &#x43F;&#x440;&#x43E;&#x433;&#x440;&#x430;&#x43C;&#x43C;&#x43D;&#x43E;&#x435; &#x43E;&#x431;&#x435;&#x441;&#x43F;&#x435;&#x447;&#x435;&#x43D;&#x438;&#x435;. &#x412;&#x44B; &#x43C;&#x43E;&#x436;&#x435;&#x442;&#x435; &#x440;&#x430;&#x441;&#x43F;&#x440;&#x43E;&#x441;&#x442;&#x440;&#x430;&#x43D;&#x44F;&#x442;&#x44C;
-&#x438;&#x43B;&#x438; &#x438;&#x437;&#x43C;&#x435;&#x43D;&#x44F;&#x442;&#x44C; &#x435;&#x433;&#x43E; &#x43F;&#x440;&#x438; &#x443;&#x441;&#x43B;&#x43E;&#x432;&#x438;&#x44F;&#x445; &#x441;&#x43E;&#x43E;&#x442;&#x432;&#x435;&#x442;&#x441;&#x442;&#x432;&#x438;&#x44F; GNU General Public License, &#x43E;&#x43F;&#x443;&#x431;&#x43B;&#x438;&#x43A;&#x43E;&#x432;&#x430;&#x43D;&#x43D;&#x43E;&#x439;
-Free Software Foundation; &#x43B;&#x438;&#x431;&#x43E; &#x432;&#x435;&#x440;&#x441;&#x438;&#x438; 2 &#x43B;&#x438;&#x446;&#x435;&#x43D;&#x437;&#x438;&#x438;, &#x43B;&#x438;&#x431;&#x43E;
-(&#x43D;&#x430; &#x432;&#x430;&#x448;&#x435; &#x443;&#x441;&#x43C;&#x43E;&#x442;&#x440;&#x435;&#x43D;&#x438;&#x435;) &#x43B;&#x44E;&#x431;&#x43E;&#x439; &#x431;&#x43E;&#x43B;&#x435;&#x435; &#x43F;&#x43E;&#x437;&#x434;&#x43D;&#x435;&#x439; &#x432;&#x435;&#x440;&#x441;&#x438;&#x438;.
+    <property name="comments" translatable="yes">Simple and flexible watcher torrent trackers, based on regular expressons.</property>
+    <property name="website">https://sourceforge.net/projects/twatch/</property>
+    <property name="license" translatable="yes">This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-TWatch &#x440;&#x430;&#x441;&#x43F;&#x440;&#x43E;&#x441;&#x442;&#x440;&#x430;&#x43D;&#x44F;&#x435;&#x442;&#x441;&#x44F; &#x432; &#x43D;&#x430;&#x434;&#x435;&#x436;&#x434;&#x435; &#x43D;&#x430; &#x442;&#x43E;, &#x447;&#x442;&#x43E; &#x43F;&#x440;&#x438;&#x43B;&#x43E;&#x436;&#x435;&#x43D;&#x438;&#x435; &#x431;&#x443;&#x434;&#x435;&#x442; &#x43F;&#x43E;&#x43B;&#x435;&#x437;&#x43D;&#x43E;,
-&#x43D;&#x43E; &#x411;&#x415;&#x417; &#x412;&#x421;&#x42F;&#x41A;&#x418;&#x425; &#x413;&#x410;&#x420;&#x410;&#x41D;&#x422;&#x418;&#x419;; &#x43D;&#x435; &#x433;&#x430;&#x440;&#x430;&#x43D;&#x442;&#x438;&#x440;&#x443;&#x435;&#x442;&#x441;&#x44F; &#x434;&#x430;&#x436;&#x435; &#x41F;&#x420;&#x418;&#x413;&#x41E;&#x414;&#x41D;&#x41E;&#x421;&#x422;&#x42C; &#x438;&#x43B;&#x438; &#x421;&#x41E;&#x41E;&#x422;&#x412;&#x415;&#x421;&#x422;&#x412;&#x418;&#x415;
-&#x41A;&#x410;&#x41A;&#x418;&#x41C;-&#x41B;&#x418;&#x411;&#x41E; &#x422;&#x420;&#x415;&#x411;&#x41E;&#x412;&#x410;&#x41D;&#x418;&#x42F;&#x41C;. &#x414;&#x43B;&#x44F; &#x43F;&#x43E;&#x43B;&#x443;&#x447;&#x435;&#x43D;&#x438;&#x44F; &#x434;&#x43E;&#x43F;&#x43E;&#x43B;&#x43D;&#x438;&#x442;&#x435;&#x43B;&#x44C;&#x43D;&#x43E;&#x439; &#x438;&#x43D;&#x444;&#x43E;&#x440;&#x43C;&#x430;&#x446;&#x438;&#x438; &#x43E;&#x437;&#x43D;&#x430;&#x43A;&#x43E;&#x43C;&#x44C;&#x442;&#x435;&#x441;&#x44C;
-&#x441; GNU General Public License.
-
-&#x412;&#x44B; &#x434;&#x43E;&#x43B;&#x436;&#x43D;&#x44B; &#x431;&#x44B;&#x43B;&#x438; &#x43F;&#x43E;&#x43B;&#x443;&#x447;&#x438;&#x442;&#x44C; &#x43A;&#x43E;&#x43F;&#x438;&#x44E; GNU General Public License
-&#x432;&#x43C;&#x435;&#x441;&#x442;&#x435; &#x441; TWatch. &#x415;&#x441;&#x43B;&#x438; &#x44D;&#x442;&#x43E;&#x433;&#x43E; &#x43D;&#x435; &#x43F;&#x440;&#x43E;&#x438;&#x437;&#x43E;&#x448;&#x43B;&#x43E;, &#x43D;&#x430;&#x43F;&#x438;&#x448;&#x438;&#x442;&#x435; &#x432; Free Software Foundation, Inc.,
-51 Franklin St, Fifth Floor, Boston, MA 02110-1301  USA</property>
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.</property>
     <property name="authors">Roman V. Nikolaev &lt;rshadow@rambler.ru&gt;
 Dmitry E. Oboukhov &lt;unera@debian.org&gt;	</property>
     <property name="logo">twatch.png</property>
-    <signal name="close" handler="gtk_true"/>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox1">
         <property name="visible">True</property>
@@ -336,6 +333,7 @@ Dmitry E. Oboukhov &lt;unera@debian.org&gt;	</property>
             <property name="visible">True</property>
             <property name="homogeneous">True</property>
             <property name="layout_style">end</property>
+            <signal name="button_press_event" handler="on_about_button_press"/>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -352,6 +350,7 @@ Dmitry E. Oboukhov &lt;unera@debian.org&gt;	</property>
     <property name="role">Settings</property>
     <property name="modal">True</property>
     <property name="window_position">center</property>
+    <property name="destroy_with_parent">True</property>
     <property name="type_hint">normal</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="skip_pager_hint">True</property>
@@ -370,13 +369,13 @@ Dmitry E. Oboukhov &lt;unera@debian.org&gt;	</property>
             <property name="visible">True</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="button1">
+              <object class="GtkButton" id="set_button_ok">
                 <property name="label">gtk-ok</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
-                <signal name="activate" handler="gtk_true"/>
+                <signal name="pressed" handler="on_save_settings" object="settings"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -385,13 +384,13 @@ Dmitry E. Oboukhov &lt;unera@debian.org&gt;	</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button2">
+              <object class="GtkButton" id="set_button_cancel">
                 <property name="label">gtk-close</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
-                <signal name="activate" handler="gtk_widget_hide" object="settings"/>
+                <signal name="pressed" handler="gtk_false" object="settings"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -409,8 +408,8 @@ Dmitry E. Oboukhov &lt;unera@debian.org&gt;	</property>
       </object>
     </child>
     <action-widgets>
-      <action-widget response="0">button1</action-widget>
-      <action-widget response="0">button2</action-widget>
+      <action-widget response="0">set_button_ok</action-widget>
+      <action-widget response="0">set_button_cancel</action-widget>
     </action-widgets>
   </object>
 </interface>
