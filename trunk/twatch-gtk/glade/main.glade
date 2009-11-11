@@ -2,7 +2,6 @@
 <interface>
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy toplevel-contextual -->
-  <!-- interface-local-resource-path /home/rubin/workspace/twatch/trunk/twatch-gtk/img -->
   <object class="GtkTreeStore" id="maintreestore">
     <columns>
       <!-- column-name Статус -->
@@ -67,7 +66,7 @@
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                        <signal name="activate" handler="gtk_widget_show" object="settings"/>
+                        <signal name="activate" handler="show_settings"/>
                       </object>
                     </child>
                   </object>
@@ -88,7 +87,7 @@
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                        <signal name="activate" handler="gtk_widget_show" object="about"/>
+                        <signal name="activate" handler="show_about"/>
                       </object>
                     </child>
                   </object>
@@ -290,126 +289,5 @@
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkAboutDialog" id="about">
-    <property name="border_width">5</property>
-    <property name="title" translatable="yes">About TWatch</property>
-    <property name="role">About</property>
-    <property name="modal">True</property>
-    <property name="window_position">center</property>
-    <property name="destroy_with_parent">True</property>
-    <property name="type_hint">normal</property>
-    <property name="skip_taskbar_hint">True</property>
-    <property name="skip_pager_hint">True</property>
-    <property name="transient_for">main</property>
-    <property name="has_separator">False</property>
-    <property name="program_name">TWatch</property>
-    <property name="version">0.0.1</property>
-    <property name="copyright" translatable="yes">Copyright &#xA9; 2009 Roman V. Nikolaev</property>
-    <property name="comments" translatable="yes">Simple and flexible watcher torrent trackers, based on regular expressons.</property>
-    <property name="website">https://sourceforge.net/projects/twatch/</property>
-    <property name="license" translatable="yes">This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.</property>
-    <property name="authors">Roman V. Nikolaev &lt;rshadow@rambler.ru&gt;
-Dmitry E. Oboukhov &lt;unera@debian.org&gt;	</property>
-    <property name="logo">twatch.png</property>
-    <child internal-child="vbox">
-      <object class="GtkVBox" id="dialog-vbox1">
-        <property name="visible">True</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child>
-          <placeholder/>
-        </child>
-        <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area1">
-            <property name="visible">True</property>
-            <property name="homogeneous">True</property>
-            <property name="layout_style">end</property>
-            <signal name="button_press_event" handler="on_about_button_press"/>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="pack_type">end</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-  </object>
-  <object class="GtkDialog" id="settings">
-    <property name="border_width">5</property>
-    <property name="title" translatable="yes">Settings TWatch</property>
-    <property name="role">Settings</property>
-    <property name="modal">True</property>
-    <property name="window_position">center</property>
-    <property name="destroy_with_parent">True</property>
-    <property name="type_hint">normal</property>
-    <property name="skip_taskbar_hint">True</property>
-    <property name="skip_pager_hint">True</property>
-    <property name="transient_for">main</property>
-    <signal name="close" handler="gtk_widget_hide" object="settings"/>
-    <child internal-child="vbox">
-      <object class="GtkVBox" id="dialog-vbox2">
-        <property name="visible">True</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child>
-          <placeholder/>
-        </child>
-        <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area2">
-            <property name="visible">True</property>
-            <property name="layout_style">end</property>
-            <child>
-              <object class="GtkButton" id="set_button_ok">
-                <property name="label">gtk-ok</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_stock">True</property>
-                <signal name="pressed" handler="on_save_settings" object="settings"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="set_button_cancel">
-                <property name="label">gtk-close</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_stock">True</property>
-                <signal name="pressed" handler="gtk_false" object="settings"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="pack_type">end</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-    <action-widgets>
-      <action-widget response="0">set_button_ok</action-widget>
-      <action-widget response="0">set_button_cancel</action-widget>
-    </action-widgets>
   </object>
 </interface>

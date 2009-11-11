@@ -10,9 +10,23 @@ use lib qw(../../);
 use Glib qw(:constants);
 use Gtk2;
 
-sub on_save_settings
+use TWatchGtk::Config;
+
+sub init
 {
-    die 2;
+    my ($self) = @_;
+
+    $self->{builder}->get_object;
+}
+
+sub on_button_ok_pressed
+{
+    my ($self, $item, $window) = @_;
+}
+
+sub on_button_cancel_pressed
+{
+    my ($self, $item, $window) = @_;
 }
 
 1;

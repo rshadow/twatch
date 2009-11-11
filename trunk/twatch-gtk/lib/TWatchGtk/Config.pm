@@ -1,8 +1,4 @@
-#!/usr/bin/perl
-use strict;
-use warnings;
-use utf8;
-use open qw(:utf8 :std);
+package TWatchGtk::Config;
 
 =head1 TWatchGtk::Config
 
@@ -10,11 +6,15 @@ use open qw(:utf8 :std);
 
 =cut
 
-package TWatchGtk::Config;
+use strict;
+use warnings;
+use utf8;
+use open qw(:utf8 :std);
 
 use base qw(Exporter);
-
 our @EXPORT=qw(config DieDumper Dumper);
+
+use TWatch::Config;
 
 =head2
 
@@ -32,6 +32,8 @@ sub config
 
     # Загрузим конфиг
     $config->load;
+    # Сольем с конфигом качалки
+    $config->merge;
 
     return $config;
 }
@@ -96,44 +98,26 @@ sub get
     return $self->{param}{$name};
 }
 
-################################################################################
-# Другие функции
-################################################################################
+=head2 get
 
-
-=head2 DieDumper
-
-Функция для отладки
+Функция получения данных конфигурационного файла демона
 
 =cut
-sub DieDumper($@)
+sub d_get
 {
-    require Data::Dumper;
-    $Data::Dumper::Indent = 1;
-    $Data::Dumper::Terse = 1;
-    $Data::Dumper::Useqq = 1;
-    $Data::Dumper::Deepcopy = 1;
-    $Data::Dumper::Maxdepth = 0;
-    my $dump = Data::Dumper->Dump([@_]);
-    # юникодные символы преобразуем в них самих
-    # вметсто \x{уродство}
-#    $dump=~s/(\\x\{[\da-fA-F]+\})/eval "qq{$1}"/eg;
-    die $dump;
+    my ($self, $name) = @_;
+    return $self->{daemon}{$name};
 }
 
-=head2 Dumper
+=head2 merge
+
+Слияние конфига TWatch и TWatchGTK
 
 =cut
-sub Dumper
+sub merge
 {
-    require Data::Dumper;
-    $Data::Dumper::Indent = 1;
-    $Data::Dumper::Terse = 1;
-    $Data::Dumper::Useqq = 1;
-    $Data::Dumper::Deepcopy = 1;
-    $Data::Dumper::Maxdepth = 0;
-    my $dump = Data::Dumper->Dump([@_]);
+    my ($self) = @_;
 
-    return $dump;
+    $self->{daemon} = TWatch::Config::config;
 }
 1;

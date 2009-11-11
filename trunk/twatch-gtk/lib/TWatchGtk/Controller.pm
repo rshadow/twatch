@@ -20,15 +20,29 @@ sub new
 {
     my ($class, %opts) = @_;
     my $self = bless \%opts, $class;
+
+    # Получим имя файла с интерфейсом
+    my ($glade) = $class =~ m/::(\w+?)$/;
+    $glade = lc $glade;
+
+    # Загрузим Glade
+    my $builder = Gtk2::Builder->new;
+    $builder->add_from_file(config->get('Glade') . $glade . '.glade' );
+
+    # Подсоединим сигналы
+    $builder->connect_signals (undef, $self );
+
+    # Сохраним окно
+    $self->{builder} = $builder;
+    $self->{object} = $builder->get_object($glade);
+
+    # Вызов хука инициализации
+    $self->init();
+
     return $self;
 }
 
-=head2 app
-
-Получение объекта приложения
-
-=cut
-sub app{ return shift->{app} };
+sub init {}
 
 # Стандартные функции ##########################################################
 =head2
@@ -42,56 +56,26 @@ sub gtk_main_quit
     return TRUE;
 }
 
-sub gtk_widget_show
-{
-    my ($self, $item, $window) = @_;
-    $window->reshow_with_initial_size;
-    return TRUE;
-}
-
-sub gtk_widget_hide
-{
-    my ($self, $item, $window) = @_;
-    $window->hide;
-    return TRUE;
-}
-
-sub gtk_widget_destroy
-{
-    my ($self, $item, $window) = @_;
-    $window->destroy;
-    $window->gtk_widget_hide_on_delete;
-    return TRUE;
-}
-
-sub gtk_true
-{
-    gtk_widget_hide(@_);
-}
-
-sub gtk_false
-{
-    gtk_widget_hide(@_);
-}
-
-# Обработчики меню #############################################################
-#sub show_about
+#sub gtk_widget_show
 #{
-#    my ($self) = @_;
-#    Gtk2->show_about_dialog($self->app->get_object('about'));
+#    my ($self, $item, $window) = @_;
+#    $window->reshow_with_initial_size;
 #    return TRUE;
 #}
 #
-#sub show_settings
+#sub gtk_widget_hide
 #{
-#    my ($self) = @_;
-#    $self->app->get_object('settings')->show;
+#    my ($self, $item, $window) = @_;
+#    $window->hide;
 #    return TRUE;
 #}
-
-sub settings_save
-{
-    DieDumper @_;
-}
+#
+#sub gtk_widget_destroy
+#{
+#    my ($self, $item, $window) = @_;
+##    $window->gtk_widget_hide_on_delete;
+#    $window->destroy;
+#    return TRUE;
+#}
 
 1;
