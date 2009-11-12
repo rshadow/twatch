@@ -108,7 +108,7 @@ sub load
     die 'Config file not exists' unless $loaded eq 'yes';
 
     # Сохраним оригинал т.к. дальше он может преобразововаться
-    $self->{orig} = $self->{param};
+    %{ $self->{orig} } = %{ $self->{param} };
 
     # Преобразуем в массив уровней
     $self->{param}{EmailLevel} = [ split ',', $self->{param}{EmailLevel} ];
