@@ -4,10 +4,12 @@
   <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkTreeStore" id="maintreestore">
     <columns>
-      <!-- column-name Статус -->
-      <column type="GdkPixbuf"/>
-      <!-- column-name Кнопка -->
-      <column type="GtkButtonsType"/>
+      <!-- column-name col_status -->
+      <column type="gchar"/>
+      <!-- column-name col_project -->
+      <column type="gchar"/>
+      <!-- column-name col_update -->
+      <column type="gchar"/>
     </columns>
   </object>
   <object class="GtkWindow" id="main">
@@ -124,7 +126,7 @@
                     <property name="fixed_width">24</property>
                     <property name="min_width">24</property>
                     <property name="max_width">24</property>
-                    <property name="title">&#x421;&#x442;&#x430;&#x442;&#x443;&#x441;</property>
+                    <property name="title">Status</property>
                     <property name="reorderable">True</property>
                     <property name="sort_indicator">True</property>
                   </object>
@@ -132,7 +134,7 @@
                 <child>
                   <object class="GtkTreeViewColumn" id="col_project">
                     <property name="resizable">True</property>
-                    <property name="title">&#x41F;&#x440;&#x43E;&#x435;&#x43A;&#x442;</property>
+                    <property name="title">Project</property>
                     <property name="expand">True</property>
                     <property name="reorderable">True</property>
                     <property name="sort_indicator">True</property>
@@ -141,7 +143,7 @@
                 <child>
                   <object class="GtkTreeViewColumn" id="col_update">
                     <property name="resizable">True</property>
-                    <property name="title">&#x41E;&#x431;&#x43D;&#x43E;&#x432;&#x43B;&#x435;&#x43D;</property>
+                    <property name="title">Updated</property>
                     <property name="expand">True</property>
                     <property name="reorderable">True</property>
                     <property name="sort_indicator">True</property>

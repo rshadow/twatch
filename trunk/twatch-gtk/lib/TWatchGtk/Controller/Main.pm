@@ -43,9 +43,40 @@ sub build_project_tree
     my ($self) = @_;
 
     # Получим объекты для работы
-    my $tree    = $self->{builder}->get_object('treeview_projects');
-    my $twatch  = $self->{twatch};
+    my $treeview    = $self->{builder}->get_object('treeview_projects');
+    my $twatch      = $self->{twatch};
 
+    my $model   = $treeview->get_model();
+#    $model->append(undef);
+#    $model->append(undef);
+#    $model->append(undef);
+#    $model->set_column_types (qw(Glib::String Glib::String Glib::String));
+##    my $iter    = $model->get_iter_first();
+
+#    DieDumper $model;
+    for (keys %{$twatch->{project}})
+    {
+        # Добавим проект
+        my $iter_project = $model->insert_with_values(undef, 0,
+            0 => 11, 1 => $_, 2 => $_);
+
+        # Добавим уровни
+        my $iter_watches = $model->insert_with_values($iter_project, 0,
+            0 => 11, 1 => 'Watches', 2 => undef);
+        my $iter_disabled = $model->insert_with_values($iter_project, 0,
+            0 => 11, 1 => 'Disabled', 2 => undef);
+        my $iter_completed = $model->insert_with_values($iter_project, 0,
+            0 => 11, 1 => 'Completed', 2 => undef);
+
+        # Добавим список завершенных торренов
+#        DieDumper $twatch->get_proj($_)->{watches}{complete}{watch};
+    }
+
+#    $treeview->collapse_all;
+
+
+
+#     ($model);
 #    DieDumper [ keys %{$twatch->{project}} ];
 
 
