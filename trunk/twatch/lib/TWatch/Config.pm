@@ -166,9 +166,12 @@ sub create_dir
     {
         # Получим путь к директории
         my $path = $self->get($param);
+        # Сохраним оригинал
+        $self->{orig}{$param} = $path;
+        # Удалим home
         $path =~ s/^~/$ENV{HOME}/;
         # Установим абсолютный путь во время выполнения
-#        $self->set($param, $path);
+        $self->set($param, $path);
         # Получим директорию
         my $dir = $path;
         $dir = dirname( $dir ) if $dir =~ m/\Q*.xml\E$/;

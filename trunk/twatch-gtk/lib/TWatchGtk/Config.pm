@@ -22,20 +22,23 @@ use TWatch::Config;
 
 =cut
 
-sub config
 {
-    our $config;
-    return $config if $config;
+    no warnings "redefine";
+    sub config
+    {
+        our $config;
+        return $config if $config;
 
-    $config = TWatchGtk::Config->new;
-    return unless $config;
+        $config = TWatchGtk::Config->new;
+        return unless $config;
 
-    # Загрузим конфиг
-    $config->load;
-    # Сольем с конфигом качалки
-    $config->merge;
+        # Загрузим конфиг
+        $config->load;
+        # Сольем с конфигом качалки
+        $config->merge;
 
-    return $config;
+        return $config;
+    }
 }
 
 =head2 new
@@ -98,7 +101,7 @@ sub get
     return $self->{param}{$name};
 }
 
-=head2 get
+=head2 d_get
 
 Функция получения данных конфигурационного файла демона
 
@@ -106,7 +109,18 @@ sub get
 sub d_get
 {
     my ($self, $name) = @_;
-    return $self->{daemon}{$name};
+    return $self->{daemon}{param}{$name};
+}
+
+=head2 d_get_orig
+
+Функция получения оригинальных данных конфигурационного файла демона
+
+=cut
+sub d_get_orig
+{
+    my ($self, $name) = @_;
+    return $self->{daemon}{orig}{$name};
 }
 
 =head2 merge
@@ -118,6 +132,7 @@ sub merge
 {
     my ($self) = @_;
 
-    $self->{daemon} = TWatch::Config::config;
+    $self->{daemon}{param}  = TWatch::Config::config->{param};
+    $self->{daemon}{orig}   = TWatch::Config::config->{orig};
 }
 1;

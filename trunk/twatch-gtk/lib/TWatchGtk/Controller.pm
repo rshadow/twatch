@@ -34,7 +34,7 @@ sub new
 
     # Сохраним окно
     $self->{builder} = $builder;
-    $self->{object} = $builder->get_object($glade);
+    $self->{window} = $builder->get_object($glade);
 
     # Вызов хука инициализации
     $self->init();
