@@ -19,11 +19,14 @@ sub init
     # Инициализация параметров:
 
     # Строковые параметры
-    $self->{builder}->get_object( $_ )->set_text( config->d_get_orig( $_ ) )
-        for (qw(Project Save Complete EMail));
+    $self->{builder}->get_object( $_ )->set_text( config->daemon->get_orig( $_ ) )
+        for (qw(Project Save Complete));
+
+    $self->{builder}->get_object( $_ )->set_text( config->daemon->get( $_ ) )
+        for (qw(EMail));
 
     # Уровень отсылки уведомлений
-    for( @{ config->d_get('EmailLevel') } )
+    for( @{ config->daemon->get('EmailLevel') } )
     {
         $self->{builder}->get_object($_)->set_active( 1 )
             if $self->{builder}->get_object( $_ );
@@ -31,13 +34,15 @@ sub init
 
     # Использование прокси
     $self->{builder}->get_object('NoProxy')->set_active(
-        config->d_get('NoProxy') eq 'yes'
+        config->daemon->is_noproxy
     );
 }
 
 sub on_button_ok_pressed
 {
     my ($self, $window) = @_;
+
+    # Сохраним
 
     $self->{window}->destroy;
 }

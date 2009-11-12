@@ -107,6 +107,9 @@ sub load
     # Выйдем если не удалось загрузить ниодного конфига
     die 'Config file not exists' unless $loaded eq 'yes';
 
+    # Сохраним оригинал т.к. дальше он может преобразововаться
+    $self->{orig} = $self->{param};
+
     # Преобразуем в массив уровней
     $self->{param}{EmailLevel} = [ split ',', $self->{param}{EmailLevel} ];
     s/^\s*//, s/\s*$// for @{ $self->{param}{EmailLevel} };
@@ -123,6 +126,17 @@ sub get
 {
     my ($self, $name) = @_;
     return $self->{param}{$name};
+}
+
+=head2 get_orig
+
+Функция получения оригинальных данных конфигурационного файла
+
+=cut
+sub get_orig
+{
+    my ($self, $name) = @_;
+    return $self->{orig}{$name};
 }
 
 =head2 set
@@ -166,8 +180,6 @@ sub create_dir
     {
         # Получим путь к директории
         my $path = $self->get($param);
-        # Сохраним оригинал
-        $self->{orig}{$param} = $path;
         # Удалим home
         $path =~ s/^~/$ENV{HOME}/;
         # Установим абсолютный путь во время выполнения

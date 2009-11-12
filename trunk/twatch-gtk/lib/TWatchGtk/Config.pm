@@ -34,8 +34,6 @@ use TWatch::Config;
 
         # Загрузим конфиг
         $config->load;
-        # Сольем с конфигом качалки
-        $config->merge;
 
         return $config;
     }
@@ -101,38 +99,13 @@ sub get
     return $self->{param}{$name};
 }
 
-=head2 d_get
+=head2 daemon
 
-Функция получения данных конфигурационного файла демона
-
-=cut
-sub d_get
-{
-    my ($self, $name) = @_;
-    return $self->{daemon}{param}{$name};
-}
-
-=head2 d_get_orig
-
-Функция получения оригинальных данных конфигурационного файла демона
+Функция получения объекта конфигурации демона
 
 =cut
-sub d_get_orig
+sub daemon
 {
-    my ($self, $name) = @_;
-    return $self->{daemon}{orig}{$name};
-}
-
-=head2 merge
-
-Слияние конфига TWatch и TWatchGTK
-
-=cut
-sub merge
-{
-    my ($self) = @_;
-
-    $self->{daemon}{param}  = TWatch::Config::config->{param};
-    $self->{daemon}{orig}   = TWatch::Config::config->{orig};
+    return TWatch::Config::config;
 }
 1;
