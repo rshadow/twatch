@@ -83,6 +83,9 @@ sub load
     # Загрузка конфигов: сначала дефолтового, затем поверх него польз-го
     for my $config ( @{$self->{dir}{config}} )
     {
+        # Удалим home
+        $config =~ s/^~/$ENV{HOME}/;
+
         # Пропустим если конфига нет
         next unless -f $config;
 
@@ -92,12 +95,15 @@ sub load
             or warn sprintf('Can`t read config file %s : %s', $config, $!);
         next unless $file;
 
-        # Прочитаем файл и распарсим данные
-        $self->{param} = {
-            map{ split m/\s*=\s*/, $_, 2 }
-            grep m/=/,
-            map { s/#\s.*//; s/^\s*#.*//; s/\s+$//; s/^\s+//; $_ } <$file>,
-            $self->{param}};
+        # Прочитаем файл и распарсим данные. Данные от пользователя приоритетны
+        %{ $self->{param} } = (
+            %{ $self->{param} },
+            (
+                map{ split m/\s*=\s*/, $_, 2 }
+                grep m/=/,
+                map { s/#\s.*//; s/^\s*#.*//; s/\s+$//; s/^\s+//; $_ } <$file>
+            )
+        );
 
         # Закроем файл и пометим что загрузка была удачной
         close $file;
@@ -184,9 +190,9 @@ sub create_dir
         $path =~ s/^~/$ENV{HOME}/;
         # Установим абсолютный путь во время выполнения
         $self->set($param, $path);
-        # Получим директорию
+        # Получим директорию (в Save и так храниться директория)
         my $dir = $path;
-        $dir = dirname( $dir ) if $dir =~ m/\Q*.xml\E$/;
+        $dir = dirname( $dir ) unless $param eq 'Save';
         # Пропустим если директория уже создана
         next if -d $dir;
         # Создадим директорию если ее еще нет
