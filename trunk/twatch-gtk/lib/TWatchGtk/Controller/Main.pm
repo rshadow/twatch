@@ -8,7 +8,6 @@ use utf8;
 
 use Glib qw(:constants);
 use Gtk2;
-use Gtk2::Ex::Simple::List;
 
 use lib qw(../../);
 use TWatchGtk::Config; # Нужен только для дампера.
@@ -42,44 +41,57 @@ sub build_project_tree
 {
     my ($self) = @_;
 
+    use constant TW_STATUS      => 0;
+    use constant TW_TITLE       => 1;
+    use constant TW_SEASON      => 2;
+    use constant TW_SERIES      => 3;
+    use constant TW_COMPLETE    => 4;
+    use constant TW_PAGE        => 5;
+    use constant TW_ACTIONS     => 6;
+
     # Получим объекты для работы
     my $treeview    = $self->{builder}->get_object('treeview_projects');
     my $twatch      = $self->{twatch};
+    my $model       = $treeview->get_model();
 
-    my $model   = $treeview->get_model();
-#    $model->append(undef);
-#    $model->append(undef);
-#    $model->append(undef);
-#    $model->set_column_types (qw(Glib::String Glib::String Glib::String));
-##    my $iter    = $model->get_iter_first();
-
-#    DieDumper $model;
     for (keys %{$twatch->{project}})
     {
+        my $proj = $twatch->get_proj($_);
+
         # Добавим проект
         my $iter_project = $model->insert_with_values(undef, 0,
-            0 => 11, 1 => $_, 2 => $_);
+            TW_TITLE    , $proj->{name},
+            TW_COMPLETE , $proj->{updated},
+            TW_PAGE     , $proj->{url});
 
-        # Добавим уровни
-        my $iter_watches = $model->insert_with_values($iter_project, 0,
-            0 => 11, 1 => 'Watches', 2 => undef);
-        my $iter_disabled = $model->insert_with_values($iter_project, 0,
-            0 => 11, 1 => 'Disabled', 2 => undef);
-        my $iter_completed = $model->insert_with_values($iter_project, 0,
-            0 => 11, 1 => 'Completed', 2 => undef);
+        # Добавим задания проекта
+        for my $watch ( $twatch->get_watch($proj->{name}) )
+        {
+#            DieDumper $watch if $proj->{name} =~ m/zal/;
+            my $iter_watch = $model->insert_with_values($iter_project, 0,
+                TW_TITLE    , $watch->{name});
 
-        # Добавим список завершенных торренов
-#        DieDumper $twatch->get_proj($_)->{watches}{complete}{watch};
+            # Добавим список завершенных торренов
+            next unless @{ $watch->{complete} || [] };
+
+            my $iter_complete = $model->insert_with_values($iter_watch, 0,
+                    TW_TITLE    , 'Completed');
+            for my $complete ( @{ $watch->{complete} })
+            {
+                $model->insert_with_values($iter_complete, 0,
+                    TW_TITLE    , $complete->{title}    || '',
+                    TW_SEASON   , $complete->{season}   || '',
+                    TW_SERIES   , $complete->{series}   || '',
+                    TW_COMPLETE , $complete->{datetime} || '',
+                    TW_PAGE     , $complete->{page}     || '');
+            }
+        }
+
     }
 
-#    $treeview->collapse_all;
-
-
-
-#     ($model);
-#    DieDumper [ keys %{$twatch->{project}} ];
-
-
+    # Свернем все проекты
+    $treeview->collapse_all;
+    return;
 }
 
 1;

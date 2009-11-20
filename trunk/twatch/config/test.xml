@@ -1,5 +1,5 @@
 <?xml version='1.0' standalone='yes'?>
-<project>
+<project xmlns="file:///home/rubin/workspace/twatch/trunk/twatch/config/twatch.xsd">
     <name>Kinozal</name>
     <url>http://kinozal.tv</url>
     <order>1</order>

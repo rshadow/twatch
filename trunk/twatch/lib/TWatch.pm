@@ -18,7 +18,7 @@ use open qw(:utf8 :std);
 use lib qw(../lib);
 
 use Encode qw(decode encode is_utf8);
-use POSIX;
+use POSIX (qw(strftime));
 use WWW::Mechanize;
 use Sys::Hostname;
 use MIME::Lite;
@@ -133,7 +133,7 @@ sub run
                 # Получим страницу с описанием торрента/ов
                 if( $watch->{type} eq 'tree' )
                 {
-                    $self->notify(sprintf 'Get info form: %s.', $url);
+                    $self->notify(sprintf 'Get info from: %s.', $url);
 
                     eval{ $browser->get( $url ); };
                     # Проверка что контент получен
@@ -147,6 +147,8 @@ sub run
                     # Получим контент сртраницы с торрентом
                     $content = $browser->content;
                 }
+
+                my $absoulete = $browser->uri->as_string();
 
                 $self->notify(sprintf 'Get fields by user regexp');
 
@@ -263,6 +265,11 @@ sub run
                     # Если загрузка удачна, переместим торрент в готовые
                     if ($browser->success)
                     {
+                        # Добавим дополнительные параметры для сохранения
+                        $result->{datetime} = POSIX::strftime(
+                            "%Y-%m-%d %H:%M:%S", localtime(time));
+                        $result->{page} = $absoulete;
+
                         # Сохраним задание как выполненное
                         $watch->{complete} = []
                             unless exists $watch->{complete} or

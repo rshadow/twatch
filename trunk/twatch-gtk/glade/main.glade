@@ -4,12 +4,18 @@
   <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkTreeStore" id="maintreestore">
     <columns>
-      <!-- column-name col_status -->
-      <column type="gchar"/>
-      <!-- column-name col_project -->
-      <column type="gchar"/>
-      <!-- column-name col_update -->
-      <column type="gchar"/>
+      <!-- column-name status -->
+      <column type="gint"/>
+      <!-- column-name title -->
+      <column type="gchararray"/>
+      <!-- column-name season -->
+      <column type="gchararray"/>
+      <!-- column-name series -->
+      <column type="gchararray"/>
+      <!-- column-name complete -->
+      <column type="gchararray"/>
+      <!-- column-name page -->
+      <column type="gchararray"/>
     </columns>
   </object>
   <object class="GtkWindow" id="main">
@@ -63,9 +69,39 @@
                   <object class="GtkMenu" id="menu2">
                     <property name="visible">True</property>
                     <child>
+                      <object class="GtkImageMenuItem" id="imagemenuitem_add">
+                        <property name="label">gtk-add</property>
+                        <property name="visible">True</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="imagemenuitem_edit">
+                        <property name="label">gtk-edit</property>
+                        <property name="visible">True</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="imagemenuitem_delete">
+                        <property name="label">gtk-remove</property>
+                        <property name="visible">True</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem" id="separatormenuitem2">
+                        <property name="visible">True</property>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkImageMenuItem" id="imagemenuitem_settings">
                         <property name="label">gtk-preferences</property>
                         <property name="visible">True</property>
+                        <property name="accel_path">Ctrl+P</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <signal name="activate" handler="show_settings"/>
@@ -83,6 +119,14 @@
                 <child type="submenu">
                   <object class="GtkMenu" id="menu3">
                     <property name="visible">True</property>
+                    <child>
+                      <object class="GtkImageMenuItem" id="imagemenuitem_help">
+                        <property name="label">gtk-help</property>
+                        <property name="visible">True</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                      </object>
+                    </child>
                     <child>
                       <object class="GtkImageMenuItem" id="imagemenuitem_about">
                         <property name="label">gtk-about</property>
@@ -115,38 +159,104 @@
           <object class="GtkHBox" id="hbox1">
             <property name="visible">True</property>
             <child>
-              <object class="GtkTreeView" id="treeview_projects">
+              <object class="GtkScrolledWindow" id="scrolledwindow1">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="model">maintreestore</property>
-                <property name="search_column">6</property>
+                <property name="hscrollbar_policy">automatic</property>
+                <property name="vscrollbar_policy">automatic</property>
                 <child>
-                  <object class="GtkTreeViewColumn" id="col_status">
-                    <property name="sizing">fixed</property>
-                    <property name="fixed_width">24</property>
-                    <property name="min_width">24</property>
-                    <property name="max_width">24</property>
-                    <property name="title">Status</property>
+                  <object class="GtkTreeView" id="treeview_projects">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="model">maintreestore</property>
                     <property name="reorderable">True</property>
-                    <property name="sort_indicator">True</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkTreeViewColumn" id="col_project">
-                    <property name="resizable">True</property>
-                    <property name="title">Project</property>
-                    <property name="expand">True</property>
-                    <property name="reorderable">True</property>
-                    <property name="sort_indicator">True</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkTreeViewColumn" id="col_update">
-                    <property name="resizable">True</property>
-                    <property name="title">Updated</property>
-                    <property name="expand">True</property>
-                    <property name="reorderable">True</property>
-                    <property name="sort_indicator">True</property>
+                    <property name="search_column">1</property>
+                    <property name="enable_tree_lines">True</property>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="col_project">
+                        <property name="resizable">True</property>
+                        <property name="title">Title</property>
+                        <property name="expand">True</property>
+                        <property name="reorderable">True</property>
+                        <property name="sort_indicator">True</property>
+                        <child>
+                          <object class="GtkCellRendererPixbuf" id="cell_img"/>
+                          <attributes>
+                            <attribute name="stock-id">0</attribute>
+                          </attributes>
+                        </child>
+                        <child>
+                          <object class="GtkCellRendererText" id="cell_title"/>
+                          <attributes>
+                            <attribute name="text">1</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="col_season">
+                        <property name="sizing">autosize</property>
+                        <property name="title">Season</property>
+                        <property name="reorderable">True</property>
+                        <property name="sort_indicator">True</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="cell_season"/>
+                          <attributes>
+                            <attribute name="text">2</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="col_series">
+                        <property name="sizing">autosize</property>
+                        <property name="title">Series</property>
+                        <property name="reorderable">True</property>
+                        <property name="sort_indicator">True</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="cell_series"/>
+                          <attributes>
+                            <attribute name="text">3</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="col_update">
+                        <property name="sizing">autosize</property>
+                        <property name="title">Completed</property>
+                        <property name="reorderable">True</property>
+                        <property name="sort_indicator">True</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="cell_completed"/>
+                          <attributes>
+                            <attribute name="text">4</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="col_page">
+                        <property name="title">Page</property>
+                        <property name="expand">True</property>
+                        <property name="reorderable">True</property>
+                        <property name="sort_indicator">True</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="cell_page"/>
+                          <attributes>
+                            <attribute name="text">5</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="col_actions">
+                        <property name="title">Actions</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="cell_actions"/>
+                        </child>
+                      </object>
+                    </child>
                   </object>
                 </child>
               </object>
@@ -262,17 +372,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="button4">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="use_stock">True</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">1</property>
-                  </packing>
+                  <placeholder/>
                 </child>
               </object>
               <packing>
