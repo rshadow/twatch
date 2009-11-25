@@ -13,6 +13,7 @@ use lib qw(../../);
 use TWatchGtk::Config; # Нужен только для дампера.
 use TWatchGtk::Controller::About;
 use TWatchGtk::Controller::Settings;
+use TWatchGtk::Controller::Edit;
 
 # Обработчики меню #############################################################
 sub show_about
@@ -28,6 +29,13 @@ sub show_settings
     my ($self) = @_;
 #    require "TWatchGtk::Controller::Settings";
     $self->{settings} = TWatchGtk::Controller::Settings->new;
+    return TRUE;
+}
+
+sub show_edit
+{
+    my ($self) = @_;
+    $self->{edit} = TWatchGtk::Controller::Edit->new;
     return TRUE;
 }
 
@@ -53,6 +61,7 @@ sub build_project_tree
     my $treeview    = $self->{builder}->get_object('treeview_projects');
     my $twatch      = $self->{twatch};
     my $model       = $treeview->get_model();
+    my @columns     = $treeview->get_columns();
 
     for (keys %{$twatch->{project}})
     {
