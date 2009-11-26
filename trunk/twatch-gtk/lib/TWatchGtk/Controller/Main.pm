@@ -15,28 +15,63 @@ use TWatchGtk::Controller::About;
 use TWatchGtk::Controller::Settings;
 use TWatchGtk::Controller::Edit;
 
+use constant TW_STATUS      => 0;
+use constant TW_TITLE       => 1;
+use constant TW_SEASON      => 2;
+use constant TW_SERIES      => 3;
+use constant TW_COMPLETE    => 4;
+use constant TW_PAGE        => 5;
+use constant TW_ACTIONS     => 6;
+
 # Обработчики меню #############################################################
 sub show_about
 {
-    my ($self) = @_;
-#    require "TWatchGtk::Controller::About";
-    $self->{about} = TWatchGtk::Controller::About->new;
+    my ($self, $item, $param) = @_;
+    $self->{dlg}{about} = TWatchGtk::Controller::About->new;
     return TRUE;
 }
 
 sub show_settings
 {
-    my ($self) = @_;
-#    require "TWatchGtk::Controller::Settings";
-    $self->{settings} = TWatchGtk::Controller::Settings->new;
+    my ($self, $item, $param) = @_;
+    $self->{dlg}{settings} = TWatchGtk::Controller::Settings->new;
     return TRUE;
 }
 
 sub show_edit
 {
-    my ($self) = @_;
-    $self->{edit} = TWatchGtk::Controller::Edit->new;
+    my ($self, $item, $param) = @_;
+
+    my $treeview = $self->{builder}->get_object('treeview_projects');
+    my $selection = $treeview->get_selection;
+    my ($model, $iter) = $selection->get_selected;
+    my @data = $model->get_value ($iter, TW_TITLE);
+
+    DieDumper \@data;
+
+    my $name;
+    $self->{dlg}{edit} = TWatchGtk::Controller::Edit->new(
+        twatch  => $self->{twatch},
+        project => $name,
+    );
     return TRUE;
+}
+
+sub show_delete
+{
+    my ($self, $item, $param) = @_;
+
+    my $treeview = $self->{builder}->get_object('treeview_projects');
+    my $selection = $treeview->get_selection;
+    my ($model, $iter) = $selection->get_selected;
+    my $path = $model->get_path($iter);
+    while( $path->up ) {1;}
+    $iter = $model->get_iter($path);
+    DieDumper $iter;
+    my @data = $model->get_value ($iter, TW_TITLE);
+
+    DieDumper \@data;
+
 }
 
 # Логика #######################################################################
@@ -48,14 +83,6 @@ sub show_edit
 sub build_project_tree
 {
     my ($self) = @_;
-
-    use constant TW_STATUS      => 0;
-    use constant TW_TITLE       => 1;
-    use constant TW_SEASON      => 2;
-    use constant TW_SERIES      => 3;
-    use constant TW_COMPLETE    => 4;
-    use constant TW_PAGE        => 5;
-    use constant TW_ACTIONS     => 6;
 
     # Получим объекты для работы
     my $treeview    = $self->{builder}->get_object('treeview_projects');

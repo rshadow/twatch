@@ -15,7 +15,6 @@ use TWatchGtk::Config;
 sub init
 {
     my ($self) = @_;
-
     # Инициализация параметров:
 }
 

@@ -557,10 +557,10 @@ sub has_messages
 =cut
 sub notify
 {
-    my ($self, $messge) = @_;
+    my ($self, $message) = @_;
     return unless $self->{verbose};
-
-    printf $messge . "\n";
+    return unless $message;
+    print $message . "\n";
 }
 ################################################################################
 # Функции закачки
