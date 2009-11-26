@@ -46,4 +46,8 @@ clean:
 	sleep 5
 	rm -fr ./*twatch*
 
-.PHONY: all get orig doc build clean
+install:
+	@echo "*** Install packages ***"
+	dpkg -i ./*twatch*.deb
+
+.PHONY: all get orig doc build clean install

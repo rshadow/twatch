@@ -107,7 +107,6 @@
                       <object class="GtkImageMenuItem" id="imagemenuitem_settings">
                         <property name="label">gtk-preferences</property>
                         <property name="visible">True</property>
-                        <property name="accel_path">Ctrl+P</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <signal name="activate" handler="show_settings"/>
@@ -185,6 +184,7 @@
                         <property name="expand">True</property>
                         <property name="reorderable">True</property>
                         <property name="sort_indicator">True</property>
+                        <property name="sort_column_id">1</property>
                         <child>
                           <object class="GtkCellRendererPixbuf" id="cell_img"/>
                           <attributes>
@@ -205,6 +205,7 @@
                         <property name="title">Season</property>
                         <property name="reorderable">True</property>
                         <property name="sort_indicator">True</property>
+                        <property name="sort_column_id">2</property>
                         <child>
                           <object class="GtkCellRendererText" id="cell_season"/>
                           <attributes>
@@ -219,6 +220,7 @@
                         <property name="title">Series</property>
                         <property name="reorderable">True</property>
                         <property name="sort_indicator">True</property>
+                        <property name="sort_column_id">3</property>
                         <child>
                           <object class="GtkCellRendererText" id="cell_series"/>
                           <attributes>
@@ -233,6 +235,7 @@
                         <property name="title">Completed</property>
                         <property name="reorderable">True</property>
                         <property name="sort_indicator">True</property>
+                        <property name="sort_column_id">4</property>
                         <child>
                           <object class="GtkCellRendererText" id="cell_completed"/>
                           <attributes>
@@ -247,6 +250,7 @@
                         <property name="expand">True</property>
                         <property name="reorderable">True</property>
                         <property name="sort_indicator">True</property>
+                        <property name="sort_column_id">5</property>
                         <child>
                           <object class="GtkCellRendererText" id="cell_page"/>
                           <attributes>
@@ -258,6 +262,7 @@
                     <child>
                       <object class="GtkTreeViewColumn" id="col_actions">
                         <property name="title">Actions</property>
+                        <property name="sort_column_id">6</property>
                         <child>
                           <object class="GtkCellRendererText" id="cell_actions"/>
                         </child>
