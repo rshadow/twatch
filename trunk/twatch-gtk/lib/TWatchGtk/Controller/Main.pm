@@ -14,6 +14,7 @@ use TWatchGtk::Config; # Нужен только для дампера.
 use TWatchGtk::Controller::About;
 use TWatchGtk::Controller::Settings;
 use TWatchGtk::Controller::Edit;
+use TWatchGtk::Controller::Run;
 
 use constant TW_STATUS      => 0;
 use constant TW_TITLE       => 1;
@@ -42,18 +43,25 @@ sub show_edit
 {
     my ($self, $item, $param) = @_;
 
-    my $treeview = $self->{builder}->get_object('treeview_projects');
-    my $selection = $treeview->get_selection;
-    my ($model, $iter) = $selection->get_selected;
-    my @data = $model->get_value ($iter, TW_TITLE);
-
-    DieDumper \@data;
+#    my $treeview = $self->{builder}->get_object('treeview_projects');
+#    my $selection = $treeview->get_selection;
+#    my ($model, $iter) = $selection->get_selected;
+#    my @data = $model->get_value ($iter, TW_TITLE);
+#
+#    DieDumper \@data;
 
     my $name;
     $self->{dlg}{edit} = TWatchGtk::Controller::Edit->new(
         twatch  => $self->{twatch},
         project => $name,
     );
+    return TRUE;
+}
+
+sub show_run
+{
+    my ($self, $item, $param) = @_;
+    $self->{dlg}{run} = TWatchGtk::Controller::Run->new;
     return TRUE;
 }
 
