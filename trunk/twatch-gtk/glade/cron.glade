@@ -2,75 +2,59 @@
 <interface>
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy toplevel-contextual -->
-  <object class="GtkDialog" id="run">
+  <object class="GtkMessageDialog" id="cron">
     <property name="visible">True</property>
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">Check for new torrents</property>
-    <property name="role">Run</property>
+    <property name="title" translatable="yes">Auto execute question</property>
+    <property name="role">Cron</property>
+    <property name="modal">True</property>
     <property name="window_position">center</property>
-    <property name="default_width">640</property>
-    <property name="default_height">480</property>
-    <property name="destroy_with_parent">True</property>
     <property name="icon">twatch-gtk.svg</property>
     <property name="type_hint">normal</property>
+    <property name="skip_taskbar_hint">True</property>
     <property name="has_separator">False</property>
+    <property name="message_type">question</property>
+    <property name="text" translatable="yes">We recommends enable auto check torrent trackers every hour. Otherwise you can do it manually.</property>
+    <property name="secondary_text" translatable="yes">Enable auto check?</property>
     <child internal-child="vbox">
-      <object class="GtkVBox" id="dialog-vbox1">
+      <object class="GtkVBox" id="dialog-vbox2">
         <property name="visible">True</property>
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child>
-          <object class="GtkFrame" id="frame1">
+          <object class="GtkExpander" id="expander1">
             <property name="visible">True</property>
-            <property name="label_xalign">0</property>
-            <property name="shadow_type">in</property>
+            <property name="can_focus">True</property>
             <child>
-              <object class="GtkAlignment" id="alignment1">
+              <object class="GtkLabel" id="label2">
                 <property name="visible">True</property>
-                <property name="left_padding">12</property>
-                <child>
-                  <object class="GtkScrolledWindow" id="scrolledwindow1">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="hscrollbar_policy">automatic</property>
-                    <property name="vscrollbar_policy">automatic</property>
-                    <child>
-                      <object class="GtkTextView" id="textview">
-                        <property name="visible">True</property>
-                        <property name="sensitive">False</property>
-                        <property name="can_focus">True</property>
-                        <property name="editable">False</property>
-                        <property name="cursor_visible">False</property>
-                      </object>
-                    </child>
-                  </object>
-                </child>
+                <property name="label" translatable="yes">To enable auto check we see the current user jobs by "crontab -l". If no twatch jobs found then add new one from docs: /usr/share/doc/twatch/example/crontab</property>
+                <property name="wrap">True</property>
               </object>
             </child>
             <child type="label">
               <object class="GtkLabel" id="label1">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">&lt;b&gt;Execution&lt;/b&gt;</property>
-                <property name="use_markup">True</property>
+                <property name="label" translatable="yes">How it works</property>
               </object>
             </child>
           </object>
           <packing>
-            <property name="position">1</property>
+            <property name="position">3</property>
           </packing>
         </child>
         <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area1">
+          <object class="GtkHButtonBox" id="dialog-action_area2">
             <property name="visible">True</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="button_run">
-                <property name="label">gtk-execute</property>
+              <object class="GtkButton" id="button_yes">
+                <property name="label">gtk-yes</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
-                <signal name="pressed" handler="on_button_run_pressed"/>
+                <signal name="pressed" handler="on_button_yes_pressed"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -79,13 +63,13 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button2">
-                <property name="label">gtk-close</property>
+              <object class="GtkButton" id="button_no">
+                <property name="label">gtk-no</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
-                <signal name="pressed" handler="on_button_cancel_pressed"/>
+                <signal name="pressed" handler="on_button_no_pressed"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -103,8 +87,8 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="0">button_run</action-widget>
-      <action-widget response="0">button2</action-widget>
+      <action-widget response="0">button_yes</action-widget>
+      <action-widget response="0">button_no</action-widget>
     </action-widgets>
   </object>
 </interface>

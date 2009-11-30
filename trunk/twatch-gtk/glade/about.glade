@@ -2,6 +2,7 @@
 <interface>
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy toplevel-contextual -->
+  <!-- interface-local-resource-path /home/rubin/workspace/twatch/trunk/twatch-gtk/img -->
   <object class="GtkAboutDialog" id="about">
     <property name="visible">True</property>
     <property name="border_width">5</property>
@@ -14,7 +15,7 @@
     <property name="skip_taskbar_hint">True</property>
     <property name="skip_pager_hint">True</property>
     <property name="has_separator">False</property>
-    <property name="program_name">TWatch</property>
+    <property name="program_name">TWatch-GTK</property>
     <property name="version">0.0.1</property>
     <property name="copyright" translatable="yes">Copyright &#xA9; 2009 Roman V. Nikolaev</property>
     <property name="comments" translatable="yes">Simple and flexible watcher torrent trackers, based on regular expressons.</property>
@@ -29,8 +30,10 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.</property>
     <property name="authors">Roman V. Nikolaev &lt;rshadow@rambler.ru&gt;
-Dmitry E. Oboukhov &lt;unera@debian.org&gt;	</property>
-    <property name="logo">twatch.png</property>
+
+Thanks for:
+Dmitry E. Oboukhov &lt;unera@debian.org&gt;</property>
+    <property name="logo">twatch-gtk.svg</property>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox4">
         <property name="visible">True</property>

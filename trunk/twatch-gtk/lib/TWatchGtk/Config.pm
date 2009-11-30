@@ -16,6 +16,14 @@ our @EXPORT=qw(config DieDumper Dumper);
 
 use TWatch::Config;
 
+# This section contains some paths for application
+#use constant TWATCH_GTK_CONFIG_PATH => '~/.twatch/twatch-gtk.conf';
+use constant TWATCH_GTK_CONFIG_PATH => '/home/rubin/workspace/twatch/trunk/twatch-gtk/config/twatch-gtk.conf';
+#use constant TWATCH_GTK_GLADE_PATH  => '/usr/share/twatch-gtk/';
+use constant TWATCH_GTK_GLADE_PATH  => '/home/rubin/workspace/twatch/trunk/twatch-gtk/glade/';
+use constant TWATCH_PATH            => '/usr/bin/twatch';
+use constant TWATCH_CRONTAB_PATH    => '/usr/share/doc/twatch/examples/crontab';
+
 =head2
 
 Кеширование работы с конфигурацией
@@ -50,8 +58,7 @@ sub new
     my %config;
 
     # Основные директории
-#    $config{dir}{config} = '~/.twatch-gtk.conf';
-    $config{dir}{config} = '/home/rubin/workspace/twatch/trunk/twatch-gtk/config/twatch-gtk.conf';
+    $config{dir}{config} = TWATCH_GTK_CONFIG_PATH;
 
     my $self = bless \%config ,$class;
     return $self;
@@ -84,6 +91,10 @@ sub load
         map { s/#\s.*//; s/^\s*#.*//; s/\s+$//; s/^\s+//; $_ } <$file>};
 
     close $file;
+
+    $self->{param}{twatch}  = TWATCH_PATH;
+    $self->{param}{crontab} = TWATCH_CRONTAB_PATH;
+    $self->{param}{glade}   = TWATCH_GTK_GLADE_PATH;
 
     return 1;
 }

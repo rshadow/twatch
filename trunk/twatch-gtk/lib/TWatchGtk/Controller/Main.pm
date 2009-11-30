@@ -15,6 +15,7 @@ use TWatchGtk::Controller::About;
 use TWatchGtk::Controller::Settings;
 use TWatchGtk::Controller::Edit;
 use TWatchGtk::Controller::Run;
+use TWatchGtk::Controller::Cron;
 
 use constant COL_TITLE      => 0;
 use constant COL_SEASON     => 1;
@@ -38,6 +39,24 @@ use constant LEVEL_PROJECT  => 1;
 use constant LEVEL_WATCH    => 2;
 use constant LEVEL_GROUP    => 3;
 use constant LEVEL_TORRENT  => 4;
+
+sub init
+{
+    my ($self) = @_;
+
+    eval
+    {
+        # Проверим установлен ли twatch в заданиях cron
+        my $str_cron = `crontab -l`;
+        # Если не установлен то выведи диалог с предложением сделать это
+        my $regexp = sprintf '\s%s(\s|$)', config->get('twatch');
+        if(!$str_cron or ! $str_cron =~ m/$regexp/)
+        {
+            $self->{dlg}{cron} = TWatchGtk::Controller::Cron->new;
+        }
+    };
+    die $@ if $@;
+}
 
 # Обработчики меню #############################################################
 sub show_about

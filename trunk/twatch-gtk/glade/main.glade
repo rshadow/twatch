@@ -24,12 +24,12 @@
   </object>
   <object class="GtkWindow" id="main">
     <property name="visible">True</property>
-    <property name="title" translatable="yes">TWatch</property>
+    <property name="title" translatable="yes">Torrent trackers watcher</property>
     <property name="role">Main</property>
     <property name="window_position">center</property>
     <property name="default_width">800</property>
     <property name="default_height">600</property>
-    <property name="icon">twatch.png</property>
+    <property name="icon">twatch-gtk.svg</property>
     <signal name="destroy" handler="gtk_main_quit"/>
     <child>
       <object class="GtkVBox" id="vbox1">

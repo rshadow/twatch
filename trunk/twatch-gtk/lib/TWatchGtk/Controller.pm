@@ -27,7 +27,7 @@ sub new
 
     # Загрузим Glade
     my $builder = Gtk2::Builder->new;
-    $builder->add_from_file(config->get('Glade') . $glade . '.glade' );
+    $builder->add_from_file(config->get('glade') . $glade . '.glade' );
 
     # Подсоединим сигналы
     $builder->connect_signals (undef, $self );
