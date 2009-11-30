@@ -339,6 +339,22 @@ sub load_proj
     my @complete = glob(config->get('Complete'));
     $_ = {%{$xs->XMLin($_)}, cfile => $_} for @complete;
 
+    # Очистим результаты от пустых хешей (Гнусный хак чистки за XML::Simple)
+    for my $complete ( @complete )
+    {
+        for my $name ( keys %{ $complete->{watches} } )
+        {
+            for my $result ( @{ $complete->{watches}{$name}{complete} } )
+            {
+                for my $key ( keys %$result)
+                {
+                    $result->{$key} = ''
+                        if 'HASH' eq ref $result->{$key} and !%{$result->{$key}};
+                }
+            }
+        }
+    }
+
     # Информацию по завершенным заданиям добавим в проекты
     for my $complete ( @complete )
     {

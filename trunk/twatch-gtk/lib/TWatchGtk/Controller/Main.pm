@@ -22,7 +22,15 @@ use constant TW_SEASON      => 2;
 use constant TW_SERIES      => 3;
 use constant TW_COMPLETE    => 4;
 use constant TW_PAGE        => 5;
-use constant TW_ACTIONS     => 6;
+use constant TW_PAGE_DECOR  => 6;
+use constant TW_PAGE_COLOR  => 7;
+
+#use constant TW_ACTIONS     => 6;
+
+use constant LEVEL_PROJECT  => 0;
+use constant LEVEL_WATCH    => 1;
+use constant LEVEL_GROUP    => 2;
+use constant LEVEL_TORRENT  => 3;
 
 # Обработчики меню #############################################################
 sub show_about
@@ -98,6 +106,8 @@ sub build_project_tree
     my $model       = $treeview->get_model();
     my @columns     = $treeview->get_columns();
 
+    my $blue = Gtk2::Gdk::Color->new(0,0,65535);
+
     for (keys %{$twatch->{project}})
     {
         my $proj = $twatch->get_proj($_);
@@ -106,28 +116,32 @@ sub build_project_tree
         my $iter_project = $model->insert_with_values(undef, 0,
             TW_TITLE    , $proj->{name},
             TW_COMPLETE , $proj->{updated},
-            TW_PAGE     , $proj->{url});
+            TW_PAGE     , $proj->{url},
+            TW_PAGE_DECOR , 'single',
+            TW_PAGE_COLOR , $blue);
 
         # Добавим задания проекта
         for my $watch ( $twatch->get_watch($proj->{name}) )
         {
 #            DieDumper $watch if $proj->{name} =~ m/zal/;
             my $iter_watch = $model->insert_with_values($iter_project, 0,
-                TW_TITLE    , $watch->{name});
+                TW_TITLE,       $watch->{name});
 
             # Добавим список завершенных торренов
             next unless @{ $watch->{complete} || [] };
 
             my $iter_complete = $model->insert_with_values($iter_watch, 0,
-                    TW_TITLE    , 'Completed');
+                    TW_TITLE,       'Completed');
             for my $complete ( @{ $watch->{complete} })
             {
                 $model->insert_with_values($iter_complete, 0,
-                    TW_TITLE    , $complete->{title}    || '',
-                    TW_SEASON   , $complete->{season}   || '',
-                    TW_SERIES   , $complete->{series}   || '',
-                    TW_COMPLETE , $complete->{datetime} || '',
-                    TW_PAGE     , $complete->{page}     || '');
+                    TW_TITLE,       $complete->{title}    || '',
+                    TW_SEASON,      $complete->{season}   || '',
+                    TW_SERIES,      $complete->{series}   || '',
+                    TW_COMPLETE,    $complete->{datetime} || '',
+                    TW_PAGE,        $complete->{page}     || '',
+                    TW_PAGE_DECOR,  'single',
+                    TW_PAGE_COLOR,  $blue);
             }
         }
 
