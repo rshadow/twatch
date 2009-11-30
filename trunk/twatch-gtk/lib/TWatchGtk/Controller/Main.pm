@@ -108,7 +108,30 @@ sub show_delete
     $iter = $model->get_iter($path);
     my ($name) = $model->get_value ($iter, TW_TITLE);
 
-    $self->{twatch}->delete_proj($name);
+    # TODO Сдесь сделать показ отдельного окна удаления с галочками что именно
+    # удалять кроме файла проета и, возможно, списком файлов которые будут
+    # удалены
+    # Выведим сообщение об удалении
+    my $dialog = Gtk2::MessageDialog->new ($self->{window},
+        'destroy-with-parent', 'question', 'yes-no',
+        sprintf('Delete project: %s', $name) );
+    my $result = $dialog->run;
+    return unless $result eq 'yes';
+    $dialog->destroy;
+
+    # Удалим проект
+    my $deleted = $self->{twatch}->delete_proj($name);
+    unless( $deleted )
+    {
+        my $dialog = Gtk2::MessageDialog->new ($self->{window},
+            'destroy-with-parent', 'error', 'ok', 'Can`t delete project.');
+        $dialog->run;
+        $dialog->destroy;
+        return;
+    }
+
+    # Перерисуем дерево проектов
+    $model->remove ($iter);
 }
 
 # Логика #######################################################################

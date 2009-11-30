@@ -488,10 +488,13 @@ sub delete_proj
         unless $proj;
 
     # Удалим файл проекта
-    unlink $proj->{file};
+    my $deleted = unlink $proj->{file};
+    return unless $deleted;
+
     # Удалим проект
     undef $self->{project}{$name};
 
+    return $deleted;
 }
 
 ################################################################################
