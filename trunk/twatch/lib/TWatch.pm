@@ -472,6 +472,28 @@ sub save_complete
     return 1;
 }
 
+=head2 delete_proj
+
+Удаление проекта с заданным именем.
+
+=cut
+sub delete_proj
+{
+    my ($self, $name) = @_;
+
+    # Получим проект
+    my $proj = $self->get_proj($name);
+    warn 'Can`t delete project: Project does not exists.',
+    return
+        unless $proj;
+
+    # Удалим файл проекта
+    unlink $proj->{file};
+    # Удалим проект
+    undef $self->{project}{$name};
+
+}
+
 ################################################################################
 # Функции работы с почтой
 ################################################################################

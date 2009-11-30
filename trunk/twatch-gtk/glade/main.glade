@@ -73,30 +73,42 @@
                   <object class="GtkMenu" id="menu2">
                     <property name="visible">True</property>
                     <child>
-                      <object class="GtkImageMenuItem" id="imagemenuitem_add">
-                        <property name="label">gtk-add</property>
+                      <object class="GtkMenuItem" id="menuitem5">
                         <property name="visible">True</property>
+                        <property name="label" translatable="yes">Project</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                        <signal name="activate" handler="show_edit"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkImageMenuItem" id="imagemenuitem_edit">
-                        <property name="label">gtk-edit</property>
-                        <property name="visible">True</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                        <signal name="activate" handler="show_edit"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkImageMenuItem" id="imagemenuitem_delete">
-                        <property name="label">gtk-remove</property>
-                        <property name="visible">True</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
-                        <signal name="activate" handler="show_delete"/>
+                        <child type="submenu">
+                          <object class="GtkMenu" id="menu5">
+                            <property name="visible">True</property>
+                            <child>
+                              <object class="GtkImageMenuItem" id="imagemenuitem_add">
+                                <property name="label">gtk-add</property>
+                                <property name="visible">True</property>
+                                <property name="use_underline">True</property>
+                                <property name="use_stock">True</property>
+                                <signal name="activate" handler="show_edit"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkImageMenuItem" id="imagemenuitem_edit">
+                                <property name="label">gtk-edit</property>
+                                <property name="visible">True</property>
+                                <property name="use_underline">True</property>
+                                <property name="use_stock">True</property>
+                                <signal name="activate" handler="show_edit"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkImageMenuItem" id="imagemenuitem_delete">
+                                <property name="label">gtk-remove</property>
+                                <property name="visible">True</property>
+                                <property name="use_underline">True</property>
+                                <property name="use_stock">True</property>
+                                <signal name="activate" handler="show_delete"/>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
                       </object>
                     </child>
                     <child>
@@ -196,15 +208,14 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="model">maintreestore</property>
-                    <property name="reorderable">True</property>
                     <property name="search_column">1</property>
                     <property name="enable_tree_lines">True</property>
+                    <signal name="row_activated" handler="on_treeview_projects_row_activated"/>
                     <child>
                       <object class="GtkTreeViewColumn" id="col_project">
                         <property name="resizable">True</property>
                         <property name="title">Title</property>
                         <property name="expand">True</property>
-                        <property name="reorderable">True</property>
                         <property name="sort_indicator">True</property>
                         <property name="sort_column_id">1</property>
                         <child>
@@ -225,7 +236,6 @@
                       <object class="GtkTreeViewColumn" id="col_season">
                         <property name="sizing">autosize</property>
                         <property name="title">Season</property>
-                        <property name="reorderable">True</property>
                         <property name="sort_indicator">True</property>
                         <property name="sort_column_id">2</property>
                         <child>
@@ -240,7 +250,6 @@
                       <object class="GtkTreeViewColumn" id="col_series">
                         <property name="sizing">autosize</property>
                         <property name="title">Series</property>
-                        <property name="reorderable">True</property>
                         <property name="sort_indicator">True</property>
                         <property name="sort_column_id">3</property>
                         <child>
@@ -255,7 +264,6 @@
                       <object class="GtkTreeViewColumn" id="col_update">
                         <property name="sizing">autosize</property>
                         <property name="title">Completed</property>
-                        <property name="reorderable">True</property>
                         <property name="sort_indicator">True</property>
                         <property name="sort_column_id">4</property>
                         <child>
@@ -270,7 +278,6 @@
                       <object class="GtkTreeViewColumn" id="col_page">
                         <property name="title">Page</property>
                         <property name="expand">True</property>
-                        <property name="reorderable">True</property>
                         <property name="sort_indicator">True</property>
                         <property name="sort_column_id">5</property>
                         <child>
