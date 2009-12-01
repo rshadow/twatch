@@ -135,8 +135,8 @@ sub show_delete
         'destroy-with-parent', 'question', 'yes-no',
         sprintf('Delete project: %s', $name) );
     my $result = $dialog->run;
-    return unless $result eq 'yes';
     $dialog->destroy;
+    return unless $result eq 'yes';
 
     # Удалим проект
     my $deleted = $self->{twatch}->delete_proj($name);

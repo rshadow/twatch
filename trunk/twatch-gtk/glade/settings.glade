@@ -24,6 +24,7 @@
           <object class="GtkNotebook" id="notebook1">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="enable_popup">True</property>
             <child>
               <object class="GtkTable" id="table1">
                 <property name="visible">True</property>

@@ -35,7 +35,7 @@
             <child type="label">
               <object class="GtkLabel" id="label1">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">How it works</property>
+                <property name="label" translatable="yes">Details</property>
               </object>
             </child>
           </object>

@@ -497,6 +497,47 @@ sub delete_proj
     return $deleted;
 }
 
+=head2 add_proj
+
+Добавление нового проекта в список текущих
+
+=cut
+sub add_proj
+{
+    my ($self, $proj) = @_;
+
+    if( $self->get_proj( $proj->{name} ) )
+    {
+        warn sprintf('Can`t add project "%s". This project already exists.',
+            $proj->{name});
+        return;
+    }
+
+    $self->{project}{ $proj->{name} } = $proj;
+}
+
+=head2 save_proj
+
+Сохранение файла проекта
+
+=cut
+sub save_proj
+{
+    my ($self, $name) = @_;
+
+    # Получим проект
+    my $proj    = $self->get_proj($name);
+    my $watch   = $self->get_watch($name);
+
+    $watch->{$_} = {
+        name        => $_,
+        ($watch->{$_}{complete})
+            ?(complete => { result => $watch->{$_}{complete} })
+            :(),
+    } for keys %$watch;
+}
+
+
 ################################################################################
 # Функции работы с почтой
 ################################################################################
