@@ -344,6 +344,9 @@ sub load_proj
     {
         for my $name ( keys %{ $complete->{watches} } )
         {
+            # Пропустим если не хеш
+            next unless ref $complete->{watches}{$name}{complete};
+            # В завершенных почистим пустые хеши
             for my $result ( @{ $complete->{watches}{$name}{complete} } )
             {
                 for my $key ( keys %$result)
