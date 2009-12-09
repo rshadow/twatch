@@ -84,7 +84,7 @@
                 <filter>
                     <name>series</name>
                     <value>4</value>
-                    <method>></method>
+                    <method><![CDATA[>]]></method>
                 </filter>
             </filters>
         </watch>

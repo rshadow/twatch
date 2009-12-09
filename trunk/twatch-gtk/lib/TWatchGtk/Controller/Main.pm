@@ -44,18 +44,11 @@ sub init
 {
     my ($self) = @_;
 
-    eval
-    {
-        # Проверим установлен ли twatch в заданиях cron
-        my $str_cron = `crontab -l`;
-        # Если не установлен то выведи диалог с предложением сделать это
-        my $regexp = sprintf '\s%s(\s|$)', config->get('twatch');
-        if(!$str_cron or ! $str_cron =~ m/$regexp/)
-        {
-            $self->{dlg}{cron} = TWatchGtk::Controller::Cron->new;
-        }
-    };
-    die $@ if $@;
+    # Если проверку надо производить и задание не установлено в cron то
+    # выведим сообщение
+    $self->{dlg}{cron} = TWatchGtk::Controller::Cron->new
+        if config->is_show_cron_dialog and
+           ! TWatchGtk::Controller::Cron::verify;
 }
 
 # Обработчики меню #############################################################

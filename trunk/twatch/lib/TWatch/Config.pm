@@ -18,6 +18,16 @@ use File::Path qw(make_path);
 use base qw(Exporter);
 our @EXPORT=qw(config DieDumper Dumper);
 
+###############################################################################
+# This section contains some paths for use in this program
+# Edit this for some OS
+# I think no any place to change. If it`s wrong, please inform me.
+# (Except config file)
+################################################################################
+use constant TWATCH_SYSTEM_CONFIG_PATH  => '/etc/twatch/twatch.conf';
+use constant TWATCH_CONFIG_PATH         => '~/.twatch/twatch.conf';
+###############################################################################
+
 =head2
 
 Кеширование работы с конфигурацией
@@ -56,8 +66,8 @@ sub new
 
     # Версии конфигов
     $config{dir}{config} = [
-        '/etc/twatch/twatch.conf',
-        '~/.twatch/twatch.conf',
+        TWATCH_SYSTEM_CONFIG_PATH,
+        TWATCH_CONFIG_PATH,
     ];
 
     my $self = bless \%config ,$class;

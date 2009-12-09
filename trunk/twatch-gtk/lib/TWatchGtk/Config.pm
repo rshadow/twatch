@@ -16,13 +16,23 @@ our @EXPORT=qw(config DieDumper Dumper);
 
 use TWatch::Config;
 
-# This section contains some paths for application
-#use constant TWATCH_GTK_CONFIG_PATH => '~/.twatch/twatch-gtk.conf';
-use constant TWATCH_GTK_CONFIG_PATH => '/home/rubin/workspace/twatch/trunk/twatch-gtk/config/twatch-gtk.conf';
+################################################################################
+# This section contains some paths for use in this program
+# Edit this for some OS
+# I think no any place to change. If it`s wrong, please inform me.
+# (Except config file and *.glade file)
+################################################################################
+use constant TWATCH_GTK_SYSTEM_CONFIG_PATH =>
+                        '/etc/twatch/twatch-gtk.conf';
+use constant TWATCH_GTK_CONFIG_PATH => '~/.twatch/twatch-gtk.conf';
 #use constant TWATCH_GTK_GLADE_PATH  => '/usr/share/twatch-gtk/';
-use constant TWATCH_GTK_GLADE_PATH  => '/home/rubin/workspace/twatch/trunk/twatch-gtk/glade/';
-use constant TWATCH_PATH            => '/usr/bin/twatch';
+use constant TWATCH_GTK_GLADE_PATH  =>
+                        '/home/rubin/workspace/twatch/trunk/twatch-gtk/glade/';
+#use constant TWATCH_PATH            => '/usr/bin/twatch';
+use constant TWATCH_PATH            =>
+                        '/home/rubin/workspace/twatch/trunk/twatch/twatch';
 use constant TWATCH_CRONTAB_PATH    => '/usr/share/doc/twatch/examples/crontab';
+###############################################################################
 
 =head2
 
@@ -55,10 +65,12 @@ use constant TWATCH_CRONTAB_PATH    => '/usr/share/doc/twatch/examples/crontab';
 sub new
 {
     my ($class, %opts) = @_;
-    my %config;
+    my %config = (dir => {}, param => {});
 
     # Основные директории
-    $config{dir}{config} = TWATCH_GTK_CONFIG_PATH;
+    $config{dir}{config} = [
+         TWATCH_GTK_SYSTEM_CONFIG_PATH,
+         TWATCH_GTK_CONFIG_PATH];
 
     my $self = bless \%config ,$class;
     return $self;
@@ -77,20 +89,44 @@ sub load
 {
     my ($self) = @_;
 
-    # Load config
-    warn sprintf( 'Config file not exists in: %s', $self->{dir}{config})
-        unless -f $self->{dir}{config};
+    # Флаг удачной загрузки конфига
+    my $loaded = 'no';
 
-    open my $file, '<', $self->{dir}{config}
-        or warn sprintf('Can`t read config file %s : %s',
-            $self->{dir}{config}, $!);
+    # Загрузка конфигов: сначала дефолтового, затем поверх него польз-го
+    for my $config ( @{$self->{dir}{config}} )
+    {
+        # Удалим home
+        $config =~ s/^~/$ENV{HOME}/;
 
-    $self->{param} = {
-        map{ split m/\s*=\s*/, $_, 2 }
-        grep m/=/,
-        map { s/#\s.*//; s/^\s*#.*//; s/\s+$//; s/^\s+//; $_ } <$file>};
+        # Пропустим если конфига нет
+        next unless -f $config;
 
-    close $file;
+        # Откроем файл конфига. Если не получиться поругаемся и перейдем к
+        # другому файлу конфигурации
+        open my $file, '<', $config
+            or warn sprintf('Can`t read config file %s : %s', $config, $!);
+        next unless $file;
+
+        # Прочитаем файл и распарсим данные. Данные от пользователя приоритетны
+        %{ $self->{param} } = (
+            %{ $self->{param} },
+            (
+                map{ split m/\s*=\s*/, $_, 2 }
+                grep m/=/,
+                map { s/#\s.*//; s/^\s*#.*//; s/\s+$//; s/^\s+//; $_ } <$file>
+            )
+        );
+
+        # Закроем файл и пометим что загрузка была удачной
+        close $file;
+        $loaded = 'yes';
+    }
+
+    # Выйдем если не удалось загрузить ниодного конфига
+    die 'Config file not exists' unless $loaded eq 'yes';
+
+    # Сохраним оригинал т.к. дальше он может преобразововаться
+    %{ $self->{orig} } = %{ $self->{param} };
 
     $self->{param}{twatch}  = TWATCH_PATH;
     $self->{param}{crontab} = TWATCH_CRONTAB_PATH;
@@ -110,6 +146,17 @@ sub get
     return $self->{param}{$name};
 }
 
+=head2 set
+
+Функция установки данных конфигурации
+
+=cut
+sub set
+{
+    my ($self, $name, $value) = @_;
+    $self->{param}{$name} = $value;
+}
+
 =head2 daemon
 
 Функция получения объекта конфигурации демона
@@ -119,4 +166,17 @@ sub daemon
 {
     return TWatch::Config::config;
 }
+
+=head2 is_show_cron_dialog
+
+Показывать cron диалог при запуске
+
+=cut
+sub is_show_cron_dialog
+{
+    my ($self) = @_;
+    return 1 if $self->get('ShowCronDialog') =~ m/^(1|yes|true|on)$/;
+    return 0;
+}
+
 1;

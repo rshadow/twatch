@@ -9,6 +9,7 @@ use lib qw(../../);
 
 use Glib qw(:constants);
 use Gtk2;
+use IPC::Cmd qw(can_run run);
 
 use TWatchGtk::Config;
 
@@ -17,12 +18,23 @@ sub on_button_yes_pressed
 {
     my ($self, $window) = @_;
 
+    # Получим путь к программе
+    my $cpath = can_run('crontab');
+    warn 'crontab is not installed',
+    return TRUE
+        unless $cpath;
+
     # Получим текущие задания для пользователя
-    my $current = `crontab -l` || '';
+    my ($ok, $err, $full_buf, $stdout_buff, $stderr_buff) =
+        run( command => [$cpath, '-l'], verbose => 0, timeout => 10 );
+    my $current = join '', @$stdout_buff;
 
     # Получим примерное задание для twatch
     my $example = '';
     open my $exemple_crontab, '<', config->get('crontab');
+    warn 'Can`t read example crontab',
+    return TRUE
+        unless $exemple_crontab;
     {
         $/ = '';
         $example = <$exemple_crontab>;
@@ -35,6 +47,9 @@ sub on_button_yes_pressed
 
     # Установим новый файл с заданиями
     open my $new_crontab, '|-', 'crontab -';
+    warn 'Can`t set new crontab',
+    return TRUE
+        unless $new_crontab;
     print $new_crontab $current;
     close $new_crontab;
 
@@ -49,4 +64,29 @@ sub on_button_no_pressed
     return TRUE;
 }
 
+=head2 verify
+
+Проверяет установлено или нет задание в crontab
+
+=cut
+sub verify
+{
+    # Получим путь к программе
+    my $cpath = can_run('crontab');
+    warn 'crontab is not installed',
+    return
+        unless $cpath;
+
+    # Проверим установлен ли twatch в заданиях cron
+    my ($ok, $err, $full_buf, $stdout_buff, $stderr_buff) =
+        run( command => [$cpath, '-l'], verbose => 0, timeout => 10 );
+
+    # Преобразуем весь буфер в строку
+    $stdout_buff = join '', @$stdout_buff;
+
+    # Прервемся если не найдем путь к twatch
+    my $regexp = sprintf '\s%s(\s|$)', config->get('twatch');
+    return 1 if $stdout_buff =~ m/$regexp/;
+    return 0;
+}
 1;
