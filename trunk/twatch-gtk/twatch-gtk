@@ -13,10 +13,6 @@ use Glib qw(:constants);
 use Gnome2;
 use Gtk2 qw(-init);
 
-#die "Glib::Object thread safetly failed"
-#    unless Glib::Object->set_threadsafe (TRUE);
-
-
 use TWatchGtk;
 
 # Создание окна
