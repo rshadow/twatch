@@ -67,7 +67,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkEntry" id="entry1">
+                          <object class="GtkEntry" id="name">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="invisible_char">&#x25CF;</property>
@@ -78,7 +78,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkEntry" id="entry2">
+                          <object class="GtkEntry" id="url">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="invisible_char">&#x25CF;</property>
@@ -91,7 +91,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkSpinButton" id="spinbutton1">
+                          <object class="GtkSpinButton" id="order">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="invisible_char">&#x25CF;</property>
@@ -140,7 +140,7 @@
                           </object>
                         </child>
                         <child>
-                          <object class="GtkEntry" id="entry3">
+                          <object class="GtkEntry" id="auth_url">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="invisible_char">&#x25CF;</property>
@@ -192,7 +192,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry" id="entry5">
+                              <object class="GtkEntry" id="auth_login_name">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="invisible_char">&#x25CF;</property>
@@ -203,7 +203,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry" id="entry6">
+                              <object class="GtkEntry" id="auth_login_value">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="invisible_char">&#x25CF;</property>
@@ -245,7 +245,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry" id="entry7">
+                              <object class="GtkEntry" id="auth_password_name">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="invisible_char">&#x25CF;</property>
@@ -256,7 +256,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry" id="entry8">
+                              <object class="GtkEntry" id="auth_password_value">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="invisible_char">&#x25CF;</property>
@@ -349,7 +349,7 @@
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="button_ok">
-                <property name="label">gtk-ok</property>
+                <property name="label">gtk-save</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>

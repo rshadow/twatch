@@ -66,23 +66,47 @@ sub show_settings
     return TRUE;
 }
 
+sub show_add
+{
+    my ($self, $item, $param) = @_;
+
+    # Получим имя проекта
+    my $sel = $self->_get_selected_project;
+
+    $self->{dlg}{edit} = TWatchGtk::Controller::Edit->new(
+        twatch  => $self->{twatch},
+        project => undef,
+    );
+    return TRUE;
+}
+
 sub show_edit
 {
     my ($self, $item, $param) = @_;
 
-    my $treeview = $self->{builder}->get_object('treeview_projects');
-    my $selection = $treeview->get_selection;
-    my ($model, $iter) = $selection->get_selected;
+    # Получим имя проекта
+    my $sel = $self->_get_selected_project;
+
+    # Выведим предупреждение если не смогли получить имя проекта
+    unless( $sel )
+    {
+        my $dialog = Gtk2::MessageDialog->new ($self->{window},
+            'destroy-with-parent', 'error', 'ok', 'Select project first');
+        $dialog->run;
+        $dialog->destroy;
+        return;
+    }
+
+    my ($model, $iter) = $sel->{selection}->get_selected;
     my @data = $model->get_value ($iter, TW_TITLE);
 
     # Определим уровень вызова: что именно редактируем
-    my ($path) = $selection->get_selected_rows;
+    my ($path) = $sel->{selection}->get_selected_rows;
     my $level = $path->get_depth;
 
-    my $name;
     $self->{dlg}{edit} = TWatchGtk::Controller::Edit->new(
         twatch  => $self->{twatch},
-        project => $name,
+        project => $sel->{name},
     );
     return TRUE;
 }
@@ -98,13 +122,10 @@ sub show_delete
 {
     my ($self, $item, $param) = @_;
 
-    my $treeview = $self->{builder}->get_object('treeview_projects');
-    my $selection = $treeview->get_selection;
-    my ($model, $iter) = $selection->get_selected;
-    my ($path) = $selection->get_selected_rows;
-
+    # Получим имя проекта
+    my $sel = $self->_get_selected_project;
     # Выведим предупреждение если не смогли получить имя проекта
-    unless( $path )
+    unless( $sel )
     {
         my $dialog = Gtk2::MessageDialog->new ($self->{window},
             'destroy-with-parent', 'error', 'ok', 'Select project first');
@@ -113,26 +134,19 @@ sub show_delete
         return;
     }
 
-    # С любого дочернего элемента дойдем до проекта
-    while( $path->get_depth > 1 ) { $path->up }
-
-    # Получим название проекта
-    $iter = $model->get_iter($path);
-    my ($name) = $model->get_value ($iter, TW_TITLE);
-
     # TODO Сдесь сделать показ отдельного окна удаления с галочками что именно
     # удалять кроме файла проета и, возможно, списком файлов которые будут
     # удалены
     # Выведим сообщение об удалении
     my $dialog = Gtk2::MessageDialog->new ($self->{window},
         'destroy-with-parent', 'question', 'yes-no',
-        sprintf('Delete project: %s', $name) );
+        sprintf('Delete project: %s', $sel->{name}) );
     my $result = $dialog->run;
     $dialog->destroy;
     return unless $result eq 'yes';
 
     # Удалим проект
-    my $deleted = $self->{twatch}->delete_proj($name);
+    my $deleted = $self->{twatch}->delete_proj($sel->{name});
     unless( $deleted )
     {
         my $dialog = Gtk2::MessageDialog->new ($self->{window},
@@ -143,6 +157,7 @@ sub show_delete
     }
 
     # Перерисуем дерево проектов
+    my ($model, $iter) = $sel->{selection}->get_selected;
     $model->remove ($iter);
 }
 
@@ -234,6 +249,32 @@ sub on_treeview_projects_row_activated
     {
         $self->show_edit();
     }
+}
+
+=head2 _get_selected_project
+
+Получение имени выделенного проекта
+
+=cut
+sub _get_selected_project
+{
+    my ($self) = @_;
+
+    my $treeview = $self->{builder}->get_object('treeview_projects');
+    my $selection = $treeview->get_selection;
+    my ($model, $iter) = $selection->get_selected;
+    my ($path) = $selection->get_selected_rows;
+
+    return unless $path;
+
+    # С любого дочернего элемента дойдем до проекта
+    while( $path->get_depth > 1 ) { $path->up }
+
+    # Получим название проекта
+    $iter = $model->get_iter($path);
+    my ($name) = $model->get_value ($iter, TW_TITLE);
+
+    return {name => $name, selection => $selection};
 }
 
 1;

@@ -86,7 +86,7 @@
                                 <property name="visible">True</property>
                                 <property name="use_underline">True</property>
                                 <property name="use_stock">True</property>
-                                <signal name="activate" handler="show_edit"/>
+                                <signal name="activate" handler="show_add"/>
                               </object>
                             </child>
                             <child>
@@ -320,6 +320,7 @@
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="use_stock">True</property>
+                    <signal name="pressed" handler="show_add"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -334,6 +335,7 @@
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="use_stock">True</property>
+                    <signal name="pressed" handler="show_edit"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -348,6 +350,7 @@
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="use_stock">True</property>
+                    <signal name="pressed" handler="show_delete"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
