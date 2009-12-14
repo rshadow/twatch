@@ -17,28 +17,25 @@ SVN = https://twatch.svn.sourceforge.net/svnroot/twatch/trunk
 all:
 	@echo "*** Full build ***"
 	make clean
-	make get && make orig && make doc && make build
+	make get && make doc && make orig && make build
 
 get:
 	@echo "*** Get last from svn ***"
 	svn export $(SVN)/twatch/ twatch-$(VERSION)
-#	svn export $(SVN)/twatch-gtk twatch-gtk-$(VERSION)
-
-orig:
-	@echo "*** Create sorce archive ***"
-	tar -czvf twatch_$(VERSION).orig.tar.gz twatch-$(VERSION) \
-		--exclude debian/ 
-#	tar -czvf twatch-gtk_$(VERSION).orig.tar.gz twatch-gtk-$(VERSION) \
-#		--exclude debian/
 
 doc:
 	@echo "*** Create man pages ***"
 	pod2man twatch-$(VERSION)/twatch > twatch-$(VERSION)/man/twatch.man
 
+orig:
+	@echo "*** Create sorce archive ***"
+	tar -czvf twatch_$(VERSION).orig.tar.gz twatch-$(VERSION) \
+		--exclude twatch-$(VERSION)/debian 
+
 build:
 	@echo "*** Create deb package ***"
 	chmod -R a+x twatch-$(VERSION)/debian/rules
-	cd twatch-$(VERSION) && fakeroot debian/rules binary
+	cd twatch-$(VERSION) && dpkg-buildpackage
 
 clean:
 	@echo "*** Clean all ***"
@@ -48,6 +45,10 @@ clean:
 
 install:
 	@echo "*** Install packages ***"
-	dpkg -i ./*twatch*.deb
+	dpkg --install ./*twatch*.deb
 
-.PHONY: all get orig doc build clean install
+uninstall:
+	@echo "*** Uninstall packages ***"
+	dpkg --purge twatch libtwatch-perl
+
+.PHONY: all get doc orig build clean install uninstall
