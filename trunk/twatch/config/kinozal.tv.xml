@@ -2,7 +2,7 @@
 <project>
     <name>Kinozal</name>
     <url>http://kinozal.tv</url>
-    <order>1</order>
+    <order>11</order>
     <authtorization>
         <login>
             <name>username</name>
@@ -28,12 +28,18 @@
                 <info><![CDATA[<td class="templ">\s*(<.*?>Качество.*?)</td>]]></info>
                 <rating><![CDATA[]]></rating>
                 <quality><![CDATA[>\s*Качество:\s*<.*?>\s*(.*?)\s*<br]]></quality>
+                <translate><![CDATA[>\s*Перевод:\s*<.*?>\s*(.*?)\s*<br]]></translate>
             </reg>
             <filters>
                 <filter>
                     <name>quality</name>
                     <value>HDTVRip</value>
                     <method>eq</method>
+                </filter>
+                <filter>
+                    <name>translate</name>
+                    <value>/.*голосый.*/i</value>
+                    <method>regexp</method>
                 </filter>
             </filters>
         </watch>

@@ -161,6 +161,10 @@ sub run
                     s/^\s+//, s/\s+$// for $reg;
                     # Используем регулярник на содержимом страницы
                     @{ $result{$_} } = $content =~ m/$reg/sgi;
+                    # Приведем к десятичным числам.
+                    # (Числа на сайте могут начиниться с нуля, а для перла это
+                    # восьмеричный формат)
+                    $_ = (m/^\d+$/) ?int($_) :$_ for @{ $result{$_} };
                 }
 
                 # Если ссылки не были найдены то обработку дальше не ведем
@@ -220,16 +224,30 @@ sub run
                             $flag = 0, last unless $watch->{result}{$key}{$_};
 
                             # Проверим фильтр
-                            $flag &&= $sandbox->reval(
-                                "$watch->{result}{$key}{$_}".
-                                " $watch->{filters}{$_}{method} ".
-                                "$watch->{filters}{$_}{value}");
+                            if($watch->{filters}{$_}{method} eq 'regexp')
+                            {
+                                $flag &&= $sandbox->reval(
+                                    qq{
+                                        "$watch->{result}{$key}{$_}"
+                                        =~
+                                        $watch->{filters}{$_}{value}
+                                    });
+                            }
+                            else
+                            {
+                                $flag &&= $sandbox->reval(
+                                    qq{
+                                        $watch->{result}{$key}{$_}
+                                        $watch->{filters}{$_}{method}
+                                        $watch->{filters}{$_}{value}
+                                    });
+                            }
 
                             # Если пользователь что-то ввел не так то выведим
                             # сообщение об ошибке
                             die sprintf 'Can`t set filter in "%s" project,'.
-                                ' watch "%s", filter "%s"',
-                                $proj->{name}, $watch->{name}, $_ if $@;
+                                ' watch "%s", filter "%s" (%s)',
+                                $proj->{name}, $watch->{name}, $_, $@ if $@;
 
                             # Прекратим проверку если хоть один фильтр
                             # не совпадает

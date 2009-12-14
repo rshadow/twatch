@@ -2,7 +2,7 @@
 <project>
     <name>LostFilm</name>
     <url>http://lostfilm.tv</url>
-    <order>0</order>
+    <order>10</order>
     <authtorization>
         <login>
             <name>FormLogin</name>
@@ -33,7 +33,7 @@
                 <filter>
                     <name>season</name>
                     <value>2</value>
-                    <method>>=</method>
+                    <method><![CDATA[>=]]></method>
                 </filter>
             </filters>
         </watch>
@@ -79,7 +79,7 @@
                 <filter>
                     <name>season</name>
                     <value>1</value>
-                    <method>>=</method>
+                    <method><![CDATA[>=]]></method>
                 </filter>
                 <filter>
                     <name>series</name>
@@ -107,7 +107,7 @@
                 <filter>
                     <name>season</name>
                     <value>3</value>
-                    <method>></method>
+                    <method><![CDATA[>]]></method>
                 </filter>
             </filters>
         </watch>
@@ -130,7 +130,7 @@
                 <filter>
                     <name>season</name>
                     <value>3</value>
-                    <method>></method>
+                    <method><![CDATA[>]]></method>
                 </filter>
             </filters>
         </watch>
