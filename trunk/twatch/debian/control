@@ -1,5 +1,5 @@
 Source: twatch
-Section:
+Section: net
 Priority: optional
 Maintainer: Roman V. Nikolaev <rshadow@rambler.ru>
 Standards-Version: 3.8.3
