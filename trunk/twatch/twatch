@@ -26,29 +26,30 @@ pod2usage(1) if $help;
 # Выключим буферизацию вывода если установлен флаг показа сообщений
 $|=1 if $verbose;
 
+config->verbose( $verbose );
 ################################################################################
 # Выполнение программы
 ################################################################################
-print "Loading...\n"                                                if $verbose;
+notify('Loading');
 # Создадим объект программы
-my $twatch = TWatch->new(verbose => $verbose)
+my $twatch = TWatch->new()
     or die "Can`t create Twatch object.";
 
-print "Start execute projects...\n"                                 if $verbose;
+notify('Start execute projects');
 # Выполним закачки
 $twatch->run;
 
-print "Send notification mail...\n"                                 if $verbose;
+notify('Send notification mail');
 # Разошлем письма
 $twatch->send_mail;
 
-print "Execute post plugins...\n"                                   if $verbose;
+notify('Execute post plugins');
 #Запустим плагины постобработки
 my $plugins = TWatch::Plugin->new(verbose => $verbose)
     or die "Can`t create TWatch::Plugin object.";
 $plugins->post( $twatch );
 
-print "Done\n"                                                      if $verbose;
+notify('Done');
 exit 0;
 
 __END__

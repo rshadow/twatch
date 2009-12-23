@@ -16,7 +16,7 @@ use File::Basename qw(dirname);
 use File::Path qw(make_path);
 
 use base qw(Exporter);
-our @EXPORT=qw(config DieDumper Dumper);
+our @EXPORT=qw(config notify DieDumper Dumper);
 
 ###############################################################################
 # This section contains some paths for use in this program
@@ -176,6 +176,43 @@ sub is_noproxy
     my ($self) = @_;
     return 1 if $self->get('NoProxy') =~ m/^(1|yes|true|on)$/;
     return 0;
+}
+
+=head2 notify
+
+Вывод сообщений в консоль
+
+=cut
+sub notify
+{
+    my ($message, $wait) = @_;
+
+    # Пропустим вывод есл мообщения нет или вывод выключен
+    return unless config->verbose;
+    return unless $message;
+
+    # Форматируем в зависимости от модуля
+    $message = ((' ') x 2) . $message if caller eq 'TWatch';
+    $message = ((' ') x 4) . $message if caller eq 'TWatch::Project';
+    $message = ((' ') x 6) . $message if caller eq 'TWatch::Watch';
+
+    # Если флаг ожидания не стоит то выведим с концом строки
+    $message .= "\n" unless $wait;
+
+    print $message;
+}
+
+=head2 verbose
+
+Получение/установка паремтра вывода сообщений
+
+=cut
+
+sub verbose
+{
+    my ($self, $param) = @_;
+    $self->{verbose} = $param if defined $param;
+    return $self->{verbose};
 }
 
 ################################################################################

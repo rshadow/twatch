@@ -39,7 +39,7 @@
                 <filter>
                     <name>translate</name>
                     <value>/.*голосый.*/i</value>
-                    <method>regexp</method>
+                    <method>=~</method>
                 </filter>
             </filters>
         </watch>
