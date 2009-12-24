@@ -17,7 +17,7 @@
         <watch>
             <name>Naruto</name>
             <url><![CDATA[http://kinozal.tv/browse.php?s=%CD%E0%F0%F3%F2%EE&c=20&v=0&y=&t=0&a=0&o=0]]></url>
-            <urlreg><![CDATA[(/details\.php\?id=\d+)]]></urlreg>
+            <urlreg><![CDATA[(\/details\.php\?id=\d+)]]></urlreg>
             <order>0</order>
             <reg>
                 <torrent><![CDATA[<a\s+.*?title="Скачать:.*?\s+.*?href=".*?/(Naruto.*?\.torrent)".*?>]]></torrent>

@@ -12,10 +12,12 @@ use utf8;
 use open qw(:utf8 :std);
 use lib qw(../../lib);
 
-use TWatch::Config;
-
 use base qw(Exporter);
 our @EXPORT=qw(complete);
+
+use XML::Simple;
+
+use TWatch::Config;
 
 =head2 complete
 
@@ -71,8 +73,10 @@ sub load
     {
         for my $name ( keys %{ $complete->{watches} } )
         {
-            # Пропустим если не хеш
-            next unless ref $complete->{watches}{$name}{complete};
+            # Добавим пустой массив выполненных, даже если их нету
+            $complete->{watches}{$name}{complete} = []
+                unless %{ $complete->{watches}{$name} };
+
             # В завершенных почистим пустые хеши
             for my $result ( @{ $complete->{watches}{$name}{complete} } )
             {
@@ -86,7 +90,8 @@ sub load
     }
 
     # Перестроим для быстрого доступа по имени проекта
-    $self->{result}{ $_->{name} } = $_ for @complete;
+    $self->{project} = {};
+    $self->{project}{ $_->{name} } = $_ for @complete;
 }
 
 =head2 get
@@ -98,10 +103,8 @@ sub get
 {
     my ($self, $name) = @_;
 
-    warn sprintf 'Can`t get completed for %s project.', $name
-        unless $self->{result}{$name};
-
-    return $self->{result}{$name};
+    return unless exists $self->{project}{$name};
+    return $self->{project}{$name};
 }
 
 1;

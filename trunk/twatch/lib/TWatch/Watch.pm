@@ -12,7 +12,12 @@ use utf8;
 use open qw(:utf8 :std);
 use lib qw(../../lib);
 
+use POSIX (qw(strftime));
+use WWW::Mechanize;
+use Safe;
+
 use TWatch::Config;
+use TWatch::Message;
 
 sub new
 {
@@ -123,11 +128,20 @@ sub result
     return $self->{result};
 }
 
-=head2 get_result
+=head2 get_result $torrent
 
-Получение результата
+Get result by torrent name
+
+=over
+
+=item $torrent
+
+Torrent file name
+
+=back
 
 =cut
+
 sub get_result
 {
     my ($self, $torrent) = @_;
@@ -143,7 +157,7 @@ sub get_result
 sub is_result
 {
     my ($self, $torrent) = @_;
-    return ( $self->{result}{ $torrent } ) ?1 :0;
+    return ( exists $self->{result}{ $torrent } ) ?1 :0;
 }
 
 =head2 delete_result
@@ -200,10 +214,21 @@ sub filter_value
     return $self->{filters}{$name}{value};
 }
 
-=head2 run
+=head2 run $browser
 
-Выполнение работ по заданию
+Do job to get new torrent files
+
+=over
+
+=item $browser
+
+WWW::Mechanize object.
+It`s must be authtorized and prepared for unlimited usage.
+
+=back
+
 =cut
+
 sub run
 {
     my ($self, $browser) = @_;
@@ -222,7 +247,7 @@ sub run
     if( !$browser->success or ($@ and $@ =~ m/Can't connect/) )
     {
         warn sprintf 'Can`t get content (links list) by link: %s', $self->url;
-        next;
+        return;
     }
 
     # Получим контент сртраницы со списком торрентов
@@ -256,7 +281,7 @@ sub run
     }
 
     notify(sprintf 'Watch type: %s', $self->type);
-    notify(sprintf 'Links count: %d', scalar @links);
+    notify(sprintf 'Links count: %d', scalar @links) if $self->type eq 'tree';
 
     for my $url ( @links )
     {
@@ -281,69 +306,39 @@ sub run
         # Сохраним абсолютный url к списку ссылок
         my $absoulete = $browser->uri->as_string();
 
+        # Получим ссылки на торренты
         $self->parse( $content );
         notify('Nothing to download. Skip Watch.'),
         next
             unless $self->result_count;
 
+        # Добавим текущую страницу в результаты
+        $_->{page} = $absoulete for values %{ $self->result };
+
+        # Загрузим торренты
         notify('NEW TORRENTS AVIABLE!');
-#
-#                # Обработаем полученные данные о торрентах
-#                for( keys %{ $watch->{result} } )
-#                {
-#                    my $result = $watch->{result}{$_};
-#                    # Загрузим торрент файл
-#                    {{
-#                        # Соберем путь для сохранения
-#                        my $save = config->get('Save').'/'.$result->{torrent};
-#                        # Пропустим уже загруженный торрент
-#                        last if -f $save or -s _;
-#                        # Загрузим торрент с сайта
-#                        $browser->get( $result->{link}, ':content_file' => $save);
-#                    }}
-#
-#                    # Если загрузка удачна, переместим торрент в готовые
-#                    if ($browser->success)
-#                    {
-#                        # Добавим дополнительные параметры для сохранения
-#                        $result->{datetime} = POSIX::strftime(
-#                            "%Y-%m-%d %H:%M:%S", localtime(time));
-#                        $result->{page} = $absoulete;
-#
-#                        # Сохраним задание как выполненное
-#                        $watch->{complete} = []
-#                            unless exists $watch->{complete} or
-#                                   'ARRAY' eq ref $watch->{complete};
-#                        push @{ $watch->{complete} }, $result;
-#                        delete $watch->{result}{$_};
-#
-#                        # Добавим сообщение об удачной закачке
-#                        $self->add_message(
-#                            level   => 'info',
-#                            message => sprintf('New *.torrent download complete.'),
-#                            data    => $result);
-#                    }
-#                    else
-#                    {
-#                        warn
-#                            sprintf
-#                                'Can`t get *.torrent in "%s" project,'.
-#                                ' watch "%s" from %s',
-#                                $proj->{name}, $watch->{name}, $result->{link};
-#                    }
-#                }
+        $self->download( $browser );
+
+        notify('Has not dowloaded torrents') if $self->result_count;
     }
-
-
 
     return $self;
 }
 
-=head2 parse
+=head2 parse $content
 
-Парсинг страницы
+Parse content for torrent data
+
+=over
+
+=item $content
+
+content of html page for parsing
+
+=back
 
 =cut
+
 sub parse
 {
     my ($self, $content) = @_;
@@ -357,12 +352,13 @@ sub parse
         my $reg = $self->reg->{$_};
         s/^\s+//, s/\s+$// for $reg;
         # Используем регулярник на содержимом страницы
-        my ($value) = $content =~ m/$reg/sgi;
-        push @{ $result{$_} }, $value || '';
+        my @value = $content =~ m/$reg/sgi;
         # Приведем к десятичным числам.
         # (Числа на сайте могут начиниться с нуля, а для перла это
         # восьмеричный формат)
-        $_ = (m/^\d+$/) ?int($_) :$_ for @{ $result{$_} };
+        (m/^\d+$/)  ?$_ = int($_)   :next   for @value;
+        # Добавим массив в результаты
+        push @{ $result{$_} }, @value;
     }
 
     # Если ссылки не были найдены то обработку дальше не ведем
@@ -393,11 +389,11 @@ sub parse
                 if $self->is_result( $_->{torrent} );
         }
     }
+
     # Если все уже готово то перейдем к следующему заданию
     notify('All torrent already completed.'),
     return
         unless $self->result_count;
-
     {{
         # Выбрасим тоттенты не походящие по фильтрам
         notify('Filter torrents');
@@ -427,7 +423,7 @@ sub parse
                 # Проверим фильтр
                 my $left =      $result->{$name};
                 my $right =     $self->filter_value($name);
-                my $method =    $self->filter_method($key) || '=~';
+                my $method =    $self->filter_method($name) || '=~';
 
                 if($method eq '=~' or $method eq '!~')
                 {
@@ -460,6 +456,72 @@ sub parse
     notify('All links filtered'),
     return
         unless $self->result_count;
+
+    return $self->result_count;
+}
+
+=head2 download $browser
+
+Download torrents listed in watch results.
+
+=over
+
+=item $browser
+
+WWW::Mechanize object.
+It`s must be authtorized and prepared for unlimited usage.
+
+=back
+
+=cut
+
+sub download
+{
+    my ($self, $browser) = @_;
+
+    # Обработаем полученные данные о торрентах
+    for my $key ( keys %{ $self->{result} } )
+    {
+        my $result = $self->get_result( $key );
+
+        # Загрузим торрент файл
+        {{
+            # Соберем путь для сохранения
+            my $save = config->get('Save').'/'.$result->{torrent};
+            # Пропустим уже загруженный торрент
+            last if -f $save or -s _;
+            # Загрузим торрент с сайта
+            $browser->get( $result->{link}, ':content_file' => $save);
+        }}
+
+        # Если загрузка удачна, переместим торрент в готовые
+        if ($browser->success)
+        {
+            # Добавим дополнительные параметры для сохранения
+            $result->{datetime} = POSIX::strftime(
+                "%Y-%m-%d %H:%M:%S", localtime(time));
+
+            # Сохраним задание как выполненное
+            $self->add_complete( $result );
+            $self->delete_result( $key );
+
+            notify( sprintf 'Download complete: %s', $result->{torrent} );
+
+            # Добавим сообщение об удачной закачке
+            add_message(
+                level   => 'info',
+                message => sprintf('Download complete: %s', $result->{torrent}),
+                data    => $result);
+        }
+        else
+        {
+            notify( sprintf 'Can`t download from %s', $result->{link} );
+            add_message(
+                level   => 'error',
+                message => sprintf('Can`t download from %s', $result->{link}),
+                data    => $result);
+        }
+    }
 
     return $self->result_count;
 }

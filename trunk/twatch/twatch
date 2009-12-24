@@ -15,6 +15,7 @@ use Pod::Usage;
 use TWatch;
 use TWatch::Config;
 use TWatch::Plugin;
+use TWatch::Message;
 
 ################################################################################
 # Обработка командной строки
@@ -41,7 +42,7 @@ $twatch->run;
 
 notify('Send notification mail');
 # Разошлем письма
-$twatch->send_mail;
+send_messages;
 
 notify('Execute post plugins');
 #Запустим плагины постобработки

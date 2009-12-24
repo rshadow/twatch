@@ -265,7 +265,7 @@ sub DieDumper
     my $dump = Data::Dumper->Dump([@_]);
     # юникодные символы преобразуем в них самих
     # вметсто \x{уродство}
-#    $dump=~s/(\\x\{[\da-fA-F]+\})/eval "qq{$1}"/eg;
+    $dump=~s/(\\x\{[\da-fA-F]+\})/eval "qq{$1}"/eg;
     die $dump;
 }
 

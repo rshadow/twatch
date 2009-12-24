@@ -80,7 +80,7 @@ sub update
 {
     my ($self, $param) = @_;
     $self->{update} = $param if defined $param;
-    return $self->{update};
+    return $self->{update} || '';
 }
 
 sub url
@@ -157,6 +157,18 @@ sub watches_count
     return scalar keys %{ $self->{watches} };
 }
 
+=head2 get_watch $name
+
+Get watch by name
+
+=cut
+
+sub get_watch
+{
+    my ($self, $name) = @_;
+    return $self->{watches}{$name};
+}
+
 ###############################################################################
 =head1 Другие методы
 
@@ -170,7 +182,7 @@ sub load
 {
     my ($self) = @_;
 
-    # Объект для работы с XML
+    # Загрузим проект ##########################################################
     my $xs = XML::Simple->new(
         NoAttr      => 1,
         ForceArray  => ['watch', 'result', 'filter'],
@@ -180,11 +192,9 @@ sub load
             'filters'   => 'filter',
         }
     );
-
-    # Загрузим проект
     my $project = $xs->XMLin( $self->file );
 
-    # Добавим задания в проект
+    # Добавим задания в проект #################################################
     for my $name ( keys %{ $project->{watches} }  )
     {
         # Добавим имя задания в буфер
@@ -198,11 +208,15 @@ sub load
     # Удалим задания из буфера, т.к. они уже все загружены
     delete $project->{watches};
 
+    # Добавим остальные параметры в проект #####################################
     # Остальное, без изменений, станет параметрами проекта
     $self->{$_} = $project->{$_} for keys %$project;
 
+    # Добавим выполненные задания в проект #####################################
     # Получим выполненные задания для данного проекта
     my $complete = complete->get( $self->name );
+    # Если загруженных нет то стразу выйдем
+    return $self unless $complete;
     # Сохраним в проекте путь к файлу завершенных заданий
     $self->cfile( $complete->{cfile} );
     # Сохраним в проекте время последней проверки
@@ -241,6 +255,7 @@ sub run
     # Получим объект браузера с пройденной авторизацией на трекере
     notify(sprintf 'Authtorization...');
     my $browser = $self->get_auth_browser;
+
     # Если авторизоваться не удалось пропустим проект
     unless ($browser)
     {
