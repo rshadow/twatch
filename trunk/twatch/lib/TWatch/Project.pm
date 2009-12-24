@@ -117,9 +117,9 @@ sub auth_login_name
 sub auth_password_name
 {
     my ($self, $param) = @_;
-    $self->{authtorization}{login}{name} = $param if defined $param;
+    $self->{authtorization}{password}{name} = $param if defined $param;
     return undef unless $self->auth;
-    return $self->auth->{login}{name};
+    return $self->auth->{password}{name};
 }
 
 sub auth_login_value
@@ -133,9 +133,9 @@ sub auth_login_value
 sub auth_password_value
 {
     my ($self, $param) = @_;
-    $self->{authtorization}{login}{value} = $param if defined $param;
+    $self->{authtorization}{password}{value} = $param if defined $param;
     return undef unless $self->auth;
-    return $self->auth->{login}{value};
+    return $self->auth->{password}{value};
 }
 
 sub watches
@@ -280,9 +280,10 @@ sub run
 
     # Установим последнее время апдейта
     $self->update( POSIX::strftime("%Y-%m-%d %H:%M:%S", localtime(time)) );
+    notify(sprintf 'Complete at %s', $self->update);
 
     # Сохраним список готовых заданий
-    notify(sprintf 'Save completed list');
+    notify('Save completed list');
     complete->save( $self );
 
     return $self;
