@@ -242,6 +242,7 @@ sub load
 Проверка проекта
 
 =cut
+
 sub run
 {
     my ($self) = @_;
@@ -277,6 +278,13 @@ sub run
         notify('Watch complete');
     }
 
+    # Установим последнее время апдейта
+    $self->update( POSIX::strftime("%Y-%m-%d %H:%M:%S", localtime(time)) );
+
+    # Сохраним список готовых заданий
+    notify(sprintf 'Save completed list');
+    complete->save( $self );
+
     return $self;
 }
 
@@ -287,6 +295,7 @@ sub run
 Получение авторизававшегося объекта браузера
 
 =cut
+
 sub get_auth_browser
 {
     my ($self) = @_;
@@ -359,5 +368,4 @@ sub get_auth_browser
 
     return $browser;
 }
-
 1;

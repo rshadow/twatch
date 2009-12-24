@@ -6,7 +6,7 @@ use utf8;
 use open qw(:std :utf8);
 use lib qw(lib ../lib);
 
-use Test::More tests    => 2;
+use Test::More tests    => 3;
 use Encode qw(decode);
 
 ################################################################################
@@ -20,7 +20,7 @@ BEGIN {
     binmode $builder->failure_output, ":utf8";
     binmode $builder->todo_output,    ":utf8";
 
-    diag("************* Тест проектов *************");
+    diag("************* Test Project *************");
     use_ok('TWatch');
     use_ok('TWatch::Project');
 }

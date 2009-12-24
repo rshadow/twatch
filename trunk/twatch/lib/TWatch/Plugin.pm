@@ -23,6 +23,7 @@ use TWatch::Config;
 =head2 new
 
 =cut
+
 sub new
 {
     my ($class, %opts) = @_;
@@ -36,6 +37,7 @@ sub new
 Функция выполнения плагинов постобработки
 
 =cut
+
 sub post
 {
     my ($self, $twatch) = @_;

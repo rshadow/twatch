@@ -99,6 +99,7 @@ sub load
 Получение результатов для проекта
 
 =cut
+
 sub get
 {
     my ($self, $name) = @_;
@@ -107,4 +108,58 @@ sub get
     return $self->{project}{$name};
 }
 
+=head2 save
+
+Save list completed torrent downloads
+
+=cut
+
+sub save
+{
+    my ($self, $project) = @_;
+
+    # Получим проект
+    my $watches = $project->watches;
+
+    for my $name ( keys %$watches )
+    {
+        $watches->{$name} = {
+            name        => $name,
+            ($watches->{$name}->complete_count)
+                ?(complete => { result => [values %{ $watches->{$name}->complete }] })
+                :(),
+        }
+    };
+
+    # Составим данные о сохранении
+    my $save = {
+        name    => $project->name,
+        update  => $project->update,
+        watches => { watch => [ values %$watches ] },
+    };
+
+    # Получим имя файла для сохранения
+    my $file = $project->cfile;
+    # Составим имя файла для сохранения из пути поиска данных по завершенным
+    # закачкам, плюс имя файла проектаб если это новый файл
+    $file = (config->get('Complete') =~ m/^(.*)\/.*?$/)[0] .
+            ($project->file =~ m/^.*(\/.*?\.xml)$/)[0]
+        unless $file;
+
+    # Сохраним конфиг
+    my $xs = XML::Simple->new(
+        AttrIndent  => 1,
+        KeepRoot    => 1,
+        RootName    => 'project',
+        NoAttr      => 1,
+        NoEscape    => 1,
+        NoSort      => 1,
+        ForceArray  => ['watch', 'result'],
+        XMLDecl     => 1,
+        OutputFile  => $file,
+    );
+    my $xml = $xs->XMLout($save);
+
+    return 1;
+}
 1;

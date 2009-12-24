@@ -6,9 +6,10 @@ TWatch - осуществляет слежение за ссылками на с
 
 =head1 VERSION
 
-0.0.1
+0.0.2
 
 =cut
+
 our $VERSION = '0.0.2';
 
 use strict;
@@ -28,6 +29,7 @@ use TWatch::Watch;
 Конструктор объекта закачкм
 
 =cut
+
 sub new
 {
     my ($class, %opts) = @_;
@@ -45,6 +47,7 @@ sub new
 Скрипт выполнения закачек соответсвенно параметрам проекта.
 
 =cut
+
 sub run
 {
     my ($self) = @_;
@@ -65,11 +68,6 @@ sub run
         $project->run
             or warn sprintf 'Project aborted!';
 
-
-#
-#        # Сохраним список готовых заданий
-#        $self->save_complete($proj->{name});
-
         notify('Project complete');
     }
 }
@@ -85,6 +83,7 @@ sub run
 Функция загрузки проектов
 
 =cut
+
 sub load_projects
 {
     my ($self) = @_;
@@ -105,6 +104,7 @@ sub load_projects
 Получние проектов
 
 =cut
+
 sub get_projects
 {
     my ($self, $name) = @_;
@@ -120,6 +120,7 @@ sub get_projects
 Получние заданий
 
 =cut
+
 sub get_watch
 {
     my ($self, $p_name, $w_name) = @_;
@@ -132,61 +133,12 @@ sub get_watch
     return $project->get_watch($w_name);
 }
 
-=head2 save_complete
-
-Сохранение готовых заданий
-
-=cut
-sub save_complete
-{
-    my ($self, $name) = @_;
-
-    # Получим проект
-    my $proj    = $self->get_projects($name);
-    my $watch   = $self->get_watch($name);
-    $watch->{$_} = {
-        name        => $_,
-        ($watch->{$_}{complete})
-            ?(complete => { result => $watch->{$_}{complete} })
-            :(),
-    } for keys %$watch;
-
-    # Составим данные о сохранении
-    my $save = {
-        name    => $proj->{name},
-        update  => POSIX::strftime("%Y-%m-%d %H:%M:%S", localtime(time)),
-        watches => { watch => [ values %$watch ] },
-    };
-
-    # Составим имя файла для сохранения из пути поиска данных по завершенным
-    # закачкам, плюс имя файла проекта
-    my $file = $proj->{cfile};
-    $file = (config->get('Complete') =~ m/^(.*)\/.*?$/)[0] .
-            ($proj->{file} =~ m/^.*(\/.*?\.xml)$/)[0]
-        unless $file;
-
-    # Сохраним конфиг
-    my $xs = XML::Simple->new(
-        AttrIndent  => 1,
-        KeepRoot    => 1,
-        RootName    => 'project',
-        NoAttr      => 1,
-        NoEscape    => 1,
-        NoSort      => 1,
-        ForceArray  => ['watch', 'result'],
-        XMLDecl     => 1,
-        OutputFile  => $file,
-    );
-    my $xml = $xs->XMLout($save);
-
-    return 1;
-}
-
 =head2 delete_project
 
 Удаление проекта с заданным именем.
 
 =cut
+
 sub delete_project
 {
     my ($self, $name) = @_;
@@ -214,6 +166,7 @@ sub delete_project
 Добавление нового проекта в список текущих
 
 =cut
+
 sub add_project
 {
     my ($self, $new) = @_;
@@ -233,6 +186,7 @@ sub add_project
 Сохранение файла проекта
 
 =cut
+
 sub save_project
 {
 #    my ($self, $name) = @_;
@@ -249,12 +203,10 @@ sub save_project
 #    } for keys %$watch;
 }
 
-
-
-
 =head1 REQUESTS & BUGS
 
 Roman V. Nikolaev <rshadow@rambler.ru>
 
 =cut
+
 1;

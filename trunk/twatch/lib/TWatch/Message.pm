@@ -1,8 +1,12 @@
 package TWatch::Message;
 
-=head1 TWatch::Message
+=head1 NAME
 
-Модуль отправки сообщений
+TWatch::Message - collect and send messges to user
+
+=head1 SYNOPSIS
+
+    use TWatch::Message;
 
 =cut
 
@@ -23,64 +27,59 @@ use Encode qw(decode encode is_utf8);
 
 use TWatch::Config;
 
-################################################################################
-# Переменные
-################################################################################
-my $log;
-
-################################################################################
-# Функции работы с сообщениями
-################################################################################
+# Message collector
+my @quie;
 
 =head1 MESSAGE METHODS
 
+=cut
+
 =head2 log
 
-Добавить сообщение
+Add message to collector
 
 =cut
+
 sub add_message
 {
     my (%opts) = @_;
 
-    $log = [] unless $log;
-
-    push @$log, \%opts;
+    push @quie, \%opts;
     return 1;
 }
 
 =head2 get_messages
 
-Получение всех сообщений
+Get messages from collector
 
 =cut
+
 sub get_messages
 {
-    return (wantarray) ?@$log :$log;
+    return (wantarray) ?@quie :\@quie;
 }
 
 =head2 has_messages
 
-Проверка наличия сообщений
+How many messages in collector. Can be used as boolean flag.
 
 =cut
+
 sub has_messages
 {
-    return 0 unless defined $log;
-    return scalar @$log;
+    return scalar @quie;
 }
-
-################################################################################
-# Функции работы с почтой
-################################################################################
 
 =head1 EMAIL METHODS
 
+=cut
+
 =head2 send_messages
 
-Отсылка списка сообщений
+Send collected messages on email
 
 =cut
+
 sub send_messages
 {
     # Пропустим если сообщений нет
@@ -110,11 +109,12 @@ sub send_messages
             Type        =>  "text/plain; charset=utf-8",
             Data        =>
                 encode( utf8 => join( (('#') x 50 ."\n"), @messages) ),
+            'X-Service' => 'twatch',
         );
 
-        die Encode::decode(utf8 => $msg->body_as_string);
-
-        $msg->send;
+        eval { $msg->send; };
+        warn sprintf 'Can`t send email to %s : $s', config->get('Email'), $@
+            if $@;
     }
 }
 

@@ -28,7 +28,7 @@ use constant TWATCH_SYSTEM_CONFIG_PATH  => '/etc/twatch/twatch.conf';
 use constant TWATCH_CONFIG_PATH         => '~/.twatch/twatch.conf';
 ###############################################################################
 
-=head2
+=head2 config
 
 Кеширование работы с конфигурацией
 
@@ -59,6 +59,7 @@ sub config
 Конфигурация
 
 =cut
+
 sub new
 {
     my ($class, %opts) = @_;
@@ -83,6 +84,7 @@ sub new
 Load current config
 
 =cut
+
 sub load
 {
     my ($self) = @_;
@@ -138,6 +140,7 @@ sub load
 Функция получения данных конфигурационного файла
 
 =cut
+
 sub get
 {
     my ($self, $name) = @_;
@@ -149,6 +152,7 @@ sub get
 Функция получения оригинальных данных конфигурационного файла
 
 =cut
+
 sub get_orig
 {
     my ($self, $name) = @_;
@@ -160,6 +164,7 @@ sub get_orig
 Функция установки данных конфигурации
 
 =cut
+
 sub set
 {
     my ($self, $name, $value) = @_;
@@ -171,6 +176,7 @@ sub set
 Флаг "Не использовать прокси"
 
 =cut
+
 sub is_noproxy
 {
     my ($self) = @_;
@@ -183,6 +189,7 @@ sub is_noproxy
 Вывод сообщений в консоль
 
 =cut
+
 sub notify
 {
     my ($message, $wait) = @_;
@@ -224,6 +231,7 @@ sub verbose
 Создает директории в пользовательской папке
 
 =cut
+
 sub create_dir
 {
     my ($self) = @_;
@@ -254,6 +262,7 @@ sub create_dir
 Функция для отладки
 
 =cut
+
 sub DieDumper
 {
     require Data::Dumper;
@@ -272,6 +281,7 @@ sub DieDumper
 =head2 Dumper
 
 =cut
+
 sub Dumper
 {
     require Data::Dumper;
