@@ -9,7 +9,7 @@ TWatch - осуществляет слежение за ссылками на с
 0.0.1
 
 =cut
-our $VERSION = '0.0.1';
+our $VERSION = '0.0.2';
 
 use strict;
 use warnings;
