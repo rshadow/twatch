@@ -26,4 +26,10 @@ sub run
     printf "%s\n", $self->{string};
 }
 
+=head1 REQUESTS & BUGS
+
+Roman V. Nikolaev <rshadow@rambler.ru>
+
+=cut
+
 1;

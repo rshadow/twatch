@@ -525,4 +525,11 @@ sub download
 
     return $self->result_count;
 }
+
+=head1 REQUESTS & BUGS
+
+Roman V. Nikolaev <rshadow@rambler.ru>
+
+=cut
+
 1;

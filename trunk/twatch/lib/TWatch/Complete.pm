@@ -162,4 +162,11 @@ sub save
 
     return 1;
 }
+
+=head1 REQUESTS & BUGS
+
+Roman V. Nikolaev <rshadow@rambler.ru>
+
+=cut
+
 1;

@@ -1,88 +1,82 @@
 <?xml version='1.0' standalone='yes'?>
 <!--
+This project file example for torrent tracker LostFilm.tv
+Just copy this file in project directory (default: ~/.twatch/project) and
+change parameters as you wish.
 
-Пример конфигурационного файла для торрент трекера LostFilm.tv
-Просто скопируйте этот файл в директорию проектов и поменяйте параметры на
-нужные вам.
-(По умолчанию: ~/.twatch/project)
+This file can be base for write new own project files. See more about parameters
+in manual ($man twatch).
 
-Вы можете использовать данный файл как основу для написания новых проектов.
-Обозначения параметров можно посмотреть в соответствующем мануале.
-
-Внимание! Если значение праметра содержит знак ">" или "<" оберните его в
-специальную xml конструкцию: <![CDATA[значение]]>, этого требует спецификация
-xml.
+XML! If parameter value cosist ">" or "<" warp them as in example:
+<![CDATA[you_value]]>.
 -->
 <project>
 
-    <!-- Общие параметры проекта -->
+    <!-- Common project parameters -->
 
-    <!--  Имя проекта. Обязательный. -->
+    <!--  Project name. Required. -->
     <name>LostFilm</name>
-    <!-- Адрес главной страницы сайта. Обязательный. -->
+    <!-- Main page. Required. -->
     <url>http://lostfilm.tv</url>
-    <!-- Порядковый номер для обработки. Любые числа и буквы. -->
+    <!-- Sort index. Any digits or characters. -->
     <order>0</order>
 
-    <!-- Параметры авторизации на сервере -->
+    <!-- Authtarization parameters -->
     <authtorization>
         <!--
-            Адрес страницы авторизации (страница с формой авторизации).
-            Если совпадает с главной страницей то можно не указывать.
+            Url authtorization page (contain authtorization form).
+            If match with project url you can miss it
         ->
         <url></url>
         <!--
-            Имена и значения параметров для входа на трекер.
-            Обязательные:
-                login       - логин пользователя на тракере
-                password    - пароль
-            Вы можете добавить свои значения но как правило это не требуется
-            так как скрипт отсылает форму, полученную непостредственно с
-            трекера, со всеми необходимыми параметрами.
+            Parameters name and value for login on tracker.
+            Required:
+                login       - user login
+                password    - user password
+            You can add new own parameters but, as a rule, this not need.
+            Programm send really form from tracker with all parameters in
+            authtorization form.
         -->
         <login>
-            <!-- Имя параметра логина в форме авторизации -->
+            <!-- Login parameter name in authtorization form. -->
             <name>FormLogin</name>
-            <!-- Логин -->
+            <!-- Login. -->
             <value>test_login</value>
         </login>
         <password>
-            <!-- Имя параметра пароля в форме авторизации -->
+            <!-- Password parameter name in authtorization form. -->
             <name>FormPassword</name>
-            <!-- Пароль. -->
+            <!-- Password. -->
             <value>123456</value>
         </password>
     </authtorization>
 
-    <!-- Параметры заданий -->
+    <!-- Tasks parameters -->
     <watches>
         <watch>
-            <!-- Наименование задания. -->
+            <!-- Name. -->
             <name>House M.D.</name>
-            <!-- Адрес для списка торрентов. -->
+            <!-- Url for page with torrent list. -->
             <url>http://www.lostfilm.tv/browse.php?cat=51</url>
             <!--
-                Регулярное выражения для поиска страниц с торрентами.
-                Если на странице <url> храниться не список торрентов а список
-                страниц с описанием торрент файлов то используйте
-                данный параметр для получения списка ссылок на данные страницы.
-                Подробности смотрите в справке.
+                Regular expression for search pages with torrents.
+                Typically use if previos parameter <url> contain list of urls
+                with pages wich description torrent.
             -->
             <urlreg></urlreg>
-            <!-- Порядковый номер для обработки. Любые числа и буквы. -->
+            <!-- Sort index. Any digits or characters. -->
             <order>0</order>
             <!--
-               Список параметров торрента с регулярными выражениями для
-               вычленения данного праметра из html страницы.
-               Обязательные:
-                    torrent     - имя торрент файла
-                    link        - путь для закачки торрент файла
-               Зарезервированные:
-                    datetime    - зарезервировано для внутренних нужд
-               Остальные параметры не обязательные, но могут быть
-               использованы для фильтров и для получения дополнительной
-               информации в рассылке.
-               Примерный список параметров приведен ниже в этой секции.
+               List of user make parameters with regular expressions for
+               extraction them from html page.
+               Required:
+                    torrent     - torrent file name
+                    link        - link to download this torrent file
+               Reserved:
+                    datetime    - reserved: download data
+               All rested parameters not required. You can define them and
+               use for filters and additional information in email.
+               This is example of parameters list.
             -->
             <reg>
                 <torrent><![CDATA[<a href=".*?/(House\.M\.D.*?\.torrent)"[^>]*?class="a_download"]]></torrent>
@@ -96,16 +90,15 @@ xml.
                 <size><![CDATA[<td class="t_cell">.*?Размер:\s*(.*?);.*?</td>]]></size>
             </reg>
             <!--
-                Список фильтров для параметров секции <reg>.
-                Параметры:
-                    name    - имя параметра из <reg>
-                    value   - значение фильтра
-                    method  - метод фильтрации:
+                List of filters for section <reg>.
+                Parameters:
+                    name    - parameter name from <reg>
+                    value   - filter value
+                    method  - filter method:
                               =~, !~, ==, >, >=, <, <=, !=, <=>, eq, gt, lt, ne,
-                              ... и любые другие логические операторы perl
-                Фильтры объединяються через логическое И.
-                Примерный список фильтров приведен ниже в этой секции: скачивать
-                торрент файлы для 6 и больше сезона.
+                              ... and all over logical perl operators.
+                Filters for this task unoun by logical AND.
+                Example below: download all series in 6 season and great.
             -->
             <filters>
                 <filter>

@@ -63,4 +63,10 @@ sub post
     }
 }
 
+=head1 REQUESTS & BUGS
+
+Roman V. Nikolaev <rshadow@rambler.ru>
+
+=cut
+
 1;

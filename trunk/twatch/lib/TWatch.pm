@@ -2,7 +2,7 @@ package TWatch;
 
 =head1 NAME
 
-TWatch - осуществляет слежение за ссылками на сайте и скачку файлов по ссылкам.
+TWatch - track for links on tracker and download new torrents.
 
 =head1 VERSION
 
@@ -26,7 +26,7 @@ use TWatch::Watch;
 
 =head2 new
 
-Конструктор объекта закачкм
+Main constructor
 
 =cut
 
@@ -44,7 +44,7 @@ sub new
 
 =head2 run
 
-Скрипт выполнения закачек соответсвенно параметрам проекта.
+Run execute downloads.
 
 =cut
 
@@ -72,15 +72,11 @@ sub run
     }
 }
 
-################################################################################
-# Функции работы с проектами
-################################################################################
-
 =head1 PROJECT METHODS
 
 =head2 load_projects
 
-Функция загрузки проектов
+Load projects from files. Return count of loaded projects.
 
 =cut
 
@@ -88,20 +84,22 @@ sub load_projects
 {
     my ($self) = @_;
 
-    # Загрузим конфиги
+    # Get projects paths
     my @projects = glob(config->get('Project'));
     return unless @projects;
 
+    # Load all projects
     $_ = TWatch::Project->new(file => $_) for @projects;
 
+    # Add all in hash
     $self->{project}{$_->name} = $_ for @projects;
 
     return scalar @projects;
 }
 
-=head2 get_projects
+=head2 get_projects $name
 
-Получние проектов
+Return project by $name. If $name not defined return a hash or sorted array. 
 
 =cut
 

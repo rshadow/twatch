@@ -294,4 +294,11 @@ sub Dumper
 
     return $dump;
 }
+
+=head1 REQUESTS & BUGS
+
+Roman V. Nikolaev <rshadow@rambler.ru>
+
+=cut
+
 1;
