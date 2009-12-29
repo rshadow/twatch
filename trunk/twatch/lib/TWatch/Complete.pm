@@ -1,8 +1,8 @@
 package TWatch::Complete;
 
-=head1 TWatch::Complete
+=head1 NAME
 
-Модуль загрузки выполненных заданий
+TWatch::Complete - Load and save completed tasks
 
 =cut
 
@@ -19,9 +19,14 @@ use XML::Simple;
 
 use TWatch::Config;
 
+=head1 CONSTRUCTORS
+
+=cut
+
 =head2 complete
 
-Загружает выполненные задания и держит их в кеше
+Load and cache completed tasks.
+Use this funtction for access completed tasks.
 
 =cut
 
@@ -34,6 +39,12 @@ sub complete
     return $complete;
 }
 
+=head2 new
+
+Load completed tasks and return this object
+
+=cut
+
 sub new
 {
     my ($class, %opts) = @_;
@@ -45,6 +56,15 @@ sub new
     return $self;
 }
 
+=head1 METHODS
+
+=cut
+
+=head2 load
+
+Load completed tasks
+
+=cut
 
 sub load
 {
@@ -96,7 +116,7 @@ sub load
 
 =head2 get
 
-Получение результатов для проекта
+Get completed tasks for $name project
 
 =cut
 
@@ -110,7 +130,7 @@ sub get
 
 =head2 save
 
-Save list completed torrent downloads
+Save list completed tasks
 
 =cut
 
@@ -118,7 +138,7 @@ sub save
 {
     my ($self, $project) = @_;
 
-    # Получим проект
+    # Get project
     my $watches = $project->watches;
 
     for my $name ( keys %$watches )
@@ -131,22 +151,22 @@ sub save
         }
     };
 
-    # Составим данные о сохранении
+    # Make data to save
     my $save = {
         name    => $project->name,
         update  => $project->update,
         watches => { watch => [ values %$watches ] },
     };
 
-    # Получим имя файла для сохранения
+    # Get file name to save
     my $file = $project->cfile;
-    # Составим имя файла для сохранения из пути поиска данных по завершенным
-    # закачкам, плюс имя файла проектаб если это новый файл
+    # Full path consists of completed path and project filename if it is
+    # new file
     $file = (config->get('Complete') =~ m/^(.*)\/.*?$/)[0] .
             ($project->file =~ m/^.*(\/.*?\.xml)$/)[0]
         unless $file;
 
-    # Сохраним конфиг
+    # Save completed
     my $xs = XML::Simple->new(
         AttrIndent  => 1,
         KeepRoot    => 1,
@@ -166,6 +186,25 @@ sub save
 =head1 REQUESTS & BUGS
 
 Roman V. Nikolaev <rshadow@rambler.ru>
+
+=head1 AUTHORS
+
+Copyright (C) 2008 Nikolaev Roman <rshadow@rambler.ru>
+
+=head1 LICENSE
+
+This program is free software: you can redistribute  it  and/or  modify  it
+under the terms of the GNU General Public License as published by the  Free
+Software Foundation, either version 3 of the License, or (at  your  option)
+any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even  the  implied  warranty  of  MERCHANTABILITY  or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public  License  for
+more details.
+
+You should have received a copy of the GNU  General  Public  License  along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 =cut
 

@@ -1,8 +1,8 @@
 package TWatch::Watch;
 
-=head1 TWatch::Watch
+=head1 NAME
 
-Модуль загрузки торрента
+TWatch::Watch task module to load torrents.
 
 =cut
 
@@ -19,6 +19,14 @@ use Safe;
 use TWatch::Config;
 use TWatch::Message;
 
+
+
+=head1 CONSTRUCTOR
+
+=cut
+
+
+
 sub new
 {
     my ($class, %opts) = @_;
@@ -28,12 +36,32 @@ sub new
     return $self;
 }
 
+
+
+=head1 DATA METHODS
+
+=cut
+
+
+
+=head2 name $param
+
+If defined $param set task name. Unless return it.
+
+=cut
+
 sub name
 {
     my ($self, $param) = @_;
     $self->{name} = $param if defined $param;
     return $self->{name};
 }
+
+=head2 url $param
+
+If defined $param set task url. Unless return it.
+
+=cut
 
 sub url
 {
@@ -42,12 +70,24 @@ sub url
     return $self->{url};
 }
 
+=head2 urlreg $param
+
+If defined $param set task url regular expression. Unless return it.
+
+=cut
+
 sub urlreg
 {
     my ($self, $param) = @_;
     $self->{urlreg} = $param if defined $param;
     return $self->{urlreg};
 }
+
+=head2 order $param
+
+If defined $param set task sort order. Unless return it.
+
+=cut
 
 sub order
 {
@@ -56,6 +96,12 @@ sub order
     return $self->{order};
 }
 
+=head2 type $param
+
+If defined $param set task type: linear or tree. Unless return it.
+
+=cut
+
 sub type
 {
     my ($self, $param) = @_;
@@ -63,11 +109,23 @@ sub type
     return $self->{type};
 }
 
+=head2 reg
+
+return regular expression hash for user defined params.
+
+=cut
+
 sub reg
 {
     my ($self) = @_;
     return $self->{reg};
 }
+
+=head2 complete
+
+Return hash of completed downloads
+
+=cut
 
 sub complete
 {
@@ -75,15 +133,21 @@ sub complete
     return $self->{complete};
 }
 
+=head2 complete_count
+
+Return count of completed downloads hash
+
+=cut
+
 sub complete_count
 {
     my ($self) = @_;
     return scalar keys %{ $self->{complete} };
 }
 
-=head2 add_complete
+=head2 add_complete $complete
 
-Добавить результат выполнения
+Add $complete to task completed array
 
 =cut
 
@@ -91,17 +155,17 @@ sub add_complete
 {
     my ($self, $complete) = @_;
 
-    # Работаем с массивом результатов
+    # Always array reference
     $complete = [$complete] unless 'ARRAY' eq ref $complete;
 
-    # Добавим законченные в задание
+    # Add result to task completed array
     $self->{complete}{ $_->{torrent} } = $_ for @$complete;
 }
 
 
-=head2 add_result
+=head2 add_result $result
 
-Добавить результат выполнения
+Add $result to task
 
 =cut
 
@@ -109,16 +173,16 @@ sub add_result
 {
     my ($self, $result) = @_;
 
-    # Работаем с массивом результатов
+    # Always array reference
     $result = [$result] unless 'ARRAY' eq ref $result;
 
-    # Добавим законченные в задание
+    # Add result to task result array
     $self->{result}{ $_->{torrent} } = $_ for @$result;
 }
 
 =head2 result
 
-Получение хеща результатов
+Get results hash
 
 =cut
 
@@ -130,7 +194,7 @@ sub result
 
 =head2 get_result $torrent
 
-Get result by torrent name
+Get result by torrent name.
 
 =over
 
@@ -148,9 +212,9 @@ sub get_result
     return $self->{result}{ $torrent };
 }
 
-=head2 is_result
+=head2 is_result $torrent
 
-Проверка есть такой торрент в результатах
+Check is $torrent for result.
 
 =cut
 
@@ -160,9 +224,9 @@ sub is_result
     return ( exists $self->{result}{ $torrent } ) ?1 :0;
 }
 
-=head2 delete_result
+=head2 delete_result $torrent
 
-Удаляет результат
+Delete from result hash by $torrent.
 
 =cut
 
@@ -178,9 +242,8 @@ sub delete_result
 
 =head2 result_count
 
-Возвращает количество скаченных страниц.
-В коде надо быть осторожным. Это значение обычно уменьшается при
-фильтрации готовых торрентов, фильтрации по выражениям и т.д.
+Get result count. This value sets after parse torrent description page and
+decrease by filters, completed check, etc.
 
 =cut
 
@@ -190,11 +253,23 @@ sub result_count
     return scalar keys %{ $self->{result} };
 }
 
+=head2 filters
+
+Get filters for task.
+
+=cut
+
 sub filters
 {
     my ($self) = @_;
     return $self->{filters};
 }
+
+=head2 filters_count
+
+Get filters count for task.
+
+=cut
 
 sub filters_count
 {
@@ -202,17 +277,37 @@ sub filters_count
     return scalar keys %{ $self->{filters} };
 }
 
+=head2 filter_method $name
+
+Get method for fileter by $name.
+
+=cut
+
 sub filter_method
 {
     my ($self, $name) = @_;
     return $self->{filters}{$name}{method};
 }
 
+=head2 filter_value $name
+
+Get value for fileter by $name.
+
+=cut
+
 sub filter_value
 {
     my ($self, $name) = @_;
     return $self->{filters}{$name}{value};
 }
+
+
+
+=head1 DOWNLOAD METHODS
+
+=cut
+
+
 
 =head2 run $browser
 
@@ -240,58 +335,71 @@ sub run
     }
     notify(sprintf 'Get links list from %s', $self->url );
 
-    # Получим страницу с сылками на торренты
+    # Get torrents links page
     eval{ $browser->get( $self->url ); };
 
-    # Проверка что контент получен
+    # Check for page content
     if( !$browser->success or ($@ and $@ =~ m/Can't connect/) )
     {
         warn sprintf 'Can`t get content (links list) by link: %s', $self->url;
         return;
     }
 
-    # Получим контент сртраницы со списком торрентов
+    # Get page content
     my $content = $browser->content;
 
-    # Получим ссылки на страницы описания торрентов и определим
-    # структуру хранения торрентов на трекере
+    # Define torrent type (tree or linear) and get links for torrent description
     my @links;
     if ($self->urlreg)
     {
-        # Если на трекере описание каждого торрента находиться на
-        # отдельной странице то считаем его древовидным.
-        # Это основной тип тракеров. Например: torrents.ru
+        # If tracker layout like this:
+        # - Torrent list
+        #   |- Torrent 1 description
+        #       |- Link to 1.torrent
+        #   |- Torrent 2 description
+        #       |- Link to 2.torrent
+        #   |- Torrent 3 description
+        #       |- Link to 3.torrent
+        #
+        # this is tree type. List of torrents contain links to description
+        # page. Then description page have link to torrent file.
+        # This is main trackers layout. Example: thepiratebay.org, torrents.ru
         $self->type('tree');
 
-        # Получим ссылки на страницы с описаниями торрентов и ссылками
-        # для скачки файлов торрента
+        # Parse links to description pages
         my $reg = $self->urlreg;
         @links = $content =~ m/$reg/sgi;
     }
     else
     {
-        # Если на трекере есть список с описаниями торрентов и ссылками
-        # на получение торрент файлов в этом списке то считаем его
-        # линейным.
-        # Как правило это трекеры с сериалами. Например: lostfilm.tv
+        # If tracker layout like this:
+        # - Torrent description
+        #   |- Link to 1.torrent
+        #   |- Link to 2.torrent
+        #   |- Link to 3.torrent
+        #
+        # this is linear type. Torrent have one description page and many
+        # *.torrents links on it.
+        # This trackers typically for series. Example: lostfilm.tv
         $self->type('linear');
 
-        # Текущая страница и есть страница со ссылками
+        # Current page contain links.
         @links = ($self->url);
     }
 
     notify(sprintf 'Watch type: %s', $self->type);
     notify(sprintf 'Links count: %d', scalar @links) if $self->type eq 'tree';
 
+    # For all description page get *.torrent files from them
     for my $url ( @links )
     {
-        # Получим страницу с описанием торрента/ов
+        # Get description page
         if( $self->type eq 'tree' )
         {
             notify(sprintf 'Get torrent page by tree from: %s.', $url);
 
             eval{ $browser->get( $url ); };
-            # Проверка что контент получен
+            # Check for content
             if( !$browser->success or ($@ and $@ =~ m/Can't connect/) )
             {
                 warn
@@ -299,23 +407,23 @@ sub run
                 next;
             }
 
-            # Получим контент сртраницы с торрентом
+            # Get content
             $content = $browser->content;
         }
 
-        # Сохраним абсолютный url к списку ссылок
+        # Remember absolutly url
         my $absoulete = $browser->uri->as_string();
 
-        # Получим ссылки на торренты
+        # Parse links on *.torrents
         $self->parse( $content );
         notify('Nothing to download. Skip Watch.'),
         next
             unless $self->result_count;
 
-        # Добавим текущую страницу в результаты
+        # Add current page in result
         $_->{page} = $absoulete for values %{ $self->result };
 
-        # Загрузим торренты
+        # Download torrents
         notify('NEW TORRENTS AVIABLE!');
         $self->download( $browser );
 
@@ -343,35 +451,34 @@ sub parse
 {
     my ($self, $content) = @_;
 
-    # С помощью пользовательских регулярников вытащим нужные поля
+    # Use users regexp to get fields
     notify('Get data by user regexp');
     my %result;
     for( keys %{ $self->reg } )
     {
-        # Получим регулярное выражение и очистим его от пробелов
+        # Get regexp and clean it
         my $reg = $self->reg->{$_};
         s/^\s+//, s/\s+$// for $reg;
-        # Используем регулярник на содержимом страницы
+        # Use regexp on content
         my @value = $content =~ m/$reg/sgi;
-        # Приведем к десятичным числам.
-        # (Числа на сайте могут начиниться с нуля, а для перла это
-        # восьмеричный формат)
+        # All digits to decimal.
+        # (Many sites start write digits from zero)
         (m/^\d+$/)  ?$_ = int($_)   :next   for @value;
-        # Добавим массив в результаты
+        # Add values to result
         push @{ $result{$_} }, @value;
     }
 
-    # Если ссылки не были найдены то обработку дальше не ведем
+    # Skip if no fields found
     notify(sprintf 'Links not found. Wrong regexp?: %s', $self->reg->{link}),
     return
         unless @{ $result{link} };
 
-    # Приведем к удобной форме хеша по ключу торренту
+    # Transform to easy use form
     while (@{ $result{link} })
     {
         my %res;
         $res{$_} = shift @{$result{$_}} for keys %result;
-        # Очистим от тегов
+        # Clean from tags
         ($res{$_}) ?() :next,
         $res{$_} =~ s/<\/?\s*br>/\n/g,
         $res{$_} =~ s/<.*?>//g for keys %res;
@@ -379,7 +486,7 @@ sub parse
         $self->add_result( \%res );
     }
 
-    # Выбрасим уже загруженные торренты если таковые имеються
+    # Remove from results already completed torrents
     notify('Drop completed torrents');
     if( $self->complete_count )
     {
@@ -390,37 +497,37 @@ sub parse
         }
     }
 
-    # Если все уже готово то перейдем к следующему заданию
+    # Skip if no new torrents
     notify('All torrent already completed.'),
     return
         unless $self->result_count;
+
     {{
-        # Выбрасим тоттенты не походящие по фильтрам
+        # Remove torrents by filters
         notify('Filter torrents');
 
-        # Пропустим если фильтры не заданы
+        # Skip if no filters
         last unless $self->filters_count;
 
-        # Создадим песочницу для вычисления фильтра
+        # Create sand for users expressions
         my $sandbox = Safe->new;
 
-        # Пройдемся по заданиям
+        # For each results
         for my $key ( keys %{ $self->result } )
         {
-            # Получим результат
+            # Get result
             my $result = $self->get_result($key);
 
-            # Флаг - признак что фильтры стработали
+            # Flag - result suit to filter (and be download)
             my $flag = 1;
 
-            # Проверим все фильтры для задния
+            # For all filters
             for my $name ( keys %{ $self->filters } )
             {
-                # Удалим из закачки если в задании такое значение
-                # не найдено
+                # Remove result if no filters for them
                 $flag = 0, last unless $result->{$name};
 
-                # Проверим фильтр
+                # Check filter
                 my $left =      $result->{$name};
                 my $right =     $self->filter_value($name);
                 my $method =    $self->filter_method($name) || '=~';
@@ -434,25 +541,23 @@ sub parse
                     $flag &&= $sandbox->reval("$left $method $right");
                 }
 
-                # Если пользователь что-то ввел не так то выведим
-                # сообщение об ошибке
+                # Skip if expression not valid
                 warn sprintf(
                     'Can`t set filter %s: "%s %s %s", becouse %s',
                     $name, $left, $method, $right, $@),
                 next
                     if $@;
 
-                # Прекратим проверку если хоть один фильтр
-                # не совпадает
+                # results not coincide
                 last unless $flag;
             }
 
-            # Если не соответствует фильтрам то удалим задание
+            # Remove result if filter check fail
             $self->delete_result( $key ) unless $flag;
         }
     }}
 
-    # Если фильтры все отсеяли то перейдем к следующему заданию
+    # Skip if no results (all filtered)
     notify('All links filtered'),
     return
         unless $self->result_count;
@@ -479,40 +584,42 @@ sub download
 {
     my ($self, $browser) = @_;
 
-    # Обработаем полученные данные о торрентах
+    # For each result download torrent
     for my $key ( keys %{ $self->{result} } )
     {
         my $result = $self->get_result( $key );
 
-        # Загрузим торрент файл
+        # Download torrent
         {{
-            # Соберем путь для сохранения
+            # Set path to store
             my $save = config->get('Save').'/'.$result->{torrent};
-            # Пропустим уже загруженный торрент
+            # Ckip already dowloaded
             last if -f $save or -s _;
-            # Загрузим торрент с сайта
+            # Download
             $browser->get( $result->{link}, ':content_file' => $save);
         }}
 
-        # Если загрузка удачна, переместим торрент в готовые
+        # If download complete store result in completed array
         if ($browser->success)
         {
-            # Добавим дополнительные параметры для сохранения
+            # Put additional parameters
             $result->{datetime} = POSIX::strftime(
                 "%Y-%m-%d %H:%M:%S", localtime(time));
 
-            # Сохраним задание как выполненное
+            # Set result as completed
             $self->add_complete( $result );
+            # Remove completed result
             $self->delete_result( $key );
 
             notify( sprintf 'Download complete: %s', $result->{torrent} );
 
-            # Добавим сообщение об удачной закачке
+            # Add message about this completed result
             add_message(
                 level   => 'info',
                 message => sprintf('Download complete: %s', $result->{torrent}),
                 data    => $result);
         }
+        # If download fail add message about it
         else
         {
             notify( sprintf 'Can`t download from %s', $result->{link} );
@@ -529,6 +636,25 @@ sub download
 =head1 REQUESTS & BUGS
 
 Roman V. Nikolaev <rshadow@rambler.ru>
+
+=head1 AUTHORS
+
+Copyright (C) 2008 Nikolaev Roman <rshadow@rambler.ru>
+
+=head1 LICENSE
+
+This program is free software: you can redistribute  it  and/or  modify  it
+under the terms of the GNU General Public License as published by the  Free
+Software Foundation, either version 3 of the License, or (at  your  option)
+any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even  the  implied  warranty  of  MERCHANTABILITY  or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public  License  for
+more details.
+
+You should have received a copy of the GNU  General  Public  License  along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 =cut
 

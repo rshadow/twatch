@@ -1,8 +1,8 @@
 package TWatch::Project;
 
-=head1 TWatch::Project
+=head1 NAME
 
-Модуль проекта. Работа с трекером.
+TWatch::Project - Project module: work with torrent tracker.
 
 =cut
 
@@ -19,20 +19,25 @@ use TWatch::Config;
 use TWatch::Watch;
 use TWatch::Complete;
 
-###############################################################################
-=head1 Конструктор
+
+
+=head1 CONSTRUCTOR
+
+=cut
+
+
 
 =head2 new
 
-Создает проект.
+Create new project
 
-=head3 Опции
+=head3 Options:
 
 =over
 
 =item file
 
-Путь к файлу проекта
+Path to project file
 
 =back
 
@@ -44,14 +49,23 @@ sub new
 
     my $self = bless \%opts ,$class;
 
-    # Если передан путь к проекту то загрузим его
+    # If project file path exists then load them
     $self->load if $self->file;
 
     return $self;
 }
 
-################################################################################
-=head1 Методы атрибутов
+
+
+=head1 DATA METHODS
+
+=cut
+
+
+
+=head2 name $param
+
+If defined $param set project name. Unless return it.
 
 =cut
 
@@ -62,12 +76,24 @@ sub name
     return $self->{name};
 }
 
+=head2 file $param
+
+If defined $param set project file path. Unless return it.
+
+=cut
+
 sub file
 {
     my ($self, $param) = @_;
     $self->{file} = $param if defined $param;
     return $self->{file};
 }
+
+=head2 cfile $param
+
+If defined $param set project completed file path. Unless return it.
+
+=cut
 
 sub cfile
 {
@@ -76,6 +102,12 @@ sub cfile
     return $self->{cfile};
 }
 
+=head2 update $param
+
+If defined $param set project last updte time. Unless return it.
+
+=cut
+
 sub update
 {
     my ($self, $param) = @_;
@@ -83,12 +115,24 @@ sub update
     return $self->{update} || '';
 }
 
+=head2 url $param
+
+If defined $param set project url. Unless return it.
+
+=cut
+
 sub url
 {
     my ($self, $param) = @_;
     $self->{url} = $param if defined $param;
     return $self->{url};
 }
+
+=head2 auth %param
+
+If defined %param set project authtorization hash. Unless return it.
+
+=cut
 
 sub auth
 {
@@ -98,6 +142,12 @@ sub auth
     return $self->{authtorization};
 }
 
+=head2 auth_url $param
+
+If defined $param set project authtorization url. Unless return it.
+
+=cut
+
 sub auth_url
 {
     my ($self, $param) = @_;
@@ -105,6 +155,12 @@ sub auth_url
     return undef unless $self->auth;
     return $self->auth->{url};
 }
+
+=head2 auth_login_name $param
+
+If defined $param set project authtorization login name. Unless return it.
+
+=cut
 
 sub auth_login_name
 {
@@ -114,6 +170,12 @@ sub auth_login_name
     return $self->auth->{login}{name};
 }
 
+=head2 auth_password_name $param
+
+If defined $param set project authtorization password name. Unless return it.
+
+=cut
+
 sub auth_password_name
 {
     my ($self, $param) = @_;
@@ -121,6 +183,12 @@ sub auth_password_name
     return undef unless $self->auth;
     return $self->auth->{password}{name};
 }
+
+=head2 auth_login_value $param
+
+If defined $param set project authtorization login value. Unless return it.
+
+=cut
 
 sub auth_login_value
 {
@@ -130,6 +198,12 @@ sub auth_login_value
     return $self->auth->{login}{value};
 }
 
+=head2 auth_password_value $param
+
+If defined $param set project authtorization password value. Unless return it.
+
+=cut
+
 sub auth_password_value
 {
     my ($self, $param) = @_;
@@ -138,11 +212,23 @@ sub auth_password_value
     return $self->auth->{password}{value};
 }
 
+=head2 watches
+
+Get tasks
+
+=cut
+
 sub watches
 {
     my ($self) = @_;
     return $self->{watches};
 }
+
+=head2 set_watch $watch
+
+Set/replace task $watch. Tasks stored by names ($watch->name)
+
+=cut
 
 sub set_watch
 {
@@ -150,6 +236,12 @@ sub set_watch
     $self->{watches}->{ $watch->name } = $watch;
     return $watch;
 }
+
+=head2 watches_count
+
+Get tasks count
+
+=cut
 
 sub watches_count
 {
@@ -159,7 +251,7 @@ sub watches_count
 
 =head2 get_watch $name
 
-Get watch by name
+Get watch by $name
 
 =cut
 
@@ -169,12 +261,17 @@ sub get_watch
     return $self->{watches}{$name};
 }
 
-###############################################################################
-=head1 Другие методы
+
+
+=head1 LOAD METHODS
+
+=cut
+
+
 
 =head2 load
 
-Загрузка проекта из имени файла
+Load project from file
 
 =cut
 
@@ -182,7 +279,10 @@ sub load
 {
     my ($self) = @_;
 
-    # Загрузим проект ##########################################################
+    # Skip if file no set
+    return unless $self->file;
+
+    # Load project from file ###################################################
     my $xs = XML::Simple->new(
         NoAttr      => 1,
         ForceArray  => ['watch', 'result', 'filter'],
@@ -193,53 +293,69 @@ sub load
         }
     );
     my $project = $xs->XMLin( $self->file );
+    return unless $project;
 
-    # Добавим задания в проект #################################################
+    # Add tasks in project #####################################################
     for my $name ( keys %{ $project->{watches} }  )
     {
-        # Добавим имя задания в буфер
+        # Add task name in bufer
         $project->{watches}{$name}{name} = $name;
-        # Создадим объект задания
+        # Create task object
         my $watch = TWatch::Watch->new(%{ $project->{watches}{$name} });
-        # Добавим его в проект
+        # Add task to project
         $self->set_watch( $watch );
     }
 
-    # Удалим задания из буфера, т.к. они уже все загружены
+    # Delete tasks from bufer (all already in project)
     delete $project->{watches};
 
-    # Добавим остальные параметры в проект #####################################
-    # Остальное, без изменений, станет параметрами проекта
+    # Append additional params #################################################
     $self->{$_} = $project->{$_} for keys %$project;
 
-    # Добавим выполненные задания в проект #####################################
-    # Получим выполненные задания для данного проекта
+    # Add completed info in tasks ##############################################
+    # Get completed for this project
     my $complete = complete->get( $self->name );
-    # Если загруженных нет то стразу выйдем
+    # Skip if have`t completed
     return $self unless $complete;
-    # Сохраним в проекте путь к файлу завершенных заданий
+    # Add in project path to completed
     $self->cfile( $complete->{cfile} );
-    # Сохраним в проекте время последней проверки
+    # Add in project last update time
     $self->update( $complete->{update} );
 
-    # Добавим выполненные в задания
+    # Add completed to tasks
     $_->add_complete( $complete->{watches}{ $_->name }{complete} )
         for values %{ $self->watches };
 
     return $self;
 }
 
-################################################################################
-# Функции закачки
-################################################################################
+=head2 delete
+
+Delete project and it`s files
+=cut
+
+sub delete
+{
+    my ($self) = @_;
+
+    # Delete project files
+    unlink $self->file
+        or warn sprintf 'Can`t delete project file %s', $self->file;
+    unlink $self->cfile
+        or warn sprintf 'Can`t delete complete file %s', $self->cfile;
+
+    undef $self;
+}
 
 =head1 DOWNLOAD METHODS
 
 =cut
 
+
+
 =head2 run
 
-Проверка проекта
+Execute project
 
 =cut
 
@@ -253,47 +369,46 @@ sub run
         return;
     }
 
-    # Получим объект браузера с пройденной авторизацией на трекере
+    # Get brauser object already authtorized on tracker
     notify(sprintf 'Authtorization...');
     my $browser = $self->get_auth_browser;
 
-    # Если авторизоваться не удалось пропустим проект
+    # Skip unless brouser or authtorized
     unless ($browser)
     {
         warn sprintf 'Link break. Skip project.';
         return;
     }
 
-    # Пройдемся по всем заданиям
+    # Run all tasks
     for my $name ( keys %{ $self->watches })
     {
-        # Получим задание
+        # Get task
         my $watch = $self->watches->{$name};
 
         notify(sprintf 'Start watch: %s', $watch->name );
 
+        # Execute task
         $watch->run( $browser )
             or warn sprintf 'Watch aborted!';
 
         notify('Watch complete');
     }
 
-    # Установим последнее время апдейта
+    # Set last update time
     $self->update( POSIX::strftime("%Y-%m-%d %H:%M:%S", localtime(time)) );
     notify(sprintf 'Complete at %s', $self->update);
 
-    # Сохраним список готовых заданий
+    # Save completed to file
     notify('Save completed list');
     complete->save( $self );
 
     return $self;
 }
 
-
-
 =head2 get_auth_browser
 
-Получение авторизававшегося объекта браузера
+Get browser object authtorized on tracker
 
 =cut
 
@@ -303,7 +418,7 @@ sub get_auth_browser
 
     return undef unless $self->{url};
 
-    # Объект браузера
+    # Create browser object
     my $browser = WWW::Mechanize->new(
         agent       => 'Mozilla/5.0'.
             ' (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.1)'.
@@ -312,8 +427,7 @@ sub get_auth_browser
         noproxy     => config->is_noproxy,
     );
 
-    # Во многих сайтах есть защита от прихода извне, поэтому сначала зайдем
-    # на сайт.
+    # Many sites have protection from outside coming. So go to main page first.
     eval{ $browser->get( $self->url ); };
 
     if( !$browser->success or ($@ and $@ =~ m/Can't connect/) )
@@ -322,8 +436,8 @@ sub get_auth_browser
         return undef;
     }
 
-    # Если страница авторизации указана и отличается от главной то загрузим
-    # ее для поиска формы авторизации
+    # If authtorization form not on main page (and set in config) then go to
+    # this page
     if( $self->auth_url                 and
         $self->auth_url !~ m/^\s*$/     and
         $self->auth_url ne $self->url   )
@@ -336,12 +450,12 @@ sub get_auth_browser
         }
     }
 
-    # Найдем форму авторизации (она так же станет текущей в браузере)
+    # Find authtorization form (it`s set to default form)
     my $form = $browser->form_with_fields(
         $self->auth_login_name,
         $self->auth_password_name
     );
-    # Если форма не найдена то продолжать не будем
+    # Skip if can`t find authtorization form
     unless( $form )
     {
         warn sprintf 'Can`t find authtorization form in "%s" project.',
@@ -349,16 +463,16 @@ sub get_auth_browser
         return undef;
     }
 
-    # Заполним/дополним форму параметрами авторизации
+    # Set authtorization params in form
     $browser->field( $self->auth_login_name, $self->auth_login_value )
         if $self->auth_login_name and $self->auth_login_value;
     $browser->field( $self->auth_password_name, $self->auth_password_value )
         if $self->auth_password_name and $self->auth_password_value;
 
-    # Потом авторизуемся с параметрами проекта
+    # Authtorization
     eval{ $browser->click(); };
 
-    # Проверка что авторизация прошла нормально
+    # Check if all OK
     if( !$browser->success or
         ($@ and $@ =~ m/Can't connect/) or
         !$browser->is_html() )
@@ -367,12 +481,32 @@ sub get_auth_browser
         return undef;
     }
 
+    # Return browser
     return $browser;
 }
 
 =head1 REQUESTS & BUGS
 
 Roman V. Nikolaev <rshadow@rambler.ru>
+
+=head1 AUTHORS
+
+Copyright (C) 2008 Nikolaev Roman <rshadow@rambler.ru>
+
+=head1 LICENSE
+
+This program is free software: you can redistribute  it  and/or  modify  it
+under the terms of the GNU General Public License as published by the  Free
+Software Foundation, either version 3 of the License, or (at  your  option)
+any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even  the  implied  warranty  of  MERCHANTABILITY  or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public  License  for
+more details.
+
+You should have received a copy of the GNU  General  Public  License  along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 =cut
 

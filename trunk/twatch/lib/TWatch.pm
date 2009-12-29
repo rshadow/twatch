@@ -99,7 +99,7 @@ sub load_projects
 
 =head2 get_projects $name
 
-Return project by $name. If $name not defined return a hash or sorted array. 
+Return project by $name. If $name not defined return a hash or sorted array.
 
 =cut
 
@@ -113,9 +113,12 @@ sub get_projects
     return $self->{project}{$name};
 }
 
-=head2 get_watch
+=head1 UNSUPPORTED OR USED ONLY IN TWATCH-GTK
 
-Получние заданий
+=head2 get_watch $p_name, $w_name
+
+Get task $w_name by project $p_name. Return task if $p_name defined. Unless
+return all project tasks sorteb by order.
 
 =cut
 
@@ -131,9 +134,9 @@ sub get_watch
     return $project->get_watch($w_name);
 }
 
-=head2 delete_project
+=head2 delete_project $name
 
-Удаление проекта с заданным именем.
+Delete project by $name.
 
 =cut
 
@@ -141,27 +144,25 @@ sub delete_project
 {
     my ($self, $name) = @_;
 
-    # Получим проект
+    # Get project
     my $project = $self->get_projects($name);
     warn 'Can`t delete project: Project does not exists.',
     return
         unless $project;
 
-    # Удалим файл проекта
-    unlink $project->file
-        or warn sprintf 'Can`t delete project file %s', $project->file;
-    unlink $project->cfile
-        or warn sprintf 'Can`t delete complete file %s', $project->cfile;
+    # Delete project and unlink it`s files
+    $project->delete();
 
-    # Удалим проект
-    undef $self->{project}{$name};
+    # Delete project from projects hash
+    delete $self->{project}{$name};
 
     return 1;
 }
 
-=head2 add_project
+=head2 add_project $new
 
-Добавление нового проекта в список текущих
+Add $new project. $new must be TWatch::Project object. Function fail if project
+this same name already exists.
 
 =cut
 
@@ -179,12 +180,12 @@ sub add_project
     $self->{project}{ $new->name } = $new;
 }
 
-=head2 save_proj
-
-Сохранение файла проекта
-
-=cut
-
+#=head2 save_proj
+#
+#Сохранение файла проекта
+#
+#=cut
+#
 sub save_project
 {
 #    my ($self, $name) = @_;
@@ -204,6 +205,25 @@ sub save_project
 =head1 REQUESTS & BUGS
 
 Roman V. Nikolaev <rshadow@rambler.ru>
+
+=head1 AUTHORS
+
+Copyright (C) 2008 Nikolaev Roman <rshadow@rambler.ru>
+
+=head1 LICENSE
+
+This program is free software: you can redistribute  it  and/or  modify  it
+under the terms of the GNU General Public License as published by the  Free
+Software Foundation, either version 3 of the License, or (at  your  option)
+any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even  the  implied  warranty  of  MERCHANTABILITY  or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public  License  for
+more details.
+
+You should have received a copy of the GNU  General  Public  License  along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 =cut
 

@@ -34,9 +34,23 @@ my @quie;
 
 =cut
 
-=head2 log
+=head2 add_message %opts
 
-Add message to collector
+Add message %opts to collector.
+
+Message consist from
+
+=over
+
+=item message
+
+Message text.
+
+=item level
+
+Message level: info, error.
+
+=back
 
 =cut
 
@@ -82,16 +96,16 @@ Send collected messages on email
 
 sub send_messages
 {
-    # Пропустим если сообщений нет
+    # Skip if no messages
     return 0 unless has_messages;
-    # Пропустим если не задан почтовый адрес
+    # Skip if level = none
     return 0 if grep {$_ eq 'none'} @{ config->get('EmailLevel') };
-    # Пропустим если не задан почтовый адрес
+    # Skip if no destination address
     return 0 unless config->get('Email');
 
     my @messages = get_messages;
     @messages = grep {$_->{level} ~~ @{ config->get('EmailLevel') }} @messages;
-    # Преобразуем данные сообщения в текст для письма
+    # Style messages for mail
     @messages = map {
         my $message = $_->{message};
         $message .= "\n";
@@ -100,7 +114,7 @@ sub send_messages
 
     } @messages;
 
-    # Отправим в рассылку
+    # Send mail
     {
         my $msg = new MIME::Lite(
             From        =>  sprintf( 'TWatch <twatch@%s>', hostname),
@@ -121,6 +135,25 @@ sub send_messages
 =head1 REQUESTS & BUGS
 
 Roman V. Nikolaev <rshadow@rambler.ru>
+
+=head1 AUTHORS
+
+Copyright (C) 2008 Nikolaev Roman <rshadow@rambler.ru>
+
+=head1 LICENSE
+
+This program is free software: you can redistribute  it  and/or  modify  it
+under the terms of the GNU General Public License as published by the  Free
+Software Foundation, either version 3 of the License, or (at  your  option)
+any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even  the  implied  warranty  of  MERCHANTABILITY  or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public  License  for
+more details.
+
+You should have received a copy of the GNU  General  Public  License  along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 =cut
 

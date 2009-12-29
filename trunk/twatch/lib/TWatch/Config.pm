@@ -1,8 +1,8 @@
 package TWatch::Config;
 
-=head1 TWatch::Config
+=head1 NAME
 
-Модуль загрузки конфигурации
+TWatch::Config - Load project configuretion
 
 =cut
 
@@ -28,9 +28,14 @@ use constant TWATCH_SYSTEM_CONFIG_PATH  => '/etc/twatch/twatch.conf';
 use constant TWATCH_CONFIG_PATH         => '~/.twatch/twatch.conf';
 ###############################################################################
 
+=head1 CONSTRUCTOR
+
+=cut
+
 =head2 config
 
-Кеширование работы с конфигурацией
+Load and cache configuratuon.
+Use this funtction for access configuration params.
 
 =cut
 
@@ -42,13 +47,13 @@ sub config
     $config = TWatch::Config->new;
     return unless $config;
 
-    # Загрузим конфиг
+    # Load config
     $config->load;
 
-    # Проверка конфига
+    # Check configuration
 #    $config->check;
 
-    # Создание папок
+    # Create dirs (if not exists)
     $config->create_dir;
 
     return $config;
@@ -56,7 +61,7 @@ sub config
 
 =head2 new
 
-Конфигурация
+Load and return configuration object
 
 =cut
 
@@ -75,9 +80,9 @@ sub new
     return $self;
 }
 
-################################################################################
-# Функции работы с конфигурацией
-################################################################################
+=head1 METHODS
+
+=cut
 
 =head2 load
 
@@ -89,25 +94,24 @@ sub load
 {
     my ($self) = @_;
 
-    # Флаг удачной загрузки конфига
+    # Flag successful loaded
     my $loaded = 'no';
 
-    # Загрузка конфигов: сначала дефолтового, затем поверх него польз-го
+    # Loading: first default config, next over users config
     for my $config ( @{$self->{dir}{config}} )
     {
-        # Удалим home
-        $config =~ s/^~/$ENV{HOME}/;
+        # Get abcoulete path
+        ($config) = glob $config;
 
-        # Пропустим если конфига нет
+        # Next if file not exists
         next unless -f $config;
 
-        # Откроем файл конфига. Если не получиться поругаемся и перейдем к
-        # другому файлу конфигурации
+        # Open config file
         open my $file, '<', $config
             or warn sprintf('Can`t read config file %s : %s', $config, $!);
         next unless $file;
 
-        # Прочитаем файл и распарсим данные. Данные от пользователя приоритетны
+        # Read and parse file. Next hash write over previus configuration hash
         %{ $self->{param} } = (
             %{ $self->{param} },
             (
@@ -117,27 +121,27 @@ sub load
             )
         );
 
-        # Закроем файл и пометим что загрузка была удачной
+        # Close file and mark successful loaded
         close $file;
         $loaded = 'yes';
     }
 
-    # Выйдем если не удалось загрузить ниодного конфига
+    # Exit if no one config exists
     die 'Config file not exists' unless $loaded eq 'yes';
 
-    # Сохраним оригинал т.к. дальше он может преобразововаться
+    # Save original because it can be edit by user (twatch-gtk)
     %{ $self->{orig} } = %{ $self->{param} };
 
-    # Преобразуем в массив уровней
+    # Transform some parameters for comfort usage
     $self->{param}{EmailLevel} = [ split ',', $self->{param}{EmailLevel} ];
     s/^\s*//, s/\s*$// for @{ $self->{param}{EmailLevel} };
 
     return 1;
 }
 
-=head2 get
+=head2 get $name
 
-Функция получения данных конфигурационного файла
+Get parameter by $name.
 
 =cut
 
@@ -147,9 +151,9 @@ sub get
     return $self->{param}{$name};
 }
 
-=head2 get_orig
+=head2 get_orig $name
 
-Функция получения оригинальных данных конфигурационного файла
+Get original (as in config file) parameter by $name.
 
 =cut
 
@@ -159,9 +163,9 @@ sub get_orig
     return $self->{orig}{$name};
 }
 
-=head2 set
+=head2 set $name, $value
 
-Функция установки данных конфигурации
+Set new $value for parameter by $name.
 
 =cut
 
@@ -173,7 +177,7 @@ sub set
 
 =head2 noproxy
 
-Флаг "Не использовать прокси"
+Get "noproxy" flag
 
 =cut
 
@@ -184,9 +188,10 @@ sub is_noproxy
     return 0;
 }
 
-=head2 notify
+=head2 notify $message, $wait
 
-Вывод сообщений в консоль
+Send $message to standart output. The $wait indicate print or not \n in the end
+of message.
 
 =cut
 
@@ -194,24 +199,24 @@ sub notify
 {
     my ($message, $wait) = @_;
 
-    # Пропустим вывод есл мообщения нет или вывод выключен
+    # Skip unless message or output disabled.
     return unless config->verbose;
     return unless $message;
 
-    # Форматируем в зависимости от модуля
+    # Format message by module
     $message = ((' ') x 2) . $message if caller eq 'TWatch';
     $message = ((' ') x 4) . $message if caller eq 'TWatch::Project';
     $message = ((' ') x 6) . $message if caller eq 'TWatch::Watch';
 
-    # Если флаг ожидания не стоит то выведим с концом строки
+    # Unless waiting flag print \n
     $message .= "\n" unless $wait;
 
     print $message;
 }
 
-=head2 verbose
+=head2 verbose $param
 
-Получение/установка паремтра вывода сообщений
+Set/Get verbose flag.
 
 =cut
 
@@ -222,13 +227,11 @@ sub verbose
     return $self->{verbose};
 }
 
-################################################################################
-# Другие функции
-################################################################################
+=head1 MORE FUNCTIONS
 
 =head2 create_dir
 
-Создает директории в пользовательской папке
+Create directories in user home path if it is not exists.
 
 =cut
 
@@ -236,30 +239,35 @@ sub create_dir
 {
     my ($self) = @_;
 
-    # Создадим директории для файлов
+    # Create list of directories
     for my $param ('Save', 'Project', 'Complete')
     {
-        # Получим путь к директории
+        # Get path
         my $path = $self->get($param);
-        # Удалим home
-        $path =~ s/^~/$ENV{HOME}/;
-        # Установим абсолютный путь во время выполнения
+        # Get absoulete path
+        ($path) = glob $path;
+        # Set new absoulete path in configuration
         $self->set($param, $path);
-        # Получим директорию (в Save и так храниться директория)
+
+        # Get dirs from params (It can consist mask and etc.)
+        # (Save is a directory)
         my $dir = $path;
         $dir = dirname( $dir ) unless $param eq 'Save';
-        # Пропустим если директория уже создана
+        # Next if directory exists
         next if -d $dir;
-        # Создадим директорию если ее еще нет
+        # Create one
         eval{ make_path $dir; };
         die sprintf("Can`t create store directory: %s, %s\n", $dir, $@) if $@;
     }
 }
 
+=head1 DEBUG METHODS
+
+=cut
 
 =head2 DieDumper
 
-Функция для отладки
+Print all params and die
 
 =cut
 
@@ -280,6 +288,8 @@ sub DieDumper
 
 =head2 Dumper
 
+Get all params description
+
 =cut
 
 sub Dumper
@@ -298,6 +308,25 @@ sub Dumper
 =head1 REQUESTS & BUGS
 
 Roman V. Nikolaev <rshadow@rambler.ru>
+
+=head1 AUTHORS
+
+Copyright (C) 2008 Nikolaev Roman <rshadow@rambler.ru>
+
+=head1 LICENSE
+
+This program is free software: you can redistribute  it  and/or  modify  it
+under the terms of the GNU General Public License as published by the  Free
+Software Foundation, either version 3 of the License, or (at  your  option)
+any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even  the  implied  warranty  of  MERCHANTABILITY  or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public  License  for
+more details.
+
+You should have received a copy of the GNU  General  Public  License  along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 =cut
 

@@ -1,8 +1,8 @@
 package TWatch::Plugin;
 
-=head1 TWatch::Plugin
+=head1 NAME
 
-Модуль загрузки и исполнения плагинов
+TWatch::Plugin - Load and execute plugins
 
 =cut
 
@@ -20,6 +20,10 @@ our @EXPORT=qw(config DieDumper Dumper);
 
 use TWatch::Config;
 
+=head1 CONSTRUCTOR
+
+=cut
+
 =head2 new
 
 =cut
@@ -34,7 +38,7 @@ sub new
 
 =head2 post
 
-Функция выполнения плагинов постобработки
+Execute post plugins.
 
 =cut
 
@@ -45,19 +49,19 @@ sub post
     my @modules = glob(config->get('Plugin'));
     for my $module ( @modules )
     {
-        # Получим имя модуля плагина
+        # Get plugin module name
         s/^.*\/(.*?)\.pm$/$1/, s/^(.*)$/TWatch::Plugin::$1/ for $module;
 
-        # Загрузим плагин
+        # Load plugin
         eval "require $module";
         printf("Can`t load plugin \"%s\": %s\n", $module, $@), next if $@;
 
-        # Создадим объект плагина. Передадим ему текущий конфиг.
+        # Crape plugin object and set current cinfig
         my $plugin = eval{ $module->new( config ) };
         printf("Can`t create plugin \"%s\": %s\n", $module, $@), next
             if $@ or !$plugin;
 
-        # Выполним плагин. Передадим ему объект закачек.
+        # Execute plugin with TWatch object
         eval{ $plugin->run( $twatch ) };
         printf("Can`t run plugin \"%s\": %s\n", $module, $@), next if $@;
     }
@@ -66,6 +70,25 @@ sub post
 =head1 REQUESTS & BUGS
 
 Roman V. Nikolaev <rshadow@rambler.ru>
+
+=head1 AUTHORS
+
+Copyright (C) 2008 Nikolaev Roman <rshadow@rambler.ru>
+
+=head1 LICENSE
+
+This program is free software: you can redistribute  it  and/or  modify  it
+under the terms of the GNU General Public License as published by the  Free
+Software Foundation, either version 3 of the License, or (at  your  option)
+any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even  the  implied  warranty  of  MERCHANTABILITY  or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public  License  for
+more details.
+
+You should have received a copy of the GNU  General  Public  License  along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 =cut
 
