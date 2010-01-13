@@ -13,61 +13,92 @@
 VERSION = 0.0.2-1
 SVN = https://twatch.svn.sourceforge.net/svnroot/twatch/trunk
 
-# Make new release from svn (deb package and files for mainteiner)
+# Make new release from local path (deb package and files for mainteiner)
+.PHONY: all
 all:
-	@echo "*** Full build ***"
-	make clean
-	make get && make doc && make orig && make build
+	@echo "*** Full build from local ***"
+	@make clean
+	@make get && make doc && make orig && make build
 
-# Get source from svn (prepare to make deb package)
+# Get source from local path (prepare to make deb package)
+.PHONY: get
 get:
-	@echo "*** Get last from svn ***"
-	cd release/ && svn export $(SVN)/twatch/ twatch-$(VERSION)
+	@echo "*** Get last from local ***"
+	@test -d release || mkdir release
+	@cd release/ && svn export ../ twatch-$(VERSION)
+
+# Make new release from svn (deb package and files for mainteiner)
+.PHONY: all_svn
+all_svn:
+	@echo "*** Full build form SVN ***"
+	@make clean
+	@make get_svn && make doc && make orig && make build
+	
+# Get source from svn (prepare to make deb package)
+.PHONY: get_svn
+get_svn:
+	@echo "*** Get last from SVN ***"
+	@test -d release || mkdir release
+	@cd release/ && svn export $(SVN)/twatch/ twatch-$(VERSION)
 
 # Creatre doc in cource directory (prepare to make deb package)
+.PHONY: doc
 doc:
 	@echo "*** Create man pages ***"
-	cd release/ && pod2man twatch-$(VERSION)/twatch > twatch-$(VERSION)/man/twatch.man
+	@cd release/ && pod2man twatch-$(VERSION)/twatch > twatch-$(VERSION)/man/twatch.man
 
 # Create orig archive
+.PHONY: orig
 orig:
 	@echo "*** Create sorce archive ***"
-	cd release/ && tar -czvf twatch_$(VERSION).orig.tar.gz twatch-$(VERSION) \
+	@cd release/ && tar -czvf twatch_$(VERSION).orig.tar.gz twatch-$(VERSION) \
 		--exclude twatch-$(VERSION)/debian 
 
 # Create local deb package
+.PHONY: build
 build:
 	@echo "*** Create deb package ***"
-	cd release/ && chmod -R a+x twatch-$(VERSION)/debian/rules
-	cd release/ && cd twatch-$(VERSION) && dpkg-buildpackage
+	@cd release/ && chmod -R a+x twatch-$(VERSION)/debian/rules
+	@cd release/ && cd twatch-$(VERSION) && dpkg-buildpackage
 
 # Clear all files in release/ directory
+.PHONY: clean
 clean:
 	@echo "*** Clean all ***"
 	@echo "Pause 5 sec. You can stop it by press Ctrl+C..."
-	sleep 5
-	cd release/ && rm -fr ./*twatch*
+	@sleep 5
+	@cd release/ && rm -fr ./*twatch*
 
 # Install use Debian package system
+.PHONY: install
 install:
 	@echo "*** Install packages ***"
-	cd release/ && dpkg --install ./*twatch*.deb
+	@cd release/ && dpkg --install ./*twatch*.deb
 
 # Uninstall use Debian package system
+.PHONY: uninstall
 uninstall:
 	@echo "*** Uninstall packages ***"
-	cd release/ && dpkg --purge twatch libtwatch-perl
+	@cd release/ && dpkg --purge twatch libtwatch-perl
 
-# Test source code by scripts in t/ directory	
+# Test source code by scripts in t/ directory
+.PHONY: tests	
 tests:
-	set -e; find t/ -name '*.t'|while read test; do perl $$test; done
+	@set -e; find t/ -name '*.t'|while read test; do perl $$test; done
 
-# Send new release to mainteiner via email dimka@uvw.ru
+# Send new release to mainteiner via email
+.PHONY: mail
 mail:
-	mutt -s "New TWatch version $(VERSION)" \
-		-a release/twatch_$(VERSION).diff.gz \
+	@echo "New files attached" | \
+	@mutt -x -s "New TWatch version $(VERSION)" \
 		-a release/twatch_$(VERSION).dsc \
-		-a release/twatch_$(VERSION).orig.tar.gz \
-		rshadow@rambler.ru
+		   release/twatch_$(VERSION).tar.gz \
+		   release/twatch_$(VERSION).orig.tar.gz \
+		-- dimka@uvw.ru
 
-.PHONY: all get doc orig build clean install uninstall tests mail
+# Get source from svn. After usage delete this file because in created twatch
+# directory has one and newest.
+.PHONY: src
+src:
+	@echo "*** Get source from svn ***"	
+	@svn checkout $(SVN)/twatch/ ./twatch
