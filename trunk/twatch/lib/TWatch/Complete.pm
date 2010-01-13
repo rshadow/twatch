@@ -172,7 +172,7 @@ sub save
         KeepRoot    => 1,
         RootName    => 'project',
         NoAttr      => 1,
-        NoEscape    => 1,
+#        NoEscape    => 1,
         NoSort      => 1,
         ForceArray  => ['watch', 'result'],
         XMLDecl     => 1,

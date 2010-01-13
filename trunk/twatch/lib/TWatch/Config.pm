@@ -245,7 +245,7 @@ sub create_dir
         # Get path
         my $path = $self->get($param);
         # Get absoulete path
-        ($path) = glob $path;
+        $path =~ s/^~/$ENV{HOME}/;# glob $path;
         # Set new absoulete path in configuration
         $self->set($param, $path);
 
