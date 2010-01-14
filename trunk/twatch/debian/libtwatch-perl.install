@@ -1,6 +1,4 @@
 # Config
 config/twatch.conf /etc/twatch/
 # Library
-lib/TWatch.pm /usr/share/perl5/
-lib/TWatch/Config.pm /usr/share/perl5/TWatch/
-lib/TWatch/Plugin.pm /usr/share/perl5/TWatch/
+lib/* /usr/share/perl5/
