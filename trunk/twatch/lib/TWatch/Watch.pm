@@ -121,6 +121,18 @@ sub reg
     return $self->{reg};
 }
 
+=head2 add_reg
+
+Add new regexp param to user defined params. Used for add default params.
+
+=cut
+
+sub add_reg
+{
+    my ($self, $name, $value) = @_;
+    return $self->{reg}{$name} = $value;
+}
+
 =head2 complete
 
 Return hash of completed downloads
@@ -451,6 +463,13 @@ sub parse
 {
     my ($self, $content) = @_;
 
+    # Add torrent and link if not specified
+    $self->add_reg('torrent', q{<a[^>]*href=["']?[^>'"]*/([^>'"]*\.torrent)["']?})
+        unless grep {$_ eq 'torrent'} keys %{ $self->reg };
+    $self->add_reg('link', q{<a[^>]*href=["']?([^>'"]*\.torrent)["']?})
+        unless grep {$_ eq 'link'} keys %{ $self->reg };
+
+
     # Use users regexp to get fields
     notify('Get data by user regexp');
     my %result;
@@ -459,14 +478,18 @@ sub parse
         # Get regexp and clean it
         my $reg = $self->reg->{$_};
         s/^\s+//, s/\s+$// for $reg;
-        # Use regexp on content
-        my @value = $content =~ m/$reg/sgi;
+        # Use regexp on content. If tree set only first value
+        my @value = ($self->type eq 'tree')
+            ? $content =~ m/$reg/si
+            : $content =~ m/$reg/sgi;
         # All digits to decimal.
         # (Many sites start write digits from zero)
         (m/^\d+$/)  ?$_ = int($_)   :next   for @value;
         # Add values to result
         push @{ $result{$_} }, @value;
     }
+
+    DieDumper \%result;
 
     # Skip if no fields found
     notify(sprintf 'Links not found. Wrong regexp?: %s', $self->reg->{link}),

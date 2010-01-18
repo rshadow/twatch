@@ -19,8 +19,6 @@
             <url>http://www.lostfilm.tv/browse.php?cat=96</url>
             <order>1</order>
             <reg>
-                <torrent><![CDATA[<a href=".*?/(Star\.Wars\.The\.Clone\.Wars.*?\.torrent)"[^>]*?class="a_download"]]></torrent>
-                <link><![CDATA[<a href="([^<]*?Star\.Wars\.The\.Clone\.Wars.*?)"[^>]*?class="a_download"]]></link>
                 <title><![CDATA[<td class="t_episode_title".*?>(.*?)\s*<]]></title>
                 <season><![CDATA[<a href=".*?Star\.Wars\.The\.Clone\.Wars\.s?(\d*?)\D.*?" class="a_download"]]></season>
                 <series><![CDATA[<a href=".*?Star\.Wars\.The\.Clone\.Wars\.s?\d*?\D(\d*?)\D.*?" class="a_download"]]></series>
@@ -42,8 +40,6 @@
             <url>http://www.lostfilm.tv/browse.php?cat=51</url>
             <order>0</order>
             <reg>
-                <torrent><![CDATA[<a href=".*?/(House\.M\.D.*?\.torrent)"[^>]*?class="a_download"]]></torrent>
-                <link><![CDATA[<a href="([^<]*?House\.M\.D.*?)"[^>]*?class="a_download"]]></link>
                 <title><![CDATA[<td class="t_episode_title".*?>(.*?)\s*<]]></title>
                 <season><![CDATA[<a href=".*?House\.M\.D\.s?(\d*?)\D.*?" class="a_download"]]></season>
                 <series><![CDATA[<a href=".*?House\.M\.D\.s?\d*?\D(\d*?)\D.*?" class="a_download"]]></series>
@@ -65,8 +61,6 @@
             <url>http://www.lostfilm.tv/browse.php?cat=109</url>
             <order>1</order>
             <reg>
-                <torrent><![CDATA[<a href=".*?/(Stargate\.Universe.*?\.torrent)"[^>]*?class="a_download"]]></torrent>
-                <link><![CDATA[<a href="([^<]*?Stargate\.Universe.*?)"[^>]*?class="a_download"]]></link>
                 <title><![CDATA[<td class="t_episode_title".*?>(.*?)\s*<]]></title>
                 <season><![CDATA[<a href=".*?Stargate\.Universe\.s?(\d*?)\D.*?" class="a_download"]]></season>
                 <series><![CDATA[<a href=".*?Stargate\.Universe\.s?\d*?\D(\d*?)\D.*?" class="a_download"]]></series>
@@ -93,8 +87,6 @@
             <url>http://www.lostfilm.tv/browse.php?cat=46</url>
             <order>1</order>
             <reg>
-                <torrent><![CDATA[<a href=".*?/(The\.IT\.Crowd.*?\.torrent)"[^>]*?class="a_download"]]></torrent>
-                <link><![CDATA[<a href="([^<]*?The\.IT\.Crowd.*?)"[^>]*?class="a_download"]]></link>
                 <title><![CDATA[<td class="t_episode_title".*?>(.*?)\s*<]]></title>
                 <season><![CDATA[<a href=".*?The\.IT\.Crowd\.s?(\d*?)\D.*?" class="a_download"]]></season>
                 <series><![CDATA[<a href=".*?The\.IT\.Crowd\.s?\d*?\D(\d*?)\D.*?" class="a_download"]]></series>
@@ -116,8 +108,6 @@
             <url>http://www.lostfilm.tv/browse.php?cat=37</url>
             <order>1</order>
             <reg>
-                <torrent><![CDATA[<a href=".*?/(Eureka.*?\.torrent)"[^>]*?class="a_download"]]></torrent>
-                <link><![CDATA[<a href="([^<]*?Eureka.*?)"[^>]*?class="a_download"]]></link>
                 <title><![CDATA[<td class="t_episode_title".*?>(.*?)\s*<]]></title>
                 <season><![CDATA[<a href=".*?Eureka\.s?(\d*?)\D.*?" class="a_download"]]></season>
                 <series><![CDATA[<a href=".*?Eureka\.s?\d*?\D(\d*?)\D.*?" class="a_download"]]></series>

@@ -2,7 +2,7 @@
 <project>
     <name>Kinozal</name>
     <url>http://kinozal.tv</url>
-    <order>11</order>
+    <order>9</order>
     <authtorization>
         <login>
             <name>username</name>
@@ -20,13 +20,11 @@
             <urlreg><![CDATA[(\/details\.php\?id=\d+)]]></urlreg>
             <order>0</order>
             <reg>
-                <torrent><![CDATA[<a\s+.*?title="Скачать:.*?\s+.*?href=".*?/(Naruto.*?\.torrent)".*?>]]></torrent>
-                <link><![CDATA[<a\s+.*?title="Скачать:.*?\s+.*?href="(download.php/\d+?/Naruto.*?\.torrent)".*?>]]></link>
                 <title><![CDATA[>\s*Название:\s*<.*?>\s*(.*?)\s*<br]]></title>
-                <season><![CDATA[]]></season>
+                <season><![CDATA[(2)]]></season>
                 <series><![CDATA[\(\s*(\d+)\s*серия\s*\)]]></series>
                 <info><![CDATA[<td class="templ">\s*(<.*?>Качество.*?)</td>]]></info>
-                <rating><![CDATA[]]></rating>
+                <rating><![CDATA[общая\s+оценка:\s*<b>(\d+(?:.\d+)?)<\/b>]]></rating>
                 <quality><![CDATA[>\s*Качество:\s*<.*?>\s*(.*?)\s*<br]]></quality>
                 <translate><![CDATA[>\s*Перевод:\s*<.*?>\s*(.*?)\s*<br]]></translate>
             </reg>

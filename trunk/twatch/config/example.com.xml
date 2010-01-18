@@ -69,7 +69,7 @@ XML! If parameter value cosist ">" or "<" warp them as in example:
             <!--
                List of user make parameters with regular expressions for
                extraction them from html page.
-               Required:
+               Optional (if not specified try find link on *.torrent):
                     torrent     - torrent file name
                     link        - link to download this torrent file
                Reserved:
