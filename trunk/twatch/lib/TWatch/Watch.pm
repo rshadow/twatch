@@ -489,8 +489,6 @@ sub parse
         push @{ $result{$_} }, @value;
     }
 
-    DieDumper \%result;
-
     # Skip if no fields found
     notify(sprintf 'Links not found. Wrong regexp?: %s', $self->reg->{link}),
     return
