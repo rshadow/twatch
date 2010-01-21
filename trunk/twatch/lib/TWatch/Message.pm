@@ -28,7 +28,7 @@ use Encode qw(decode encode is_utf8);
 use TWatch::Config;
 
 # Message collector
-my @quie;
+our @quie;
 
 =head1 MESSAGE METHODS
 
@@ -99,7 +99,7 @@ sub send_messages
     # Skip if no messages
     return 0 unless has_messages;
     # Skip if level = none
-    return 0 if grep {$_ eq 'none'} @{ config->get('EmailLevel') };
+    return 0 if 'none' ~~ @{ config->get('EmailLevel') };
     # Skip if no destination address
     return 0 unless config->get('Email');
 
@@ -107,11 +107,12 @@ sub send_messages
     @messages = grep {$_->{level} ~~ @{ config->get('EmailLevel') }} @messages;
     # Style messages for mail
     @messages = map {
-        my $message = $_->{message};
-        $message .= "\n";
-        $message .= sprintf("%s: %s\n", $_, ) for keys %{ $_->{data} };
-        join( "\n", values %{$message->{data}} );
-
+        my $message = $_;
+        my $str = $message->{message};
+        $str .= "\n";
+        $str .= sprintf("%-18s %s\n", $_.':', $message->{data}{$_})
+            for keys %{ $message->{data} };
+        $str;
     } @messages;
 
     # Send mail
@@ -119,7 +120,7 @@ sub send_messages
         my $msg = new MIME::Lite(
             From        =>  sprintf( 'TWatch <twatch@%s>', hostname),
             To          =>  config->get('Email'),
-            Subject     =>  sprintf( 'TWatch: %d messages', @messages),
+            Subject     =>  sprintf( 'TWatch: %d messages', scalar @messages),
             Type        =>  "text/plain; charset=utf-8",
             Data        =>
                 encode( utf8 => join( (('#') x 50 ."\n"), @messages) ),
@@ -127,8 +128,17 @@ sub send_messages
         );
 
         eval { $msg->send; };
-        warn sprintf 'Can`t send email to %s : $s', config->get('Email'), $@
-            if $@;
+        if( $@ )
+        {
+            warn sprintf 'Can`t send email to %s : $s', config->get('Email'), $@;
+        }
+        else
+        {
+            notify( sprintf 'Sended %d messages in mail', scalar @messages );
+        }
+
+        # Clean memory
+        undef @messages, $msg;
     }
 }
 

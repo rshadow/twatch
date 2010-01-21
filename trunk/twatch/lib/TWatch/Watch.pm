@@ -614,7 +614,7 @@ sub download
         {{
             # Set path to store
             my $save = config->get('Save').'/'.$result->{torrent};
-            # Ckip already dowloaded
+            # Skip already dowloaded
             last if -f $save or -s _;
             # Download
             $browser->get( $result->{link}, ':content_file' => $save);
@@ -632,13 +632,22 @@ sub download
             # Remove completed result
             $self->delete_result( $key );
 
-            notify( sprintf 'Download complete: %s', $result->{torrent} );
+            if( -f _ or -s _ )
+            {
+                notify( sprintf 'Already exists. Skip download: %s',
+                    $result->{torrent} );
+            }
+            else
+            {
+                notify( sprintf 'Download complete: %s', $result->{torrent} );
 
-            # Add message about this completed result
-            add_message(
-                level   => 'info',
-                message => sprintf('Download complete: %s', $result->{torrent}),
-                data    => $result);
+                # Add message about this completed result
+                add_message(
+                    level   => 'info',
+                    message => sprintf('Download complete: %s',
+                                       $result->{torrent}),
+                    data    => $result);
+            }
         }
         # If download fail add message about it
         else
