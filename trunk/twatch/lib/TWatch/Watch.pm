@@ -436,7 +436,7 @@ sub run
         $_->{page} = $absoulete for values %{ $self->result };
 
         # Download torrents
-        notify('NEW TORRENTS AVIABLE!');
+        notify('NEW TORRENTS AVIABLE!', 'good');
         $self->download( $browser );
 
         notify('Has not dowloaded torrents') if $self->result_count;
@@ -490,7 +490,9 @@ sub parse
     }
 
     # Skip if no fields found
-    notify(sprintf 'Links not found. Wrong regexp?: %s', $self->reg->{link}),
+    notify(
+        sprintf('Links not found. Wrong regexp?: %s', $self->reg->{link}),
+        'warn'),
     return
         unless @{ $result{link} };
 

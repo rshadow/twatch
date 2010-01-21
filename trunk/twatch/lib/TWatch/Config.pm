@@ -28,6 +28,12 @@ use constant TWATCH_SYSTEM_CONFIG_PATH  => '/etc/twatch/twatch.conf';
 use constant TWATCH_CONFIG_PATH         => '~/.twatch/twatch.conf';
 ###############################################################################
 
+# Colors for highlight console output
+use constant COLOR_RED      => "\e[1;31m";
+use constant COLOR_GREEN    => "\e[1;32m";
+use constant COLOR_YELLOW   => "\e[1;33m";
+use constant COLOR_CLEAR    => "\e[0m";
+
 =head1 CONSTRUCTOR
 
 =cut
@@ -79,6 +85,8 @@ sub new
     my $self = bless \%config ,$class;
     return $self;
 }
+
+################################################################################
 
 =head1 METHODS
 
@@ -188,16 +196,23 @@ sub is_noproxy
     return 0;
 }
 
-=head2 notify $message, $wait
+################################################################################
 
-Send $message to standart output. The $wait indicate print or not \n in the end
-of message.
+=head1 NOTIFICATIONS METHODS
+
+=cut
+
+=head2 notify $message, $level,  $wait
+
+Send $message to standart output.
+Param $level ( good|warn|bad ) highlight the message.
+The $wait indicate print or not \n in the end of message.
 
 =cut
 
 sub notify
 {
-    my ($message, $wait) = @_;
+    my ($message, $level, $wait) = @_;
 
     # Skip unless message or output disabled.
     return unless config->verbose;
@@ -210,6 +225,15 @@ sub notify
 
     # Unless waiting flag print \n
     $message .= "\n" unless $wait;
+
+    # Highlight message
+    $level = lc $level || '';
+    if( $level eq 'good' )
+        { $message = COLOR_GREEN    . $message . COLOR_CLEAR  }
+    elsif( $level eq 'warn' )
+        { $message = COLOR_YELLOW   . $message . COLOR_CLEAR  }
+    elsif( $level eq 'bad' )
+        { $message = COLOR_RED      . $message . COLOR_CLEAR  }
 
     print $message;
 }
@@ -227,7 +251,11 @@ sub verbose
     return $self->{verbose};
 }
 
+################################################################################
+
 =head1 MORE FUNCTIONS
+
+=cut
 
 =head2 create_dir
 
@@ -260,6 +288,8 @@ sub create_dir
         die sprintf("Can`t create store directory: %s, %s\n", $dir, $@) if $@;
     }
 }
+
+################################################################################
 
 =head1 DEBUG METHODS
 

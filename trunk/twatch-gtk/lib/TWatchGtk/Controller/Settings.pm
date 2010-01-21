@@ -20,7 +20,7 @@ sub init
 
     # Строковые параметры
     $self->{builder}->get_object( $_ )->set_text( config->daemon->get_orig( $_ ) )
-        for (qw(Project Save Complete EMail));
+        for (qw(Project Save Complete Email));
 
     # Уровень отсылки уведомлений
     for( @{ config->daemon->get('EmailLevel') } )
@@ -63,7 +63,7 @@ sub on_button_ok_pressed
     }
 
     # Строковые параметры
-    for (qw(EMail))
+    for (qw(Email))
     {
         my $value = $self->{builder}->get_object( $_ )->get_text();
 

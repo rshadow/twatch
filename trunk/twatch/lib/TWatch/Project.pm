@@ -365,12 +365,12 @@ sub run
 
     unless( $self->watches_count )
     {
-        notify(sprintf 'No watches. Skip project.');
+        notify('No watches. Skip project.');
         return;
     }
 
     # Get brauser object already authtorized on tracker
-    notify(sprintf 'Authtorization...');
+    notify('Authtorization...');
     my $browser = $self->get_auth_browser;
 
     # Skip unless brouser or authtorized
