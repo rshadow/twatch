@@ -110,7 +110,7 @@ sub send_messages
         my $message = $_;
         my $str = $message->{message};
         $str .= "\n";
-        $str .= sprintf("%-18s %s\n", $_.':', $message->{data}{$_})
+        $str .= sprintf("%-18s %s\n", $_.':', $message->{data}{$_} || '')
             for keys %{ $message->{data} };
         $str;
     } @messages;
