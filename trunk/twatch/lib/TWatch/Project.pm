@@ -323,8 +323,14 @@ sub load
     $self->update( $complete->{update} );
 
     # Add completed to tasks
-    $_->add_complete( $complete->{watches}{ $_->name }{complete} )
-        for values %{ $self->watches };
+    for( values %{ $self->watches } )
+    {
+        # Skip if no comlete info
+        next if ! $complete->{watches}{ $_->name } or
+                ! $complete->{watches}{ $_->name }{complete};
+        # Add completed
+        $_->add_complete( $complete->{watches}{ $_->name }{complete} );
+    }
 
     return $self;
 }

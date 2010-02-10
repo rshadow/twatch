@@ -233,7 +233,7 @@ Check is $torrent for result.
 sub is_result
 {
     my ($self, $torrent) = @_;
-    return ( exists $self->{result}{ $torrent } ) ?1 :0;
+    return ( $self->{result} and exists $self->{result}{ $torrent } ) ?1 :0;
 }
 
 =head2 delete_result $torrent
