@@ -123,7 +123,7 @@ sub send_messages
             Subject     =>  sprintf( 'TWatch: %d messages', scalar @messages),
             Type        =>  "text/plain; charset=utf-8",
             Data        =>
-                encode( utf8 => join( (('#') x 50 ."\n"), @messages) ),
+                encode( utf8 => join( ("\n".('#') x 80 ."\n\n"), @messages) ),
             'X-Service' => 'twatch',
         );
 
