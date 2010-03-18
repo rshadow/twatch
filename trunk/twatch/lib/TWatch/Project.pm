@@ -138,7 +138,8 @@ sub auth
 {
     my ($self, %param) = @_;
     $self->{authtorization} = \%param if %param;
-    return undef unless %{ $self->{authtorization} };
+    return undef
+        unless defined $self->{authtorization} and %{ $self->{authtorization} };
     return $self->{authtorization};
 }
 
