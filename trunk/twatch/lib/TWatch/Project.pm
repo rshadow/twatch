@@ -139,7 +139,7 @@ sub auth
     my ($self, %param) = @_;
     $self->{authtorization} = \%param if %param;
     return undef
-        unless defined $self->{authtorization} and %{ $self->{authtorization} };
+        unless $self->{authtorization} and %{ $self->{authtorization} };
     return $self->{authtorization};
 }
 
@@ -434,13 +434,17 @@ sub get_auth_browser
         noproxy     => config->is_noproxy,
     );
 
-    # Many sites have protection from outside coming. So go to main page first.
-    eval{ $browser->get( $self->url ); };
-
-    if( !$browser->success or ($@ and $@ =~ m/Can't connect/) )
+    if( $self->url )
     {
-        warn sprintf 'Can`t connect to link: %s.', $self->url;
-        return undef;
+        # Many sites have protection from outside coming.
+        # So go to main page first.
+        eval{ $browser->get( $self->url ); };
+
+        if( !$browser->success or ($@ and $@ =~ m/Can't connect/) )
+        {
+            warn sprintf 'Can`t connect to link: %s.', $self->url;
+            return undef;
+        }
     }
 
     # If authtorization form not on main page (and set in config) then go to
@@ -457,35 +461,40 @@ sub get_auth_browser
         }
     }
 
-    # Find authtorization form (it`s set to default form)
-    my $form = $browser->form_with_fields(
-        $self->auth_login_name,
-        $self->auth_password_name
-    );
-    # Skip if can`t find authtorization form
-    unless( $form )
+    # If authtorization exists params then do authtorization
+    if($self->auth_login_name  and $self->auth_password_name and
+       $self->auth_login_value and $self->auth_password_value)
     {
-        warn sprintf 'Can`t find authtorization form in "%s" project.',
-            $self->name;
-        return undef;
-    }
+        # Find authtorization form (it`s set to default form)
+        my $form = $browser->form_with_fields(
+            $self->auth_login_name,
+            $self->auth_password_name
+        );
+        # Skip if can`t find authtorization form
+        unless( $form )
+        {
+            warn sprintf 'Can`t find authtorization form in "%s" project.',
+                $self->name;
+            return undef;
+        }
 
-    # Set authtorization params in form
-    $browser->field( $self->auth_login_name, $self->auth_login_value )
-        if $self->auth_login_name and $self->auth_login_value;
-    $browser->field( $self->auth_password_name, $self->auth_password_value )
-        if $self->auth_password_name and $self->auth_password_value;
+        # Set authtorization params in form
+        $browser->field( $self->auth_login_name, $self->auth_login_value )
+            if $self->auth_login_name and $self->auth_login_value;
+        $browser->field( $self->auth_password_name, $self->auth_password_value )
+            if $self->auth_password_name and $self->auth_password_value;
 
-    # Authtorization
-    eval{ $browser->click(); };
+        # Authtorization
+        eval{ $browser->click(); };
 
-    # Check if all OK
-    if( !$browser->success or
-        ($@ and $@ =~ m/Can't connect/) or
-        !$browser->is_html() )
-    {
-        warn sprintf 'Can`t authtorize in "%s" project.', $self->name;
-        return undef;
+        # Check if all OK
+        if( !$browser->success or
+            ($@ and $@ =~ m/Can't connect/) or
+            !$browser->is_html() )
+        {
+            warn sprintf 'Can`t authtorize in "%s" project.', $self->name;
+            return undef;
+        }
     }
 
     # Return browser

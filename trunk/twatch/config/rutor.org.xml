@@ -1,0 +1,31 @@
+<?xml version='1.0' standalone='yes'?>
+<project>
+    <name>RuTor</name>
+    <url>http://rutor.org</url>
+    <order>1</order>
+    <watches>
+        <watch>
+            <name>The Big Bang Theory</name>
+            <url>http://rutor.org/search/0/0/000/0/Теория большого взрыва</url>
+            <order>1</order>
+            <reg>
+                <torrent><![CDATA[<a[^>]*?class="downgif"[^>]*?href="(/download/\d+)"]]></torrent>
+                <link><![CDATA[<a[^>]*?class="downgif"[^>]*?href="(/download/\d+)"]]></link>
+                <season><![CDATA[\[(\d+)x\d+\]]]></season>
+                <series><![CDATA[\[\d+x(\d+)\]]]></series>
+            </reg>
+            <filters>
+                <filter>
+                    <name>season</name>
+                    <value>3</value>
+                    <method><![CDATA[>=]]></method>
+                </filter>
+                <filter>
+                    <name>series</name>
+                    <value>17</value>
+                    <method><![CDATA[>=]]></method>
+                </filter>
+            </filters>
+        </watch>
+    </watches>
+</project>
