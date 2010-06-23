@@ -16,7 +16,6 @@ use Safe;
 
 use TWatch::Config;
 use TWatch::Message;
-use TWatch::Result;
 
 use constant DEFAULT_REG_TORRENT =>
     q{<a[^>]*href=["']?[^>'"]*/([^>'"]*\.torrent)["']?};
