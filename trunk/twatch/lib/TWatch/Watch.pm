@@ -366,6 +366,9 @@ sub run
         {
             notify(sprintf 'Get torrent page by tree from: %s.', $url);
 
+            notify(sprintf 'Sleep %d seconds', config->get('TimeoutDownloads'));
+            sleep config->get('TimeoutDownloads');
+
             eval{ $browser->get( $url ); };
             # Check for content
             if( !$browser->success or ($@ and $@ =~ m/Can't connect/) )

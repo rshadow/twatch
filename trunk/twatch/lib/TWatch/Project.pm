@@ -398,6 +398,9 @@ sub run
             or warn sprintf 'Watch aborted!';
 
         notify('Watch complete');
+
+        notify(sprintf 'Sleep %d seconds', config->get('TimeoutWatch'));
+        sleep config->get('TimeoutWatch');
     }
 
     # Set last update time
