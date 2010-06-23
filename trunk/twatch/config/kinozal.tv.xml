@@ -39,6 +39,11 @@
                     <value>/.*голосый.*/i</value>
                     <method>=~</method>
                 </filter>
+                <filter>
+                    <name>title</name>
+                    <value>/OpenDub/i</value>
+                    <method>=~</method>
+                </filter>
             </filters>
         </watch>
         <watch>

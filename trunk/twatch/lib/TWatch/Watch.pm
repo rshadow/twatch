@@ -9,8 +9,6 @@ TWatch::Watch task module to load torrents.
 use strict;
 use warnings;
 use utf8;
-use open qw(:utf8 :std);
-use lib qw(../../lib);
 
 use POSIX (qw(strftime));
 use WWW::Mechanize;
@@ -18,8 +16,12 @@ use Safe;
 
 use TWatch::Config;
 use TWatch::Message;
+use TWatch::Result;
 
-
+use constant DEFAULT_REG_TORRENT =>
+    q{<a[^>]*href=["']?[^>'"]*/([^>'"]*\.torrent)["']?};
+use constant DEFAULT_REG_LINK    =>
+    q{<a[^>]*href=["']?([^>'"]*\.torrent)["']?};
 
 =head1 CONSTRUCTOR
 
@@ -30,6 +32,9 @@ use TWatch::Message;
 sub new
 {
     my ($class, %opts) = @_;
+
+    $opts{complete} = {};
+    $opts{result}   = {};
 
     my $self = bless \%opts ,$class;
 
@@ -43,71 +48,20 @@ sub new
 =cut
 
 
+=head2 param $name, $value
 
-=head2 name $param
-
-If defined $param set task name. Unless return it.
-
-=cut
-
-sub name
-{
-    my ($self, $param) = @_;
-    $self->{name} = $param if defined $param;
-    return $self->{name};
-}
-
-=head2 url $param
-
-If defined $param set task url. Unless return it.
+Get or set new parameter value
 
 =cut
 
-sub url
+sub param
 {
-    my ($self, $param) = @_;
-    $self->{url} = $param if defined $param;
-    return $self->{url};
+    my ($self, $name, $value) = @_;
+
+    $self->{$name} = $value if defined $value;
+    return $self->{$name};
 }
 
-=head2 urlreg $param
-
-If defined $param set task url regular expression. Unless return it.
-
-=cut
-
-sub urlreg
-{
-    my ($self, $param) = @_;
-    $self->{urlreg} = $param if defined $param;
-    return $self->{urlreg};
-}
-
-=head2 order $param
-
-If defined $param set task sort order. Unless return it.
-
-=cut
-
-sub order
-{
-    my ($self, $param) = @_;
-    $self->{order} = $param if defined $param;
-    return $self->{order};
-}
-
-=head2 type $param
-
-If defined $param set task type: linear or tree. Unless return it.
-
-=cut
-
-sub type
-{
-    my ($self, $param) = @_;
-    $self->{type} = $param if defined $param;
-    return $self->{type};
-}
 
 =head2 reg
 
@@ -340,20 +294,21 @@ sub run
 {
     my ($self, $browser) = @_;
 
-    unless( $self->url )
+    unless( $self->param('url') )
     {
-        notify 'Url not set. Skip watch.';
+        notify('Url not set. Skip watch.');
         return;
     }
-    notify(sprintf 'Get links list from %s', $self->url );
+    notify(sprintf 'Get links list from %s', $self->param('url') );
 
     # Get torrents links page
-    eval{ $browser->get( $self->url ); };
+    eval{ $browser->get( $self->param('url') ); };
 
     # Check for page content
     if( !$browser->success or ($@ and $@ =~ m/Can't connect/) )
     {
-        warn sprintf 'Can`t get content (links list) by link: %s', $self->url;
+        warn sprintf 'Can`t get content (links list) by link: %s',
+            $self->param('url');
         return;
     }
 
@@ -362,7 +317,7 @@ sub run
 
     # Define torrent type (tree or linear) and get links for torrent description
     my @links;
-    if ($self->urlreg)
+    if ($self->param('urlreg'))
     {
         # If tracker layout like this:
         # - Torrent list
@@ -376,10 +331,10 @@ sub run
         # this is tree type. List of torrents contain links to description
         # page. Then description page have link to torrent file.
         # This is main trackers layout. Example: thepiratebay.org, torrents.ru
-        $self->type('tree');
+        $self->param('type', 'tree');
 
         # Parse links to description pages
-        my $reg = $self->urlreg;
+        my $reg = $self->param('urlreg');
         @links = $content =~ m/$reg/sgi;
     }
     else
@@ -393,20 +348,21 @@ sub run
         # this is linear type. Torrent have one description page and many
         # *.torrents links on it.
         # This trackers typically for series. Example: lostfilm.tv
-        $self->type('linear');
+        $self->param('type', 'linear');
 
         # Current page contain links.
-        @links = ($self->url);
+        @links = ($self->param('url'));
     }
 
-    notify(sprintf 'Watch type: %s', $self->type);
-    notify(sprintf 'Links count: %d', scalar @links) if $self->type eq 'tree';
+    notify(sprintf 'Watch type: %s', $self->param('type'));
+    notify(sprintf 'Links count: %d', scalar @links)
+        if $self->param('type') eq 'tree';
 
     # For all description page get *.torrent files from them
     for my $url ( @links )
     {
         # Get description page
-        if( $self->type eq 'tree' )
+        if( $self->param('type') eq 'tree' )
         {
             notify(sprintf 'Get torrent page by tree from: %s.', $url);
 
@@ -464,9 +420,9 @@ sub parse
     my ($self, $content) = @_;
 
     # Add torrent and link if not specified
-    $self->add_reg('torrent', q{<a[^>]*href=["']?[^>'"]*/([^>'"]*\.torrent)["']?})
+    $self->add_reg('torrent', DEFAULT_REG_TORRENT)
         unless grep {$_ eq 'torrent'} keys %{ $self->reg };
-    $self->add_reg('link', q{<a[^>]*href=["']?([^>'"]*\.torrent)["']?})
+    $self->add_reg('link',    DEFAULT_REG_LINK)
         unless grep {$_ eq 'link'} keys %{ $self->reg };
 
 
@@ -479,7 +435,7 @@ sub parse
         my $reg = $self->reg->{$_};
         s/^\s+//, s/\s+$// for $reg;
         # Use regexp on content. If tree set only first value
-        my @value = ($self->type eq 'tree')
+        my @value = ($self->param('type') eq 'tree')
             ? $content =~ m/$reg/si
             : $content =~ m/$reg/sgi;
         # All digits to decimal.

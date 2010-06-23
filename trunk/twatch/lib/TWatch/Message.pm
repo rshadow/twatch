@@ -13,8 +13,6 @@ TWatch::Message - collect and send messges to user
 use strict;
 use warnings;
 use utf8;
-use open qw(:utf8 :std);
-use lib qw(../../lib);
 
 use base qw(Exporter);
 our @EXPORT=qw(add_message get_messages has_messages send_messages);

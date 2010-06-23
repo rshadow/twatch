@@ -9,8 +9,7 @@ TWatch::Complete - Load and save completed tasks
 use strict;
 use warnings;
 use utf8;
-use open qw(:utf8 :std);
-use lib qw(../../lib);
+
 
 use base qw(Exporter);
 our @EXPORT=qw(complete);

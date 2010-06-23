@@ -9,8 +9,6 @@ TWatch::Project - Project module: work with torrent tracker.
 use strict;
 use warnings;
 use utf8;
-use open qw(:utf8 :std);
-use lib qw(../../lib);
 
 use XML::Simple;
 use WWW::Mechanize;
@@ -234,7 +232,7 @@ Set/replace task $watch. Tasks stored by names ($watch->name)
 sub set_watch
 {
     my ($self, $watch) = @_;
-    $self->{watches}->{ $watch->name } = $watch;
+    $self->{watches}->{ $watch->param('name') } = $watch;
     return $watch;
 }
 
@@ -327,10 +325,10 @@ sub load
     for( values %{ $self->watches } )
     {
         # Skip if no comlete info
-        next if ! $complete->{watches}{ $_->name } or
-                ! $complete->{watches}{ $_->name }{complete};
+        next if ! $complete->{watches}{ $_->param('name') } or
+                ! $complete->{watches}{ $_->param('name') }{complete};
         # Add completed
-        $_->add_complete( $complete->{watches}{ $_->name }{complete} );
+        $_->add_complete( $complete->{watches}{ $_->param('name') }{complete} );
     }
 
     return $self;
@@ -393,7 +391,7 @@ sub run
         # Get task
         my $watch = $self->watches->{$name};
 
-        notify(sprintf 'Start watch: %s', $watch->name );
+        notify(sprintf 'Start watch: %s', $watch->param('name') );
 
         # Execute task
         $watch->run( $browser )

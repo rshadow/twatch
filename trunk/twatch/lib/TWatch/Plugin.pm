@@ -9,8 +9,6 @@ TWatch::Plugin - Load and execute plugins
 use strict;
 use warnings;
 use utf8;
-use open qw(:utf8 :std);
-use lib qw(../../lib);
 
 use File::Basename qw(dirname);
 use File::Path qw(make_path);
