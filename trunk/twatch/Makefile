@@ -11,7 +11,7 @@
 ############################################################################
 
 VERSION = 0.0.2-1
-SVN = https://twatch.svn.sourceforge.net/svnroot/twatch/trunk
+SVN = http://svn.twatch.rshadow.ru/trunk/
 
 # Make new release from local path (deb package and files for mainteiner)
 .PHONY: all
