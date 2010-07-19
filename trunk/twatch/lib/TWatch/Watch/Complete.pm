@@ -1,8 +1,8 @@
-package TWatch::Complete;
+package TWatch::Watch::Complete;
 
 =head1 NAME
 
-TWatch::Complete - Load and save completed tasks
+TWatch::Watch::Complete - Load and save completed tasks
 
 =cut
 
@@ -33,7 +33,7 @@ sub complete
 {
     our $complete;
 
-    $complete = TWatch::Complete->new() unless $complete;
+    $complete = TWatch::Watch::Complete->new() unless $complete;
 
     return $complete;
 }
@@ -138,31 +138,31 @@ sub save
     my ($self, $project) = @_;
 
     # Get project
-    my $watches = $project->watches;
+    my %watches = $project->watches;
 
-    for my $name ( keys %$watches )
+    for my $name ( keys %watches )
     {
-        $watches->{$name} = {
+        $watches{$name} = {
             name        => $name,
-            ($watches->{$name}->complete_count)
-                ?(complete => { result => [values %{ $watches->{$name}->complete }] })
+            ($watches{$name}->complete_count)
+                ?(complete => { result => [values %{ $watches{$name}->complete }] })
                 :(),
         }
     };
 
     # Make data to save
     my $save = {
-        name    => $project->name,
-        update  => $project->update,
-        watches => { watch => [ values %$watches ] },
+        name    => $project->param('name'),
+        update  => $project->param('update'),
+        watches => { watch => [ values %watches ] },
     };
 
     # Get file name to save
-    my $file = $project->cfile;
+    my $file = $project->param('cfile');
     # Full path consists of completed path and project filename if it is
     # new file
     $file = (config->get('Complete') =~ m/^(.*)\/.*?$/)[0] .
-            ($project->file =~ m/^.*(\/.*?\.xml)$/)[0]
+            ($project->param('file') =~ m/^.*(\/.*?\.xml)$/)[0]
         unless $file;
 
     # Save completed

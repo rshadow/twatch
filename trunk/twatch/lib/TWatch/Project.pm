@@ -15,7 +15,7 @@ use WWW::Mechanize;
 
 use TWatch::Config;
 use TWatch::Watch;
-use TWatch::Complete;
+use TWatch::Watch::Complete;
 
 
 
@@ -48,7 +48,7 @@ sub new
     my $self = bless \%opts ,$class;
 
     # If project file path exists then load them
-    $self->load if $self->file;
+    $self->load if $self->param('file');
 
     return $self;
 }
@@ -59,72 +59,19 @@ sub new
 
 =cut
 
+=head2 param $name, $param
 
-
-=head2 name $param
-
-If defined $param set project name. Unless return it.
+If defined $param set param $name value. Unless return it`s value.
 
 =cut
-
-sub name
+sub param
 {
-    my ($self, $param) = @_;
-    $self->{name} = $param if defined $param;
-    return $self->{name};
+    my ($self, $name, $value) = @_;
+    die 'Undefined param name' unless $name;
+    $self->{$name} = $value if defined $value;
+    return $self->{$name};
 }
 
-=head2 file $param
-
-If defined $param set project file path. Unless return it.
-
-=cut
-
-sub file
-{
-    my ($self, $param) = @_;
-    $self->{file} = $param if defined $param;
-    return $self->{file};
-}
-
-=head2 cfile $param
-
-If defined $param set project completed file path. Unless return it.
-
-=cut
-
-sub cfile
-{
-    my ($self, $param) = @_;
-    $self->{cfile} = $param if defined $param;
-    return $self->{cfile};
-}
-
-=head2 update $param
-
-If defined $param set project last updte time. Unless return it.
-
-=cut
-
-sub update
-{
-    my ($self, $param) = @_;
-    $self->{update} = $param if defined $param;
-    return $self->{update} || '';
-}
-
-=head2 url $param
-
-If defined $param set project url. Unless return it.
-
-=cut
-
-sub url
-{
-    my ($self, $param) = @_;
-    $self->{url} = $param if defined $param;
-    return $self->{url};
-}
 
 =head2 auth %param
 
@@ -134,130 +81,65 @@ If defined %param set project authtorization hash. Unless return it.
 
 sub auth
 {
-    my ($self, %param) = @_;
-    $self->{authtorization} = \%param if %param;
-    return undef
-        unless $self->{authtorization} and %{ $self->{authtorization} };
+    my ($self, $name, $value) = @_;
+
+    $self->{authtorization} = $value if !defined $name and 'HASH' eq ref $value;
+
+    if($name eq 'url')
+    {
+        $self->{authtorization}{url} = $value if defined $value;
+        return $self->{authtorization}{url};
+    }
+    elsif($name eq 'login_name')
+    {
+        $self->{authtorization}{login}{name} = $value if defined $value;
+        return $self->{authtorization}{login}{name};
+    }
+    elsif($name eq 'password_name')
+    {
+        $self->{authtorization}{password}{name} = $value if defined $value;
+        return $self->{authtorization}{password}{name};
+    }
+    elsif($name eq 'login_value')
+    {
+        $self->{authtorization}{login}{value} = $value if defined $value;
+        return $self->{authtorization}{login}{value};
+    }
+    elsif($name eq 'password_value')
+    {
+        $self->{authtorization}{password}{value} = $value if defined $value;
+        return $self->{authtorization}{password}{value};
+    }
+
     return $self->{authtorization};
-}
-
-=head2 auth_url $param
-
-If defined $param set project authtorization url. Unless return it.
-
-=cut
-
-sub auth_url
-{
-    my ($self, $param) = @_;
-    $self->{authtorization}{url} = $param if defined $param;
-    return undef unless $self->auth;
-    return $self->auth->{url};
-}
-
-=head2 auth_login_name $param
-
-If defined $param set project authtorization login name. Unless return it.
-
-=cut
-
-sub auth_login_name
-{
-    my ($self, $param) = @_;
-    $self->{authtorization}{login}{name} = $param if defined $param;
-    return undef unless $self->auth;
-    return $self->auth->{login}{name};
-}
-
-=head2 auth_password_name $param
-
-If defined $param set project authtorization password name. Unless return it.
-
-=cut
-
-sub auth_password_name
-{
-    my ($self, $param) = @_;
-    $self->{authtorization}{password}{name} = $param if defined $param;
-    return undef unless $self->auth;
-    return $self->auth->{password}{name};
-}
-
-=head2 auth_login_value $param
-
-If defined $param set project authtorization login value. Unless return it.
-
-=cut
-
-sub auth_login_value
-{
-    my ($self, $param) = @_;
-    $self->{authtorization}{login}{value} = $param if defined $param;
-    return undef unless $self->auth;
-    return $self->auth->{login}{value};
-}
-
-=head2 auth_password_value $param
-
-If defined $param set project authtorization password value. Unless return it.
-
-=cut
-
-sub auth_password_value
-{
-    my ($self, $param) = @_;
-    $self->{authtorization}{password}{value} = $param if defined $param;
-    return undef unless $self->auth;
-    return $self->auth->{password}{value};
 }
 
 =head2 watches
 
-Get tasks
+Get tasks. In scalar context return count.
 
 =cut
 
 sub watches
 {
     my ($self) = @_;
-    return $self->{watches};
-}
-
-=head2 set_watch $watch
-
-Set/replace task $watch. Tasks stored by names ($watch->name)
-
-=cut
-
-sub set_watch
-{
-    my ($self, $watch) = @_;
-    $self->{watches}->{ $watch->param('name') } = $watch;
-    return $watch;
-}
-
-=head2 watches_count
-
-Get tasks count
-
-=cut
-
-sub watches_count
-{
-    my ($self) = @_;
+#    DieDumper wantarray, caller, %{ $self->{watches} };
+    return %{ $self->{watches} } if wantarray;
     return scalar keys %{ $self->{watches} };
 }
 
-=head2 get_watch $name
+=head2 watch $watch
 
-Get watch by $name
+Get/Set task $watch. Tasks stored by names $watch->name
 
 =cut
 
-sub get_watch
+sub watch
 {
-    my ($self, $name) = @_;
-    return $self->{watches}{$name};
+    my ($self, $param) = @_;
+    return $self->{watches}{$param} unless ref $param;
+    $self->{watches}->{ $param->param('name') } = $param;
+    return $param;
 }
 
 
@@ -279,7 +161,7 @@ sub load
     my ($self) = @_;
 
     # Skip if file no set
-    return unless $self->file;
+    return unless $self->param('file');
 
     # Load project from file ###################################################
     my $xs = XML::Simple->new(
@@ -291,9 +173,9 @@ sub load
             'filters'   => 'filter',
         }
     );
-    my $project = $xs->XMLin( $self->file );
+    my $project = $xs->XMLin( $self->param('file') );
     return unless $project;
-
+#DieDumper $project;
     # Add tasks in project #####################################################
     for my $name ( keys %{ $project->{watches} }  )
     {
@@ -302,7 +184,7 @@ sub load
         # Create task object
         my $watch = TWatch::Watch->new(%{ $project->{watches}{$name} });
         # Add task to project
-        $self->set_watch( $watch );
+        $self->watch( $watch );
     }
 
     # Delete tasks from bufer (all already in project)
@@ -313,16 +195,17 @@ sub load
 
     # Add completed info in tasks ##############################################
     # Get completed for this project
-    my $complete = complete->get( $self->name );
+    my $complete = complete->get( $self->param('name') );
     # Skip if have`t completed
     return $self unless $complete;
     # Add in project path to completed
-    $self->cfile( $complete->{cfile} );
+    $self->param('cfile', $complete->{cfile} );
     # Add in project last update time
-    $self->update( $complete->{update} );
+    $self->param('update', $complete->{update} );
 
     # Add completed to tasks
-    for( values %{ $self->watches } )
+    my %watches = $self->watches;
+    for( values %watches )
     {
         # Skip if no comlete info
         next if ! $complete->{watches}{ $_->param('name') } or
@@ -344,10 +227,10 @@ sub delete
     my ($self) = @_;
 
     # Delete project files
-    unlink $self->file
-        or warn sprintf 'Can`t delete project file %s', $self->file;
-    unlink $self->cfile
-        or warn sprintf 'Can`t delete complete file %s', $self->cfile;
+    unlink $self->param('file')
+        or warn sprintf 'Can`t delete project file %s', $self->param('file');
+    unlink $self->param('cfile')
+        or warn sprintf 'Can`t delete complete file %s', $self->param('cfile');
 
     undef $self;
 }
@@ -368,7 +251,7 @@ sub run
 {
     my ($self) = @_;
 
-    unless( $self->watches_count )
+    unless( $self->watches )
     {
         notify('No watches. Skip project.');
         return;
@@ -386,10 +269,11 @@ sub run
     }
 
     # Run all tasks
-    for my $name ( keys %{ $self->watches })
+    my %watches = $self->watches;
+    for my $name ( keys %watches )
     {
         # Get task
-        my $watch = $self->watches->{$name};
+        my $watch = $self->watch( $name );
 
         notify(sprintf 'Start watch: %s', $watch->param('name') );
 
@@ -404,8 +288,8 @@ sub run
     }
 
     # Set last update time
-    $self->update( POSIX::strftime("%Y-%m-%d %H:%M:%S", localtime(time)) );
-    notify(sprintf 'Complete at %s', $self->update);
+    $self->param('update', POSIX::strftime("%Y-%m-%d %H:%M:%S", localtime(time)) );
+    notify(sprintf 'Complete at %s', $self->param('update'));
 
     # Save completed to file
     notify('Save completed list');
@@ -435,55 +319,55 @@ sub get_auth_browser
         noproxy     => config->is_noproxy,
     );
 
-    if( $self->url )
+    if( $self->param('url') )
     {
         # Many sites have protection from outside coming.
         # So go to main page first.
-        eval{ $browser->get( $self->url ); };
+        eval{ $browser->get( $self->param('url') ); };
 
         if( !$browser->success or ($@ and $@ =~ m/Can't connect/) )
         {
-            warn sprintf 'Can`t connect to link: %s.', $self->url;
+            warn sprintf 'Can`t connect to link: %s.', $self->param('url');
             return undef;
         }
     }
 
     # If authtorization form not on main page (and set in config) then go to
     # this page
-    if( $self->auth_url                 and
-        $self->auth_url !~ m/^\s*$/     and
-        $self->auth_url ne $self->url   )
+    if( $self->auth('url')                 and
+        $self->auth('url') !~ m/^\s*$/     and
+        $self->auth('url') ne $self->param('url')   )
     {
-        eval{ $browser->get( $self->auth_url ); };
+        eval{ $browser->get( $self->auth('url') ); };
         if( !$browser->success or ($@ and $@ =~ m/Can't connect/) )
         {
-            warn sprintf 'Can`t connect to auth link: %s.', $self->auth_url;
+            warn sprintf 'Can`t connect to auth link: %s.', $self->auth('url');
             return undef;
         }
     }
 
     # If authtorization exists params then do authtorization
-    if($self->auth_login_name  and $self->auth_password_name and
-       $self->auth_login_value and $self->auth_password_value)
+    if($self->auth('login_name')  and $self->auth('password_name') and
+       $self->auth('login_value') and $self->auth('password_value'))
     {
         # Find authtorization form (it`s set to default form)
         my $form = $browser->form_with_fields(
-            $self->auth_login_name,
-            $self->auth_password_name
+            $self->auth('login_name'),
+            $self->auth('password_name')
         );
         # Skip if can`t find authtorization form
         unless( $form )
         {
             warn sprintf 'Can`t find authtorization form in "%s" project.',
-                $self->name;
+                $self->param('name');
             return undef;
         }
 
         # Set authtorization params in form
-        $browser->field( $self->auth_login_name, $self->auth_login_value )
-            if $self->auth_login_name and $self->auth_login_value;
-        $browser->field( $self->auth_password_name, $self->auth_password_value )
-            if $self->auth_password_name and $self->auth_password_value;
+        $browser->field( $self->auth('login_name'), $self->auth('login_value') )
+            if $self->auth('login_name') and $self->auth('login_value');
+        $browser->field( $self->auth('password_name'), $self->auth('password_value') )
+            if $self->auth('password_name') and $self->auth('password_value');
 
         # Authtorization
         eval{ $browser->click(); };
@@ -493,7 +377,7 @@ sub get_auth_browser
             ($@ and $@ =~ m/Can't connect/) or
             !$browser->is_html() )
         {
-            warn sprintf 'Can`t authtorize in "%s" project.', $self->name;
+            warn sprintf 'Can`t authtorize in "%s" project.', $self->param('name');
             return undef;
         }
     }

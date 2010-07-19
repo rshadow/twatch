@@ -58,10 +58,10 @@ sub run
     {
         notify(sprintf
             'Start project: %s (%s), last update %s',
-            $project->name,
-            $project->url,
-            $project->update);
-        notify(sprintf 'Watches: %d', $project->watches_count);
+            $project->param('name'),
+            $project->param('url'),
+            $project->param('update'));
+        notify(sprintf 'Watches: %d', scalar $project->watches);
 
         $project->run
             or warn sprintf 'Project aborted!';
@@ -90,7 +90,7 @@ sub load_projects
     $_ = TWatch::Project->new(file => $_) for @projects;
 
     # Add all in hash
-    $self->{project}{$_->name} = $_ for @projects;
+    $self->{project}{$_->param('name')} = $_ for @projects;
 
     return scalar @projects;
 }
@@ -112,25 +112,6 @@ sub get_projects
 }
 
 =head1 UNSUPPORTED OR USED ONLY IN TWATCH-GTK
-
-=head2 get_watch $p_name, $w_name
-
-Get task $w_name by project $p_name. Return task if $p_name defined. Unless
-return all project tasks sorteb by order.
-
-=cut
-
-sub get_watch
-{
-    my ($self, $p_name, $w_name) = @_;
-
-    my $project = $self->get_projects($p_name);
-
-    return sort {$a->{order} <=> $b->{order}} values %{ $project->watches }
-        if wantarray;
-    return $project->watches unless defined $w_name;
-    return $project->get_watch($w_name);
-}
 
 =head2 delete_project $name
 
@@ -168,14 +149,14 @@ sub add_project
 {
     my ($self, $new) = @_;
 
-    if( $self->get_projects( $new->name ) )
+    if( $self->get_projects( $new->param('name') ) )
     {
         warn sprintf('Can`t add project "%s". This project already exists.',
-            $new->name);
+            $new->param('name'));
         return;
     }
 
-    $self->{project}{ $new->name } = $new;
+    $self->{project}{ $new->param('name') } = $new;
 }
 
 #=head2 save_proj
@@ -190,7 +171,7 @@ sub save_project
 #
 #    # Получим проект
 #    my $project = $self->get_projects($name);
-#    my $watch   = $self->get_watch($name);
+#    my $watch   = $self->watch($name);
 #
 #    $watch->{$_} = {
 #        name        => $_,
