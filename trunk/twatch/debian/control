@@ -1,6 +1,6 @@
 Source: twatch
 Section: net
-Priority: optional
+Priority: extra
 Maintainer: Roman V. Nikolaev <rshadow@rambler.ru>
 Standards-Version: 3.8.3
 
