@@ -23,8 +23,6 @@ use TWatch::Watch::Complete;
 
 =cut
 
-
-
 =head2 new
 
 Create new project
@@ -59,11 +57,12 @@ sub new
 
 =cut
 
-=head2 param $name, $param
+=head2 param $name, $value
 
-If defined $param set param $name value. Unless return it`s value.
+If defined $value set param $name value. Unless return it`s value.
 
 =cut
+
 sub param
 {
     my ($self, $name, $value) = @_;
@@ -72,10 +71,12 @@ sub param
     return $self->{$name};
 }
 
+=head2 auth $name, $value
 
-=head2 auth %param
-
-If defined %param set project authtorization hash. Unless return it.
+If defined $name get project authtorization parameter. If defined $value then
+first set it. Unless defined $name but defined $value, then set auth hash and
+return it.
+Return auth hash unless defined params.
 
 =cut
 
@@ -147,8 +148,6 @@ sub watch
 =head1 LOAD METHODS
 
 =cut
-
-
 
 =head2 load
 
@@ -235,11 +234,11 @@ sub delete
     undef $self;
 }
 
+
+
 =head1 DOWNLOAD METHODS
 
 =cut
-
-
 
 =head2 run
 
@@ -364,10 +363,16 @@ sub get_auth_browser
         }
 
         # Set authtorization params in form
-        $browser->field( $self->auth('login_name'), $self->auth('login_value') )
-            if $self->auth('login_name') and $self->auth('login_value');
-        $browser->field( $self->auth('password_name'), $self->auth('password_value') )
-            if $self->auth('password_name') and $self->auth('password_value');
+        $browser->field(
+            $self->auth('login_name'),
+            $self->auth('login_value') )
+                if $self->auth('login_name') and
+                   $self->auth('login_value');
+        $browser->field(
+            $self->auth('password_name'),
+            $self->auth('password_value') )
+                if $self->auth('password_name') and
+                   $self->auth('password_value');
 
         # Authtorization
         eval{ $browser->click(); };
@@ -377,7 +382,8 @@ sub get_auth_browser
             ($@ and $@ =~ m/Can't connect/) or
             !$browser->is_html() )
         {
-            warn sprintf 'Can`t authtorize in "%s" project.', $self->param('name');
+            warn sprintf 'Can`t authtorize in "%s" project.',
+                $self->param('name');
             return undef;
         }
     }
@@ -385,6 +391,8 @@ sub get_auth_browser
     # Return browser
     return $browser;
 }
+
+
 
 =head1 REQUESTS & BUGS
 

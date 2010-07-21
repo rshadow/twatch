@@ -16,26 +16,30 @@ use Safe;
 
 use TWatch::Config;
 use TWatch::Message;
-
-use constant DEFAULT_REG_TORRENT =>
-    q{<a[^>]*href=["']?[^>'"]*/([^>'"]*\.torrent)["']?};
-use constant DEFAULT_REG_LINK    =>
-    q{<a[^>]*href=["']?([^>'"]*\.torrent)["']?};
+use TWatch::Watch::Reg;
+use TWatch::Watch::ResultList;
+use TWatch::Watch::FilterList;
 
 =head1 CONSTRUCTOR
 
 =cut
-
-
 
 sub new
 {
     my ($class, %opts) = @_;
 
     $opts{complete} = {};
-    $opts{result}   = {};
 
     my $self = bless \%opts ,$class;
+
+    # Replace oprs to objects
+    $self->{reg} = TWatch::Watch::Reg->new( %{$self->{reg}} )
+        or die 'Can`t create regexp object';
+    $self->{results}   = TWatch::Watch::ResultList->new
+        or die 'Can`t create result list object';
+    $self->{filters}   = TWatch::Watch::FilterList->new(
+        filters => $self->{filters} )
+            or die 'Can`t create filter list object';
 
     return $self;
 }
@@ -45,7 +49,6 @@ sub new
 =head1 DATA METHODS
 
 =cut
-
 
 =head2 param $name, $value
 
@@ -68,23 +71,27 @@ return regular expression hash for user defined params.
 
 =cut
 
-sub reg
-{
-    my ($self) = @_;
-    return $self->{reg};
-}
+sub reg { return shift()->{reg} }
 
-=head2 add_reg
+=head2 results
 
-Add new regexp param to user defined params. Used for add default params.
+Work with results
 
 =cut
 
-sub add_reg
-{
-    my ($self, $name, $value) = @_;
-    return $self->{reg}{$name} = $value;
-}
+sub results { return shift()->{results} }
+
+
+=head2 filters
+
+Get filters for task.
+
+=cut
+
+sub filters { return shift()->{filters} }
+
+
+
 
 =head2 complete
 
@@ -128,151 +135,10 @@ sub add_complete
 }
 
 
-=head2 add_result $result
-
-Add $result to task
-
-=cut
-
-sub add_result
-{
-    my ($self, $result) = @_;
-
-    # Always array reference
-    $result = [$result] unless 'ARRAY' eq ref $result;
-
-    # Add result to task result array
-    $self->{result}{ $_->{torrent} } = $_ for @$result;
-}
-
-=head2 result
-
-Get results hash
-
-=cut
-
-sub result
-{
-    my ($self) = @_;
-    return $self->{result};
-}
-
-=head2 get_result $torrent
-
-Get result by torrent name.
-
-=over
-
-=item $torrent
-
-Torrent file name
-
-=back
-
-=cut
-
-sub get_result
-{
-    my ($self, $torrent) = @_;
-    return $self->{result}{ $torrent };
-}
-
-=head2 is_result $torrent
-
-Check is $torrent for result.
-
-=cut
-
-sub is_result
-{
-    my ($self, $torrent) = @_;
-    return ( $self->{result} and exists $self->{result}{ $torrent } ) ?1 :0;
-}
-
-=head2 delete_result $torrent
-
-Delete from result hash by $torrent.
-
-=cut
-
-sub delete_result
-{
-    my ($self, $torrent) = @_;
-
-    warn 'No result for delete'
-        unless $self->{result}{ $torrent };
-
-    delete $self->{result}{ $torrent };
-}
-
-=head2 result_count
-
-Get result count. This value sets after parse torrent description page and
-decrease by filters, completed check, etc.
-
-=cut
-
-sub result_count
-{
-    my ($self) = @_;
-    return scalar keys %{ $self->{result} };
-}
-
-=head2 filters
-
-Get filters for task.
-
-=cut
-
-sub filters
-{
-    my ($self) = @_;
-    return $self->{filters};
-}
-
-=head2 filters_count
-
-Get filters count for task.
-
-=cut
-
-sub filters_count
-{
-    my ($self) = @_;
-    return scalar keys %{ $self->{filters} };
-}
-
-=head2 filter_method $name
-
-Get method for fileter by $name.
-
-=cut
-
-sub filter_method
-{
-    my ($self, $name) = @_;
-    return $self->{filters}{$name}{method};
-}
-
-=head2 filter_value $name
-
-Get value for fileter by $name.
-
-=cut
-
-sub filter_value
-{
-    my ($self, $name) = @_;
-    return $self->{filters}{$name}{value};
-}
-
-
 
 =head1 DOWNLOAD METHODS
 
 =cut
-
-
 
 =head2 run $browser
 
@@ -388,16 +254,16 @@ sub run
         $self->parse( $content );
         notify('Nothing to download. Skip Watch.'),
         next
-            unless $self->result_count;
+            unless $self->results->count;
 
         # Add current page in result
-        $_->{page} = $absoulete for values %{ $self->result };
+        $self->results->param(undef, page => $absoulete);
 
         # Download torrents
         notify('NEW TORRENTS AVIABLE!', 'good');
         $self->download( $browser );
 
-        notify('Has not dowloaded torrents') if $self->result_count;
+        notify('Has not dowloaded torrents') if $self->results->count;
     }
 
     return $self;
@@ -421,97 +287,68 @@ sub parse
 {
     my ($self, $content) = @_;
 
-    # Add torrent and link if not specified
-    $self->add_reg('torrent', DEFAULT_REG_TORRENT)
-        unless grep {$_ eq 'torrent'} keys %{ $self->reg };
-    $self->add_reg('link',    DEFAULT_REG_LINK)
-        unless grep {$_ eq 'link'} keys %{ $self->reg };
-
-
     # Use users regexp to get fields
     notify('Get data by user regexp');
-    my %result;
-    for( keys %{ $self->reg } )
+    my @result = $self->reg->match( $content, $self->param('type') );
+
+    for my $result ( @result )
     {
-        # Get regexp and clean it
-        my $reg = $self->reg->{$_};
-        s/^\s+//, s/\s+$// for $reg;
-        # Use regexp on content. If tree set only first value
-        my @value = ($self->param('type') eq 'tree')
-            ? $content =~ m/$reg/si
-            : $content =~ m/$reg/sgi;
-        # All digits to decimal.
-        # (Many sites start write digits from zero)
-        (m/^\d+$/)  ?$_ = int($_)   :next   for @value;
-        # Add values to result
-        push @{ $result{$_} }, @value;
+        #   Skip if no fields found
+        notify(
+            sprintf('Links not found. Wrong regexp?: %s', $self->reg->param('link')),
+            'warn'),
+        return
+            unless $result->{link};
     }
 
-    # Skip if no fields found
-    notify(
-        sprintf('Links not found. Wrong regexp?: %s', $self->reg->{link}),
-        'warn'),
-    return
-        unless @{ $result{link} };
+    $self->results->add( \@result );
 
-    # Transform to easy use form
-    while (@{ $result{link} })
-    {
-        my %res;
-        $res{$_} = shift @{$result{$_}} for keys %result;
-        # Clean from tags
-        ($res{$_}) ?() :next,
-        $res{$_} =~ s/<\/?\s*br>/\n/g,
-        $res{$_} =~ s/<.*?>//g for keys %res;
-
-        $self->add_result( \%res );
-    }
-
-    # Remove from results already completed torrents
+    # Remove from resultss already completed torrents
     notify('Drop completed torrents');
     if( $self->complete_count )
     {
         for( values %{ $self->complete } )
         {
-            $self->delete_result( $_->{torrent} )
-                if $self->is_result( $_->{torrent} );
+            $self->results->delete( $_->{torrent} )
+                if $self->results->exists( $_->{torrent} );
         }
     }
 
     # Skip if no new torrents
     notify('All torrent already completed.'),
     return
-        unless $self->result_count;
+        unless $self->results->count;
 
     {{
         # Remove torrents by filters
         notify('Filter torrents');
 
         # Skip if no filters
-        last unless $self->filters_count;
+        last unless $self->filters->count;
 
-        # Create sand for users expressions
+        # Create sandbox for users expressions
         my $sandbox = Safe->new;
 
         # For each results
-        for my $key ( keys %{ $self->result } )
+        for my $key ( $self->results->keys )
         {
             # Get result
-            my $result = $self->get_result($key);
+            my $result = $self->results->get($key);
 
             # Flag - result suit to filter (and be download)
             my $flag = 1;
 
             # For all filters
-            for my $name ( keys %{ $self->filters } )
+            for my $name ( $self->filters->keys )
             {
+
                 # Remove result if no filters for them
                 $flag = 0, last unless $result->{$name};
 
                 # Check filter
                 my $left =      $result->{$name};
-                my $right =     $self->filter_value($name);
-                my $method =    $self->filter_method($name) || '=~';
+                my $right =     $self->filters->param($name, 'value');
+                my $method =    $self->filters->param($name, 'method') || '=~';
 
                 if($method eq '=~' or $method eq '!~')
                 {
@@ -534,16 +371,16 @@ sub parse
             }
 
             # Remove result if filter check fail
-            $self->delete_result( $key ) unless $flag;
+            $self->results->delete( $key ) unless $flag;
         }
     }}
 
     # Skip if no results (all filtered)
     notify('All links filtered'),
     return
-        unless $self->result_count;
+        unless $self->results->count;
 
-    return $self->result_count;
+    return $self->results->count;
 }
 
 =head2 download $browser
@@ -566,9 +403,9 @@ sub download
     my ($self, $browser) = @_;
 
     # For each result download torrent
-    for my $key ( keys %{ $self->{result} } )
+    for my $key ( $self->results->keys )
     {
-        my $result = $self->get_result( $key );
+        my $result = $self->results->get( $key );
 
         # Download torrent
         {{
@@ -620,7 +457,7 @@ sub download
         }
     }
 
-    return $self->result_count;
+    return $self->results->count;
 }
 
 =head1 REQUESTS & BUGS
