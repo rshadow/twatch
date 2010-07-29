@@ -15,7 +15,7 @@ use WWW::Mechanize;
 
 use TWatch::Config;
 use TWatch::Watch;
-use TWatch::Watch::Complete;
+use TWatch::Complete;
 
 
 
@@ -66,7 +66,9 @@ If defined $value set param $name value. Unless return it`s value.
 sub param
 {
     my ($self, $name, $value) = @_;
-    die 'Undefined param name' unless $name;
+    die 'Undefined param name'  unless $name;
+    die 'Use public methods'     if $name eq 'watches';
+
     $self->{$name} = $value if defined $value;
     return $self->{$name};
 }
@@ -143,6 +145,13 @@ sub watch
     return $param;
 }
 
+=head2 complete
+
+Get completed info.
+
+=cut
+
+sub complete { return shift()->{complete} }
 
 
 =head1 LOAD METHODS
@@ -159,10 +168,12 @@ sub load
 {
     my ($self) = @_;
 
-    # Skip if file no set
-    return unless $self->param('file');
+    # Load completed
+    $self->{complete} = TWatch::Complete->new(cfile => $self->param('cfile'))
+        or die 'Can`t load complete object';
+    $self->param('update' => $self->complete->param('update'));
 
-    # Load project from file ###################################################
+    # Load project from file
     my $xs = XML::Simple->new(
         NoAttr      => 1,
         ForceArray  => ['watch', 'result', 'filter'],
@@ -174,44 +185,23 @@ sub load
     );
     my $project = $xs->XMLin( $self->param('file') );
     return unless $project;
-#DieDumper $project;
-    # Add tasks in project #####################################################
+
+    # Add tasks in project
     for my $name ( keys %{ $project->{watches} }  )
     {
-        # Add task name in bufer
-        $project->{watches}{$name}{name} = $name;
         # Create task object
-        my $watch = TWatch::Watch->new(%{ $project->{watches}{$name} });
+        my $watch = TWatch::Watch->new(
+            %{ $project->{watches}{$name} },
+            name     => $name,
+            complete => $self->complete->get($name) );
         # Add task to project
         $self->watch( $watch );
     }
 
     # Delete tasks from bufer (all already in project)
     delete $project->{watches};
-
-    # Append additional params #################################################
+    # Append additional params
     $self->{$_} = $project->{$_} for keys %$project;
-
-    # Add completed info in tasks ##############################################
-    # Get completed for this project
-    my $complete = complete->get( $self->param('name') );
-    # Skip if have`t completed
-    return $self unless $complete;
-    # Add in project path to completed
-    $self->param('cfile', $complete->{cfile} );
-    # Add in project last update time
-    $self->param('update', $complete->{update} );
-
-    # Add completed to tasks
-    my %watches = $self->watches;
-    for( values %watches )
-    {
-        # Skip if no comlete info
-        next if ! $complete->{watches}{ $_->param('name') } or
-                ! $complete->{watches}{ $_->param('name') }{complete};
-        # Add completed
-        $_->add_complete( $complete->{watches}{ $_->param('name') }{complete} );
-    }
 
     return $self;
 }
@@ -269,7 +259,9 @@ sub run
 
     # Run all tasks
     my %watches = $self->watches;
-    for my $name ( keys %watches )
+    my @names = keys %watches;
+
+    for my $name ( @names )
     {
         # Get task
         my $watch = $self->watch( $name );
@@ -277,13 +269,16 @@ sub run
         notify(sprintf 'Start watch: %s', $watch->param('name') );
 
         # Execute task
-        $watch->run( $browser )
-            or warn sprintf 'Watch aborted!';
+        $watch->run( $browser ) or warn sprintf 'Watch aborted!';
 
         notify('Watch complete');
 
-        notify(sprintf 'Sleep %d seconds', config->get('TimeoutWatch'));
-        sleep config->get('TimeoutWatch');
+        # Sleep between watches
+        unless( $name eq $names[$#names] )
+        {
+            notify(sprintf 'Sleep %d seconds', config->get('TimeoutWatch'));
+            sleep config->get('TimeoutWatch');
+        }
     }
 
     # Set last update time
@@ -292,7 +287,7 @@ sub run
 
     # Save completed to file
     notify('Save completed list');
-    complete->save( $self );
+    $self->complete->save( $self );
 
     return $self;
 }

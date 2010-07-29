@@ -28,16 +28,16 @@ sub new
 {
     my ($class, %opts) = @_;
 
-    $opts{complete} = {};
+#    die 'Need complete list object' unless $opts{complete};
 
     my $self = bless \%opts ,$class;
 
     # Replace oprs to objects
-    $self->{reg} = TWatch::Watch::Reg->new( %{$self->{reg}} )
+    $self->{reg}     = TWatch::Watch::Reg->new( %{$self->{reg}} )
         or die 'Can`t create regexp object';
-    $self->{results}   = TWatch::Watch::ResultList->new
+    $self->{results} = TWatch::Watch::ResultList->new
         or die 'Can`t create result list object';
-    $self->{filters}   = TWatch::Watch::FilterList->new(
+    $self->{filters} = TWatch::Watch::FilterList->new(
         filters => $self->{filters} )
             or die 'Can`t create filter list object';
 
@@ -90,51 +90,13 @@ Get filters for task.
 
 sub filters { return shift()->{filters} }
 
-
-
-
 =head2 complete
 
-Return hash of completed downloads
+Return completed list object
 
 =cut
 
-sub complete
-{
-    my ($self) = @_;
-    return $self->{complete};
-}
-
-=head2 complete_count
-
-Return count of completed downloads hash
-
-=cut
-
-sub complete_count
-{
-    my ($self) = @_;
-    return scalar keys %{ $self->{complete} };
-}
-
-=head2 add_complete $complete
-
-Add $complete to task completed array
-
-=cut
-
-sub add_complete
-{
-    my ($self, $complete) = @_;
-
-    # Always array reference
-    $complete = [$complete] unless 'ARRAY' eq ref $complete;
-
-    # Add result to task completed array
-    $self->{complete}{ $_->{torrent} } = $_ for @$complete;
-}
-
-
+sub complete { return shift()->{complete} }
 
 =head1 DOWNLOAD METHODS
 
@@ -250,7 +212,7 @@ sub run
         # Remember absolutly url
         my $absoulete = $browser->uri->as_string();
 
-        # Parse links on *.torrents
+        # Parse links for *.torrents
         $self->parse( $content );
         notify('Nothing to download. Skip Watch.'),
         next
@@ -260,7 +222,7 @@ sub run
         $self->results->param(undef, page => $absoulete);
 
         # Download torrents
-        notify('NEW TORRENTS AVIABLE!', 'good');
+        notify('NEW TORRENTS AVAILABLE!', 'good');
         $self->download( $browser );
 
         notify('Has not dowloaded torrents') if $self->results->count;
@@ -303,14 +265,13 @@ sub parse
 
     $self->results->add( \@result );
 
-    # Remove from resultss already completed torrents
-    notify('Drop completed torrents');
-    if( $self->complete_count )
+    # Remove from results already completed torrents
+    if( $self->complete->count )
     {
-        for( values %{ $self->complete } )
+        notify('Drop completed torrents');
+        for my $key ( $self->complete->keys )
         {
-            $self->results->delete( $_->{torrent} )
-                if $self->results->exists( $_->{torrent} );
+            $self->results->delete( $key ) if $self->results->exists( $key );
         }
     }
 
@@ -356,7 +317,7 @@ sub parse
                 }
                 else
                 {
-                    $flag &&= $sandbox->reval("$left $method $right");
+                    $flag &&= $sandbox->reval(qq{$left $method $right});
                 }
 
                 # Skip if expression not valid
@@ -424,11 +385,11 @@ sub download
             $result->{datetime} = POSIX::strftime(
                 "%Y-%m-%d %H:%M:%S", localtime(time));
 
-            # Set result as completed
-            $self->add_complete( $result );
-            # Remove completed result
-            $self->delete_result( $key );
+            # Move result to completed
+            $self->complete->add( $result );
+            $self->results->delete( $key );
 
+            # Add message
             if( -f _ or -s _ )
             {
                 notify( sprintf 'Already exists. Skip download: %s',

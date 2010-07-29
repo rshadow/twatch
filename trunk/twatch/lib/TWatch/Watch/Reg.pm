@@ -86,6 +86,17 @@ sub match
         push @{ $result{$name} }, @value;
     }
 
+    # Fix filenames unless it`s not *.torrent
+    for my $torrent (@{ $result{torrent} })
+    {
+        # Skip if canonical
+        next if $torrent =~ m~^[^\/]\.torrent$~i;
+        # Remove special sybmols
+        s~^[\/*?]~~, s~[\/*?]$~~, s~[\/*?]~_~g for $torrent;
+        # Add file extension
+        $torrent .= '.torrent' unless $torrent =~ m~\.torrent$~i;
+    }
+
     # Transform to easy use form
     my @result;
     while (@{ $result{link} })

@@ -40,7 +40,7 @@
         <watch>
             <name>House M.D.</name>
             <url>http://www.lostfilm.tv/browse.php?cat=51</url>
-            <order>0</order>
+            <order>2</order>
             <reg>
                 <torrent><![CDATA[<a href=".*?/(House\.M\.D.*?\.torrent)"[^>]*?class="a_download"]]></torrent>
                 <link><![CDATA[<a href="([^<]*?House\.M\.D.*?)"[^>]*?class="a_download"]]></link>
@@ -63,7 +63,7 @@
         <watch>
             <name>Stargate Universe</name>
             <url>http://www.lostfilm.tv/browse.php?cat=109</url>
-            <order>1</order>
+            <order>3</order>
             <reg>
                 <torrent><![CDATA[<a href=".*?/(Stargate\.Universe.*?\.torrent)"[^>]*?class="a_download"]]></torrent>
                 <link><![CDATA[<a href="([^<]*?Stargate\.Universe.*?)"[^>]*?class="a_download"]]></link>
@@ -91,7 +91,7 @@
         <watch>
             <name>The IT Crowd</name>
             <url>http://www.lostfilm.tv/browse.php?cat=46</url>
-            <order>1</order>
+            <order>4</order>
             <reg>
                 <torrent><![CDATA[<a href=".*?/(The\.IT\.Crowd.*?\.torrent)"[^>]*?class="a_download"]]></torrent>
                 <link><![CDATA[<a href="([^<]*?The\.IT\.Crowd.*?)"[^>]*?class="a_download"]]></link>
@@ -114,13 +114,36 @@
         <watch>
             <name>Eureka</name>
             <url>http://www.lostfilm.tv/browse.php?cat=37</url>
-            <order>1</order>
+            <order>5</order>
             <reg>
                 <torrent><![CDATA[<a href=".*?/(Eureka.*?\.torrent)"[^>]*?class="a_download"]]></torrent>
                 <link><![CDATA[<a href="([^<]*?Eureka.*?)"[^>]*?class="a_download"]]></link>
                 <title><![CDATA[<td class="t_episode_title".*?>(.*?)\s*<]]></title>
                 <season><![CDATA[<a href=".*?Eureka\.s?(\d*?)\D.*?" class="a_download"]]></season>
                 <series><![CDATA[<a href=".*?Eureka\.s?\d*?\D(\d*?)\D.*?" class="a_download"]]></series>
+                <rating><![CDATA[<td class="t_episode_rating".*?<b>(.*?)</b>.*?/td>]]></rating>
+                <video><![CDATA[<td class="t_cell">.*?Видео:\s*(.*?);.*?</td>]]></video>
+                <translate><![CDATA[<td class="t_cell">.*?Перевод:\s*(.*?);.*?</td>]]></translate>
+                <size><![CDATA[<td class="t_cell">.*?Размер:\s*(.*?);.*?</td>]]></size>
+            </reg>
+            <filters>
+                <filter>
+                    <name>season</name>
+                    <value>3</value>
+                    <method><![CDATA[>]]></method>
+                </filter>
+            </filters>
+        </watch>
+        <watch>
+            <name>Futurama</name>
+            <url>http://www.lostfilm.tv/browse.php?cat=127</url>
+            <order>6</order>
+            <reg>
+                <torrent><![CDATA[<a href=".*?/(Futurama.*?\.torrent)"[^>]*?class="a_download"]]></torrent>
+                <link><![CDATA[<a href="([^<]*?Futurama.*?)"[^>]*?class="a_download"]]></link>
+                <title><![CDATA[<td class="t_episode_title".*?>(.*?)\s*<]]></title>
+                <season><![CDATA[<a href=".*?Futurama\.s?(\d*?)\D.*?" class="a_download"]]></season>
+                <series><![CDATA[<a href=".*?Futurama\.s?\d*?\D(\d*?)\D.*?" class="a_download"]]></series>
                 <rating><![CDATA[<td class="t_episode_rating".*?<b>(.*?)</b>.*?/td>]]></rating>
                 <video><![CDATA[<td class="t_cell">.*?Видео:\s*(.*?);.*?</td>]]></video>
                 <translate><![CDATA[<td class="t_cell">.*?Перевод:\s*(.*?);.*?</td>]]></translate>

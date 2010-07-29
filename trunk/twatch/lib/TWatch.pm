@@ -4,13 +4,9 @@ package TWatch;
 
 TWatch - track for links on tracker and download new torrents.
 
-=head1 VERSION
-
-0.0.2
-
 =cut
 
-our $VERSION = '0.0.3';
+our $VERSION = '0.0.4';
 
 use strict;
 use warnings;
@@ -83,16 +79,32 @@ sub load_projects
     my ($self) = @_;
 
     # Get projects paths
-    my @projects = glob(config->get('Project'));
-    return unless @projects;
+    my @pfiles = glob(config->get('Project'));
+    return unless @pfiles;
+    # Get completed path
+    my @cfiles = glob(config->get('Complete'));
 
-    # Load all projects
-    $_ = TWatch::Project->new(file => $_) for @projects;
+    # Get executed param
+    my $execute = config->get('execute');
+    notify(sprintf 'Execute param set. Run just "%s" project', $execute);
 
-    # Add all in hash
-    $self->{project}{$_->param('name')} = $_ for @projects;
+    for my $pfile ( @pfiles )
+    {
+        # Get complete file by related file name
+        my ($pname) = $pfile =~ m~^.*/(.*?)$~;
+        my ($cfile) = grep {m~/$pname$~} @cfiles;
 
-    return scalar @projects;
+        # Load project
+        my $project = TWatch::Project->new(file => $pfile, cfile => $cfile);
+
+        # If set execute param then skip projects, except named in execute param
+        next if $execute and $project->param('name') !~ m/^$execute$/i;
+
+        # Add in hash
+        $self->{project}{$project->param('name')} = $project;
+    }
+
+    return scalar keys %{$self->{project}};
 }
 
 =head2 get_projects $name

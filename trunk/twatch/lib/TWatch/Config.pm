@@ -213,7 +213,7 @@ sub notify
     my ($message, $level, $wait) = @_;
 
     # Skip unless message or output disabled.
-    return unless config->verbose;
+    return unless config->get('verbose');
     return unless $message;
 
     # Format message by module
@@ -234,19 +234,6 @@ sub notify
         { $message = COLOR_RED      . $message . COLOR_CLEAR  }
 
     print $message;
-}
-
-=head2 verbose $param
-
-Set/Get verbose flag.
-
-=cut
-
-sub verbose
-{
-    my ($self, $param) = @_;
-    $self->{verbose} = $param if defined $param;
-    return $self->{verbose};
 }
 
 ################################################################################

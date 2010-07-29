@@ -68,6 +68,7 @@ sub add
 sub get
 {
     my ($self, $torrent) = @_;
+    return %{ $self->{result} } if wantarray and !defined $torrent;
     return $self->{result}{$torrent};
 }
 

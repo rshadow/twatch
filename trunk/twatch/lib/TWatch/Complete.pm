@@ -1,8 +1,8 @@
-package TWatch::Watch::Complete;
+package TWatch::Complete;
 
 =head1 NAME
 
-TWatch::Watch::Complete - Load and save completed tasks
+TWatch::Watch::CompleteList - Load and save completed tasks for watch
 
 =cut
 
@@ -10,33 +10,14 @@ use strict;
 use warnings;
 use utf8;
 
-
-use base qw(Exporter);
-our @EXPORT=qw(complete);
-
 use XML::Simple;
 
 use TWatch::Config;
+use TWatch::Watch::ResultList;
 
 =head1 CONSTRUCTORS
 
 =cut
-
-=head2 complete
-
-Load and cache completed tasks.
-Use this funtction for access completed tasks.
-
-=cut
-
-sub complete
-{
-    our $complete;
-
-    $complete = TWatch::Watch::Complete->new() unless $complete;
-
-    return $complete;
-}
 
 =head2 new
 
@@ -50,7 +31,7 @@ sub new
 
     my $self = bless \%opts ,$class;
 
-    $self->load;
+    $self->load if $self->{cfile};
 
     return $self;
 }
@@ -69,53 +50,66 @@ sub load
 {
     my ($self) = @_;
 
-    # Загрузим завершенные задания
-    my @complete = glob(config->get('Complete'));
-    return unless @complete;
-
-    # Объект для работы с XML
     my $xs = XML::Simple->new(
         NoAttr      => 1,
-        ForceArray  => ['watch', 'result', 'filter'],
+        ForceArray  => ['watch', 'result'],
         GroupTags   => {
             'watches'   => 'watch',
             'complete'  => 'result',
-            'filters'   => 'filter',
         }
     );
 
-    # Загрузим все выполненные задания
-    $_ = { %{$xs->XMLin($_)}, cfile => $_ } for @complete;
+    # Load completed tasks for project
+    my $complete = $xs->XMLin( $self->{cfile} );
 
-    # Очистим результаты от пустых хешей (Гнусный хак чистки за XML::Simple)
-    for my $complete ( @complete )
+    # Fix XML in
+    for my $name ( keys %{ $complete->{watches} } )
     {
-        for my $name ( keys %{ $complete->{watches} } )
-        {
-            # Добавим пустой массив выполненных, даже если их нету
-            $complete->{watches}{$name}{complete} = []
-                unless %{ $complete->{watches}{$name} };
+        # Add empty array even watch empty
+        $complete->{watches}{$name}{complete} = []
+            unless %{ $complete->{watches}{$name} };
 
-            # В завершенных почистим пустые хеши
-            for my $result ( @{ $complete->{watches}{$name}{complete} } )
+        # Convert empty hashes in empty strings
+        for my $result ( @{ $complete->{watches}{$name}{complete} } )
+        {
+            for my $key ( keys %$result)
             {
-                for my $key ( keys %$result)
-                {
-                    $result->{$key} = ''
-                        if 'HASH' eq ref $result->{$key} and !%{$result->{$key}};
-                }
+                $result->{$key} = ''
+                    if 'HASH' eq ref $result->{$key} and !%{$result->{$key}};
             }
         }
+
+        my $results = TWatch::Watch::ResultList->new;
+        $results->add( $complete->{watches}{$name}{complete} );
+        # Convert hash to result list object
+        $complete->{watches}{$name} = $results;
     }
 
-    # Перестроим для быстрого доступа по имени проекта
-    $self->{project} = {};
-    $self->{project}{ $_->{name} } = $_ for @complete;
+    # Set data to object
+    $self->{$_} = $complete->{$_} for keys %$complete;
+
+    return $self;
+}
+
+=head2 param $name, $value
+
+If defined $value set param $name value. Unless return it`s value.
+
+=cut
+
+sub param
+{
+    my ($self, $name, $value) = @_;
+    die 'Undefined param name'  unless $name;
+    die 'Use public methods'    if $name eq 'watches';
+
+    $self->{$name} = $value if defined $value;
+    return $self->{$name};
 }
 
 =head2 get
 
-Get completed tasks for $name project
+Get completed tasks for $name watch
 
 =cut
 
@@ -123,8 +117,12 @@ sub get
 {
     my ($self, $name) = @_;
 
-    return unless exists $self->{project}{$name};
-    return $self->{project}{$name};
+    # If completed not exists then create new one empty.
+    $self->{watches}{$name} =
+        TWatch::Watch::ResultList->new( name => $name, complete => [] )
+            unless exists $self->{watches}{$name};
+
+    return $self->{watches}{$name};
 }
 
 =head2 save
@@ -137,15 +135,16 @@ sub save
 {
     my ($self, $project) = @_;
 
-    # Get project
+    # Get watches names
     my %watches = $project->watches;
 
     for my $name ( keys %watches )
     {
+        my %result = $watches{$name}->complete->get;
         $watches{$name} = {
             name        => $name,
-            ($watches{$name}->complete_count)
-                ?(complete => { result => [values %{ $watches{$name}->complete }] })
+            ($watches{$name}->complete->count)
+                ?(complete => { result => [values %result] })
                 :(),
         }
     };
