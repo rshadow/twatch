@@ -1,10 +1,4 @@
-twatch (0.0.2-1) unstable; urgency=low
-
-  * New version. All code rewrite on OOP.
-
- -- Roman V. Nikolaev <rshadow@rambler.ru>  Mon, 11 Jan 2010 15:05:19 +0300
-
-twatch (0.0.1-1) unstable; urgency=low
+twatch (0.0.4-1) unstable; urgency=low
 
   * Initial release. (Closes: #562956)
 

@@ -10,7 +10,7 @@
 #
 ############################################################################
 
-VERSION = 0.0.2-1
+VERSION = $(shell grep -P "^[$$]VERSION" twatch | sed "s~[^[:digit:].]~~g")
 SVN = http://svn.twatch.rshadow.ru/trunk/
 
 # Make new release from local path (deb package and files for mainteiner)

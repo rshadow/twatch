@@ -6,6 +6,7 @@ use utf8;
 use open qw(:utf8 :std);
 
 use vars qw($VERSION $PROGRAM);
+$VERSION    = '0.0.4';
 $PROGRAM    = 'twatch';
 
 use Getopt::Long;
@@ -46,7 +47,7 @@ $twatch->run;
 
 notify('Send notification mail');
 # Send notification mail
-send_messages;
+message->send();
 
 notify('Execute post plugins');
 # Execute post plugins

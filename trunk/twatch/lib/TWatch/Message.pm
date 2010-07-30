@@ -15,7 +15,7 @@ use warnings;
 use utf8;
 
 use base qw(Exporter);
-our @EXPORT=qw(add_message get_messages has_messages send_messages);
+our @EXPORT=qw(message);
 
 use MIME::Lite;
 use MIME::Base64;
@@ -25,14 +25,43 @@ use Encode qw(decode encode is_utf8);
 
 use TWatch::Config;
 
-# Message collector
-our @quie;
+# Object singleton
+our $object;
 
 =head1 MESSAGE METHODS
 
 =cut
 
-=head2 add_message %opts
+=head2 message
+
+Return singleton message object
+
+=cut
+
+sub message
+{
+    $object = TWatch::Message->new unless $object;
+    return $object;
+}
+
+=head2 new
+
+Create message object
+
+=cut
+
+sub new
+{
+    my ($class, %opts) = @_;
+
+    my $self = bless \%opts ,$class;
+
+    $self->{quie} = [];
+
+    return $self;
+}
+
+=head2 add %opts
 
 Add message %opts to collector.
 
@@ -52,56 +81,61 @@ Message level: info, error.
 
 =cut
 
-sub add_message
+sub add
 {
-    my (%opts) = @_;
+    my ($self, %opts) = @_;
 
-    push @quie, \%opts;
+    push @{ $self->{quie} }, \%opts;
     return 1;
 }
 
-=head2 get_messages
+=head2 get
 
 Get messages from collector
 
 =cut
 
-sub get_messages
+sub get
 {
-    return (wantarray) ?@quie :\@quie;
+    my ($self) = @_;
+    return @{ $self->{quie} } if wantarray;
+    return $self->{quie};
 }
 
-=head2 has_messages
+=head2 has
 
 How many messages in collector. Can be used as boolean flag.
 
 =cut
 
-sub has_messages
+sub count
 {
-    return scalar @quie;
+    my ($self) = @_;
+    return scalar @{ $self->{quie} };
 }
 
 =head1 EMAIL METHODS
 
 =cut
 
-=head2 send_messages
+=head2 send
 
 Send collected messages on email
 
 =cut
 
-sub send_messages
+sub send
 {
+    my ($self) = @_;
+
     # Skip if no messages
-    return 0 unless has_messages;
+    return 0 unless $self->count;
     # Skip if level = none
     return 0 if 'none' ~~ @{ config->get('EmailLevel') };
     # Skip if no destination address
     return 0 unless config->get('Email');
 
-    my @messages = get_messages;
+    my @messages = $self->get;
     @messages = grep {$_->{level} ~~ @{ config->get('EmailLevel') }} @messages;
     # Style messages for mail
     @messages = map {

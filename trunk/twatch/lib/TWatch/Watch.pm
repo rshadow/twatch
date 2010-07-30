@@ -400,7 +400,7 @@ sub download
                 notify( sprintf 'Download complete: %s', $result->{torrent} );
 
                 # Add message about this completed result
-                add_message(
+                message->add(
                     level   => 'info',
                     message => sprintf('Download complete: %s',
                                        $result->{torrent}),
@@ -411,7 +411,7 @@ sub download
         else
         {
             notify( sprintf 'Can`t download from %s', $result->{link} );
-            add_message(
+            message->add(
                 level   => 'error',
                 message => sprintf('Can`t download from %s', $result->{link}),
                 data    => $result);

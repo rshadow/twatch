@@ -6,7 +6,7 @@ Standards-Version: 3.8.3
 
 Package: twatch
 Architecture: all
-Depends: ${perl:Depends}, libtwatch-perl
+Depends: ${perl:Depends}, libtwatch-perl, logrotate
 Suggests: rtorrent
 Description: watch torrent trackers and automatically download new torrents
  twatch is a simple and flexible watcher torrent trackers, based on regular
