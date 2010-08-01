@@ -12,6 +12,7 @@ use utf8;
 
 use File::Basename qw(dirname);
 use File::Path qw(make_path);
+use POSIX qw(strftime);
 
 use base qw(Exporter);
 our @EXPORT=qw(config notify DieDumper Dumper);
@@ -24,6 +25,7 @@ our @EXPORT=qw(config notify DieDumper Dumper);
 ################################################################################
 use constant TWATCH_SYSTEM_CONFIG_PATH  => '/etc/twatch/twatch.conf';
 use constant TWATCH_CONFIG_PATH         => '~/.twatch/twatch.conf';
+use constant TWATCH_LOG_PATH            => '~/.twatch/twatch.log';
 ###############################################################################
 
 # Colors for highlight console output
@@ -49,17 +51,6 @@ sub config
     return $config if $config;
 
     $config = TWatch::Config->new;
-    return unless $config;
-
-    # Load config
-    $config->load;
-
-    # Check configuration
-#    $config->check;
-
-    # Create dirs (if not exists)
-    $config->create_dir;
-
     return $config;
 }
 
@@ -81,7 +72,38 @@ sub new
     ];
 
     my $self = bless \%config ,$class;
+
+    # Load config
+    $self->load;
+
+    # Check configuration
+#    $self->check;
+
+    # Create dirs (if not exists)
+    $self->create_dir;
+
+    # Open log file and print data
+    my $path = TWATCH_LOG_PATH;
+    $path =~ s/^~/$ENV{HOME}/;# glob $path;
+    $self->set('Log', $path);
+    open my $h, '+>>:encoding(UTF-8)', $path or die 'Can`t open log file: '.$!;
+    printf $h "*** %s ***\n",
+        POSIX::strftime("%Y-%m-%d %H:%M:%S", localtime(time));
+    $self->set('hLog', $h);
+
     return $self;
+}
+
+sub DESTROY
+{
+    my ($self) = @_;
+
+    # Close log file
+    if( $self->get('hLog') )
+    {
+        close $self->get('hLog')
+            or die 'Can`t close log file: '.$!;
+    }
 }
 
 ################################################################################
@@ -142,6 +164,9 @@ sub load
     $self->{param}{EmailLevel} = [ split ',', $self->{param}{EmailLevel} ];
     s/^\s*//, s/\s*$// for @{ $self->{param}{EmailLevel} };
 
+    $self->{param}{NoProxy} =
+        ($self->{param}{NoProxy} =~ m/^(1|yes|true|on)$/i) ?1 :0;
+
     return 1;
 }
 
@@ -181,19 +206,6 @@ sub set
     $self->{param}{$name} = $value;
 }
 
-=head2 noproxy
-
-Get "noproxy" flag
-
-=cut
-
-sub is_noproxy
-{
-    my ($self) = @_;
-    return 1 if $self->get('NoProxy') =~ m/^(1|yes|true|on)$/;
-    return 0;
-}
-
 ################################################################################
 
 =head1 NOTIFICATIONS METHODS
@@ -212,8 +224,7 @@ sub notify
 {
     my ($message, $level, $wait) = @_;
 
-    # Skip unless message or output disabled.
-    return unless config->get('verbose');
+    # Skip unless message
     return unless $message;
 
     # Format message by module
@@ -223,6 +234,13 @@ sub notify
 
     # Unless waiting flag print \n
     $message .= "\n" unless $wait;
+
+    # Print to log file
+    my $h = config->get('hLog');
+    print $h $message;
+
+    # Skip if output disabled
+    return unless config->get('verbose');
 
     # Highlight message
     $level = lc $level || '';

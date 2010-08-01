@@ -302,6 +302,10 @@ sub parse
             # For all filters
             for my $name ( $self->filters->keys )
             {
+#                printf "FILTER name: %s, value: %s, method: %s\n",
+#                    $name, $self->filters->param($name, 'value'),
+#                    $self->filters->param($name, 'method');
+#                printf "DATA: %s\n", $result->{$name};
 
                 # Remove result if no filters for them
                 $flag = 0, last unless $result->{$name};
@@ -392,12 +396,13 @@ sub download
             # Add message
             if( -f _ or -s _ )
             {
-                notify( sprintf 'Already exists. Skip download: %s',
-                    $result->{torrent} );
+                notify( sprintf 'Already exists. Skip download: %s/%s',
+                    config->get('Save'), $result->{torrent} );
             }
             else
             {
-                notify( sprintf 'Download complete: %s', $result->{torrent} );
+                notify( sprintf 'Download complete: %s/%s',
+                    config->get('Save'), $result->{torrent} );
 
                 # Add message about this completed result
                 message->add(

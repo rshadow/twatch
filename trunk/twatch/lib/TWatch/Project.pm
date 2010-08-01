@@ -17,8 +17,6 @@ use TWatch::Config;
 use TWatch::Watch;
 use TWatch::Complete;
 
-
-
 =head1 CONSTRUCTOR
 
 =cut
@@ -310,7 +308,7 @@ sub get_auth_browser
             ' (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.1)'.
             ' Gecko/20090715 Firefox/3.5.1',
         cookie_jar  => {},
-        noproxy     => config->is_noproxy,
+        noproxy     => config->get('NoProxy'),
     );
 
     if( $self->param('url') )

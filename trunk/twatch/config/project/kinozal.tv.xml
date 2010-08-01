@@ -25,8 +25,8 @@
                 <series><![CDATA[\(\s*(\d+)\s*серия\s*\)]]></series>
                 <info><![CDATA[<td class="templ">\s*(<.*?>Качество.*?)</td>]]></info>
                 <rating><![CDATA[общая\s+оценка:\s*<b>(\d+(?:.\d+)?)<\/b>]]></rating>
-                <quality><![CDATA[>\s*Качество:\s*<.*?>\s*(.*?)\s*<br]]></quality>
-                <translate><![CDATA[>\s*Перевод:\s*<.*?>\s*(.*?)\s*<br]]></translate>
+                <quality><![CDATA[>\s*Качество:\s*<.*?>\s*(.*?)\s*<]]></quality>
+                <translate><![CDATA[>\s*Перевод:\s*<.*?>\s*(.*?)\s*<]]></translate>
             </reg>
             <filters>
                 <filter>
@@ -36,12 +36,7 @@
                 </filter>
                 <filter>
                     <name>translate</name>
-                    <value>/.*голосый.*/i</value>
-                    <method>=~</method>
-                </filter>
-                <filter>
-                    <name>title</name>
-                    <value>/OpenDub/i</value>
+                    <value>/.*голосый.*?Venom64.*/i</value>
                     <method>=~</method>
                 </filter>
             </filters>
