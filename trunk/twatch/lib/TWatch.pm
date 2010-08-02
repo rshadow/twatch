@@ -86,7 +86,8 @@ sub load_projects
 
     # Get executed param
     my $execute = config->get('execute');
-    notify(sprintf 'Execute param set. Run just "%s" project', $execute);
+    notify(sprintf 'Execute param set. Run just "%s" project', $execute)
+        if $execute;
 
     for my $pfile ( @pfiles )
     {
