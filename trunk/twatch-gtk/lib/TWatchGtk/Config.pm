@@ -22,15 +22,19 @@ use TWatch::Config;
 # I think no any place to change. If it`s wrong, please inform me.
 # (Except config file and *.glade file)
 ################################################################################
+# Paths to system and user config files
 use constant TWATCH_GTK_SYSTEM_CONFIG_PATH =>
                         '/etc/twatch/twatch-gtk.conf';
 use constant TWATCH_GTK_CONFIG_PATH => '~/.twatch/twatch-gtk.conf';
+# Path to glade interface files
 #use constant TWATCH_GTK_GLADE_PATH  => '/usr/share/twatch-gtk/';
 use constant TWATCH_GTK_GLADE_PATH  =>
                         '/home/rubin/workspace/twatch/trunk/twatch-gtk/glade/';
+# Path to twatch
 #use constant TWATCH_PATH            => '/usr/bin/twatch';
 use constant TWATCH_PATH            =>
                         '/home/rubin/workspace/twatch/trunk/twatch/twatch';
+# Path to example crontab
 use constant TWATCH_CRONTAB_PATH    => '/usr/share/doc/twatch/examples/crontab';
 ###############################################################################
 
@@ -48,11 +52,6 @@ use constant TWATCH_CRONTAB_PATH    => '/usr/share/doc/twatch/examples/crontab';
         return $config if $config;
 
         $config = TWatchGtk::Config->new;
-        return unless $config;
-
-        # Загрузим конфиг
-        $config->load;
-
         return $config;
     }
 }
@@ -73,6 +72,10 @@ sub new
          TWATCH_GTK_CONFIG_PATH];
 
     my $self = bless \%config ,$class;
+
+    # Загрузим конфиг
+    $self->load;
+
     return $self;
 }
 
@@ -128,6 +131,12 @@ sub load
     # Сохраним оригинал т.к. дальше он может преобразововаться
     %{ $self->{orig} } = %{ $self->{param} };
 
+    for(qw(ShowCronDialog))
+    {
+        $self->{param}{$_} =
+            ($self->{param}{$_} =~ m/^(?:1|yes|true|on)$/i) ?1 :0;
+    }
+
     $self->{param}{twatch}  = TWATCH_PATH;
     $self->{param}{crontab} = TWATCH_CRONTAB_PATH;
     $self->{param}{glade}   = TWATCH_GTK_GLADE_PATH;
@@ -165,18 +174,6 @@ sub set
 sub daemon
 {
     return TWatch::Config::config;
-}
-
-=head2 is_show_cron_dialog
-
-Показывать cron диалог при запуске
-
-=cut
-sub is_show_cron_dialog
-{
-    my ($self) = @_;
-    return 1 if $self->get('ShowCronDialog') =~ m/^(1|yes|true|on)$/;
-    return 0;
 }
 
 1;

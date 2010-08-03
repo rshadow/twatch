@@ -1,10 +1,8 @@
-#!/usr/bin/perl
 package TWatchGtk;
 
 use strict;
 use warnings;
 use utf8;
-use lib qw(..);
 
 use TWatch;
 use TWatchGtk::Config;

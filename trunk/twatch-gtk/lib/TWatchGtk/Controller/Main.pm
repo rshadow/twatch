@@ -1,4 +1,3 @@
-#!/usr/bin/perl
 package TWatchGtk::Controller::Main;
 use base qw(TWatchGtk::Controller);
 
@@ -9,7 +8,6 @@ use utf8;
 use Glib qw(:constants);
 use Gtk2;
 
-use lib qw(../../);
 use TWatchGtk::Config; # Нужен только для дампера.
 use TWatchGtk::Controller::About;
 use TWatchGtk::Controller::Settings;
@@ -47,8 +45,8 @@ sub init
     # Если проверку надо производить и задание не установлено в cron то
     # выведим сообщение
     $self->{dlg}{cron} = TWatchGtk::Controller::Cron->new
-        if config->is_show_cron_dialog and
-           ! TWatchGtk::Controller::Cron::verify;
+        if config->get('ShowCronDialog') and
+            ! TWatchGtk::Controller::Cron::verify;
 }
 
 # Обработчики меню #############################################################
@@ -179,38 +177,38 @@ sub build_project_tree
 
     my $blue = Gtk2::Gdk::Color->new(0,0,65535);
 
-    for (keys %{$twatch->{project}})
+    for my $project ($twatch->get)
     {
-        my $proj = $twatch->get_proj($_);
-
         # Добавим проект
         my $iter_project = $model->insert_with_values(undef, 0,
-            TW_TITLE    , $proj->{name},
-            TW_COMPLETE , $proj->{updated},
-            TW_PAGE     , $proj->{url},
+            TW_TITLE    , $project->param('name'),
+            TW_COMPLETE , $project->param('updated'),
+            TW_PAGE     , $project->param('url'),
             TW_PAGE_DECOR , 'single',
             TW_PAGE_COLOR , $blue);
 
         # Добавим задания проекта
-        for my $watch ( $twatch->get_watch($proj->{name}) )
+        my @watches = $project->watches;
+        for my $watch ( @watches )
         {
-#            DieDumper $watch if $proj->{name} =~ m/zal/;
+#            DieDumper $watch if $project->{name} =~ m/zal/;
             my $iter_watch = $model->insert_with_values($iter_project, 0,
-                TW_TITLE,       $watch->{name});
+                TW_TITLE,       $watch->param('name'));
 
             # Добавим список завершенных торренов
-            next unless @{ $watch->{complete} || [] };
+            next unless $watch->complete->count;
 
-            my $iter_complete = $model->insert_with_values($iter_watch, 0,
-                    TW_TITLE,       'Completed');
-            for my $complete ( @{ $watch->{complete} })
+#            my $iter_complete = $model->insert_with_values($iter_watch, 0,
+#                    TW_TITLE,       'Completed');
+            for my $key ( $watch->complete->keys )
             {
-                $model->insert_with_values($iter_complete, 0,
-                    TW_TITLE,       $complete->{title}    || '',
-                    TW_SEASON,      $complete->{season}   || '',
-                    TW_SERIES,      $complete->{series}   || '',
-                    TW_COMPLETE,    $complete->{datetime} || '',
-                    TW_PAGE,        $complete->{page}     || '',
+                $model->insert_with_values($iter_watch, 0,
+                    TW_TITLE,       $watch->complete->param($key, 'title')   ||
+                                    $watch->complete->param($key, 'torrent') || '',
+                    TW_SEASON,      $watch->complete->param($key, 'season')  || '',
+                    TW_SERIES,      $watch->complete->param($key, 'series')  || '',
+                    TW_COMPLETE,    $watch->complete->param($key, 'datetime')|| '',
+                    TW_PAGE,        $watch->complete->param($key, 'page')    || '',
                     TW_PAGE_DECOR,  'single',
                     TW_PAGE_COLOR,  $blue);
             }

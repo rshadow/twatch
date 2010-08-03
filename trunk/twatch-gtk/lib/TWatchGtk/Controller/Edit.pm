@@ -1,11 +1,9 @@
-#!/usr/bin/perl
 package TWatchGtk::Controller::Edit;
 use base qw(TWatchGtk::Controller);
 
 use strict;
 use warnings;
 use utf8;
-use lib qw(../../);
 
 use Glib qw(:constants);
 use Gtk2;
@@ -20,22 +18,24 @@ sub init
     return unless $self->{project};
 
     # Инициализация параметров:
-    my $proj = $self->{twatch}->get_proj( $self->{project} );
-    warn 'Wrong project name.', return unless $proj;
+    my $project = $self->{twatch}->get( $self->{project} );
+    warn 'Wrong project name.', return unless $project;
 
-    $self->{builder}->get_object( 'name' )->set_text( $proj->{name} );
-    $self->{builder}->get_object( 'url' )->set_text( $proj->{url} );
+    $self->{builder}->get_object('name')->set_text($project->param('name')||'');
+    $self->{builder}->get_object('url' )->set_text($project->param('url') ||'');
+    $self->{builder}->get_object('order' )->
+        set_text($project->param('order') || 0);
 
     $self->{builder}->get_object( 'auth_url' )->set_text(
-        $proj->{authtorization}{url} );
+        $project->auth('url') || '');
     $self->{builder}->get_object( 'auth_login_name' )->set_text(
-        $proj->{authtorization}{login}{name} );
+        $project->auth('login_name') || '');
     $self->{builder}->get_object( 'auth_login_value' )->set_text(
-        $proj->{authtorization}{login}{value} );
+        $project->auth('login_value') || '');
     $self->{builder}->get_object( 'auth_password_name' )->set_text(
-        $proj->{authtorization}{password}{name} );
+        $project->auth('password_name') || '');
     $self->{builder}->get_object( 'auth_password_value' )->set_text(
-        $proj->{authtorization}{password}{value} );
+        $project->auth('password_value') || '');
 }
 
 sub on_button_ok_pressed

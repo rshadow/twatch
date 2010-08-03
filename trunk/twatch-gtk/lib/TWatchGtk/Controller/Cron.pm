@@ -1,11 +1,9 @@
-#!/usr/bin/perl
 package TWatchGtk::Controller::Cron;
 use base qw(TWatchGtk::Controller);
 
 use strict;
 use warnings;
 use utf8;
-use lib qw(../../);
 
 use Glib qw(:constants);
 use Gtk2;
@@ -64,11 +62,12 @@ sub on_button_no_pressed
     return TRUE;
 }
 
-=head2 verify
+=head2 verify`
 
-Проверяет установлено или нет задание в crontab
+Check for current crontab job
 
 =cut
+
 sub verify
 {
     # Получим путь к программе

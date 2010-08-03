@@ -1,4 +1,3 @@
-#!/usr/bin/perl
 package TWatchGtk::Controller::About;
 use base qw(TWatchGtk::Controller);
 

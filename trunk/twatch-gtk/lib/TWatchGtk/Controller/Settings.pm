@@ -1,11 +1,9 @@
-#!/usr/bin/perl
 package TWatchGtk::Controller::Settings;
 use base qw(TWatchGtk::Controller);
 
 use strict;
 use warnings;
 use utf8;
-use lib qw(../../);
 
 use Glib qw(:constants);
 use Gtk2;
@@ -31,14 +29,14 @@ sub init
 
     # Использование прокси
     $self->{builder}->get_object('NoProxy')->set_active(
-        config->daemon->is_noproxy
+        config->daemon->get('NoProxy')
     );
 
     # Инициализация параметров GUI:
 
     # Использование прокси
     $self->{builder}->get_object('ShowCronDialog')->set_active(
-        config->is_show_cron_dialog
+        config->get('ShowCronDialog')
     );
 }
 
@@ -92,7 +90,7 @@ sub on_button_ok_pressed
             $self->{builder}->get_object('NoProxy')->get_active();
         push( @config, {name => 'NoProxy', value => $value || 'no'} ),
         config->daemon->set('NoProxy', $value)
-            if config->daemon->is_noproxy != $value;
+            if config->daemon->get('NoProxy') != $value;
     }
 
     # Выйдем если пользователь ничего не менял
@@ -136,7 +134,7 @@ sub on_button_ok_pressed
             $self->{builder}->get_object('ShowCronDialog')->get_active();
         push( @config, {name => 'ShowCronDialog', value => $value || 'no'}),
         config->set('ShowCronDialog', $value)
-            if config->is_show_cron_dialog != $value;
+            if config->get('ShowCronDialog') != $value;
     }
 
     # Выйдем если пользователь ничего не менял
