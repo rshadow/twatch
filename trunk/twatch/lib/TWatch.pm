@@ -121,9 +121,9 @@ Return project by $name. If $name not defined return a hash or sorted array.
 sub get
 {
     my ($self, $name) = @_;
-
-    return sort {$a->{order} <=> $b->{order}} values %{$self->{project}}
-        if ! defined $name and wantarray;
+    return sort {$a->param('order') <=> $b->param('order')}
+        values %{$self->{project}}
+            if ! defined $name and wantarray;
     return $self->{project} if ! defined $name;
     return $self->{project}{$name};
 }

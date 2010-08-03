@@ -137,8 +137,9 @@ sub watches
     {
         # Unless defined param return sort watches array
         # or count in scalar context
-        return sort {$a->{order} <=> $b->{order}} values %{ $self->{watches} }
-            if wantarray;
+        return sort {$a->param('order') <=> $b->param('order')}
+            values %{ $self->{watches} }
+                if wantarray;
         return scalar keys %{ $self->{watches} };
     }
 }
