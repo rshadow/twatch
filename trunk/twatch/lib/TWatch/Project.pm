@@ -115,31 +115,32 @@ sub auth
     return $self->{authtorization};
 }
 
-=head2 watches
+=head2 watches $param
 
-Get tasks. In scalar context return count.
+Get/Set task $param. If $param not set, then return list of watches
+or return count in scalar context.
 
 =cut
 
 sub watches
 {
-    my ($self) = @_;
-    return %{ $self->{watches} } if wantarray;
-    return scalar keys %{ $self->{watches} };
-}
-
-=head2 watch $param
-
-Get/Set task $param. Tasks stored by names $watch->name
-
-=cut
-
-sub watch
-{
     my ($self, $param) = @_;
-    return $self->{watches}{$param} unless ref $param;
-    $self->{watches}->{ $param->param('name') } = $param;
-    return $param;
+
+    if( defined $param )
+    {
+        # Set task if $param is set and it`s object
+        $self->{watches}->{ $param->param('name') } = $param if ref $param;
+        # Return task if $param is set
+        return $self->{watches}{$param};
+    }
+    else
+    {
+        # Unless defined param return sort watches array
+        # or count in scalar context
+        return sort {$a->{order} <=> $b->{order}} values %{ $self->{watches} }
+            if wantarray;
+        return scalar keys %{ $self->{watches} };
+    }
 }
 
 =head2 complete
@@ -192,7 +193,7 @@ sub load
             name     => $name,
             complete => $self->complete->get($name) );
         # Add task to project
-        $self->watch( $watch );
+        $self->watches( $watch );
     }
 
     # Delete tasks from bufer (all already in project)
@@ -238,7 +239,7 @@ sub run
 {
     my ($self) = @_;
 
-    unless( $self->watches )
+    unless( scalar $self->watches )
     {
         notify('No watches. Skip project.');
         return;
@@ -256,14 +257,10 @@ sub run
     }
 
     # Run all tasks
-    my %watches = $self->watches;
-    my @names = keys %watches;
+    my @watches = $self->watches;
 
-    for my $name ( @names )
+    for my $watch ( @watches )
     {
-        # Get task
-        my $watch = $self->watch( $name );
-
         notify(sprintf 'Start watch: %s', $watch->param('name') );
 
         # Execute task
@@ -272,7 +269,7 @@ sub run
         notify('Watch complete');
 
         # Sleep between watches
-        unless( $name eq $names[$#names] )
+        unless( $watch->param('name') eq $watches[$#watches]->param('name') )
         {
             notify(sprintf 'Sleep %d seconds', config->get('TimeoutWatch'));
             sleep config->get('TimeoutWatch');

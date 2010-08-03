@@ -135,15 +135,14 @@ sub save
 {
     my ($self, $project) = @_;
 
-    # Get watches names
-    my %watches = $project->watches;
-
-    for my $name ( keys %watches )
+    # Prepare watches array
+    my @watches = $project->watches;
+    for my $watch ( @watches )
     {
-        my %result = $watches{$name}->complete->get;
-        $watches{$name} = {
-            name        => $name,
-            ($watches{$name}->complete->count)
+        my %result = $watch->complete->get;
+        $watch = {
+            name        => $watch->param('name'),
+            ($watch->complete->count)
                 ?(complete => { result => [values %result] })
                 :(),
         }
@@ -153,7 +152,7 @@ sub save
     my $save = {
         name    => $project->param('name'),
         update  => $project->param('update'),
-        watches => { watch => [ values %watches ] },
+        watches => { watch => \@watches },
     };
 
     # Get file name to save

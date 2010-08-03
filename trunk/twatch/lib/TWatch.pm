@@ -33,7 +33,7 @@ sub new
     my %obj = %opts;
     my $self = bless \%obj ,$class;
 
-    $self->load_projects;
+    $self->load;
 
     return $self;
 }
@@ -48,7 +48,7 @@ sub run
 {
     my ($self) = @_;
 
-    my @projects = $self->get_projects;
+    my @projects = $self->get;
 
     notify(sprintf 'Total projects: %s', scalar @projects);
 
@@ -58,7 +58,7 @@ sub run
             'Start project: %s (%s), last update %s',
             $project->param('name'),
             $project->param('url'),
-            $project->param('update'));
+            $project->param('update') || 'Never');
         notify(sprintf 'Watches: %d', scalar $project->watches);
 
         $project->run
@@ -72,13 +72,13 @@ sub run
 
 =cut
 
-=head2 load_projects
+=head2 load
 
 Load projects from files. Return count of loaded projects.
 
 =cut
 
-sub load_projects
+sub load
 {
     my ($self) = @_;
 
@@ -112,13 +112,13 @@ sub load_projects
     return scalar keys %{$self->{project}};
 }
 
-=head2 get_projects $name
+=head2 get $name
 
 Return project by $name. If $name not defined return a hash or sorted array.
 
 =cut
 
-sub get_projects
+sub get
 {
     my ($self, $name) = @_;
 
@@ -143,7 +143,7 @@ sub delete_project
     my ($self, $name) = @_;
 
     # Get project
-    my $project = $self->get_projects($name);
+    my $project = $self->get($name);
     warn 'Can`t delete project: Project does not exists.',
     return
         unless $project;
@@ -168,7 +168,7 @@ sub add_project
 {
     my ($self, $new) = @_;
 
-    if( $self->get_projects( $new->param('name') ) )
+    if( $self->get( $new->param('name') ) )
     {
         warn sprintf('Can`t add project "%s". This project already exists.',
             $new->param('name'));
@@ -189,8 +189,8 @@ sub save_project
 #    my ($self, $name) = @_;
 #
 #    # Получим проект
-#    my $project = $self->get_projects($name);
-#    my $watch   = $self->watch($name);
+#    my $project = $self->get($name);
+#    my $watch   = $self->watches($name);
 #
 #    $watch->{$_} = {
 #        name        => $_,

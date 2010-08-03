@@ -117,9 +117,10 @@ sub param
     {
         die 'Result not set' unless exists $self->{result}{$torrent};
 
-        $self->{result}{$torrent}{$name} = $value;
+        $self->{result}{$torrent}{$name} = $value if defined $value;
+        return $self->{result}{$torrent}{$name};
     }
-    else
+    elsif( defined $value )
     {
         $self->{result}{$_}{$name} = $value for keys %{ $self->{result} };
     }
