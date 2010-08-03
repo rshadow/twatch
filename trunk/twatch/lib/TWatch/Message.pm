@@ -25,9 +25,6 @@ use Encode qw(decode encode is_utf8);
 
 use TWatch::Config;
 
-# Object singleton
-our $object;
-
 =head1 MESSAGE METHODS
 
 =cut
@@ -40,7 +37,11 @@ Return singleton message object
 
 sub message
 {
-    $object = TWatch::Message->new unless $object;
+    # Object singleton
+    our $object;
+    return $object if $object;
+
+    $object = TWatch::Message->new;
     return $object;
 }
 
@@ -174,6 +175,8 @@ sub send
     }
 }
 
+1;
+
 =head1 REQUESTS & BUGS
 
 Roman V. Nikolaev <rshadow@rambler.ru>
@@ -198,5 +201,3 @@ You should have received a copy of the GNU  General  Public  License  along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 =cut
-
-1;

@@ -18,6 +18,8 @@ use TWatch::Watch;
 
 =head1 CONSTRUCTOR AND MAIN
 
+=cut
+
 =head2 new
 
 Main constructor
@@ -67,6 +69,8 @@ sub run
 }
 
 =head1 PROJECT METHODS
+
+=cut
 
 =head2 load_projects
 
@@ -124,7 +128,9 @@ sub get_projects
     return $self->{project}{$name};
 }
 
-=head1 UNSUPPORTED OR USED ONLY IN TWATCH-GTK
+=head1 UNSUPPORTED OR JUST FOR TWATCH-GTK COMPATIBLE
+
+=cut
 
 =head2 delete_project $name
 
@@ -194,6 +200,8 @@ sub save_project
 #    } for keys %$watch;
 }
 
+1;
+
 =head1 REQUESTS & BUGS
 
 Roman V. Nikolaev <rshadow@rambler.ru>
@@ -218,5 +226,3 @@ You should have received a copy of the GNU  General  Public  License  along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 =cut
-
-1;

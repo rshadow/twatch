@@ -25,7 +25,7 @@ use TWatch::Complete;
 
 Create new project
 
-=head3 Options:
+=head3 Required options:
 
 =over
 
@@ -124,14 +124,13 @@ Get tasks. In scalar context return count.
 sub watches
 {
     my ($self) = @_;
-#    DieDumper wantarray, caller, %{ $self->{watches} };
     return %{ $self->{watches} } if wantarray;
     return scalar keys %{ $self->{watches} };
 }
 
-=head2 watch $watch
+=head2 watch $param
 
-Get/Set task $watch. Tasks stored by names $watch->name
+Get/Set task $param. Tasks stored by names $watch->name
 
 =cut
 
@@ -145,7 +144,7 @@ sub watch
 
 =head2 complete
 
-Get completed info.
+Get complete list object.
 
 =cut
 
@@ -207,6 +206,7 @@ sub load
 =head2 delete
 
 Delete project and it`s files
+
 =cut
 
 sub delete
@@ -385,7 +385,7 @@ sub get_auth_browser
     return $browser;
 }
 
-
+1;
 
 =head1 REQUESTS & BUGS
 
@@ -411,5 +411,3 @@ You should have received a copy of the GNU  General  Public  License  along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 =cut
-
-1;

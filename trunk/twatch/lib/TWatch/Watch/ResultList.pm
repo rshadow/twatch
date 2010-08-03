@@ -6,13 +6,7 @@ use utf8;
 
 =head1 NAME
 
-TWatch::Watch::ResultList - Модуль работы с результатоми парсинга страницы
-
-=head1 SYNOPSIS
-
-  use TWatch::Watch::ResultList;
-
-=head1 DESCRIPTION
+TWatch::Watch::ResultList - Work with parsing page results list.
 
 =cut
 
@@ -33,9 +27,9 @@ sub new
 
 =cut
 
-=head2 delete_result $torrent
+=head2 delete $torrent
 
-Delete from result hash by $torrent.
+Delete from results list by $torrent name.
 
 =cut
 
@@ -48,6 +42,13 @@ sub delete
 
     delete $self->{result}{ $torrent };
 }
+
+=head2 get $param
+
+Add new result. If $param is hash, add result from it. If list of results hash,
+add all of them.
+
+=cut
 
 sub add
 {
@@ -65,6 +66,12 @@ sub add
     }
 }
 
+=head2 get $torrent
+
+Get result by $torrent name
+
+=cut
+
 sub get
 {
     my ($self, $torrent) = @_;
@@ -72,17 +79,35 @@ sub get
     return $self->{result}{$torrent};
 }
 
+=head2 exists $torrent
+
+Return true if result by $torrent name exists.
+
+=cut
+
 sub exists
 {
     my ($self, $torrent) = @_;
     return exists $self->{result}{$torrent};
 }
 
+=head2 count
+
+Return count of list elements
+
+=cut
+
 sub count
 {
     my ($self) = @_;
     return scalar keys %{ $self->{result} };
 }
+
+=head2 param $torrent, $name, $value
+
+Get parameter by $name from $torrent name. If set $value, then it`s apply first.
+
+=cut
 
 sub param
 {
@@ -100,6 +125,12 @@ sub param
     }
 }
 
+=head2 keys
+
+Return results names list
+
+=cut
+
 sub keys
 {
     my ($self) = @_;
@@ -107,3 +138,28 @@ sub keys
 }
 
 1;
+
+=head1 REQUESTS & BUGS
+
+Roman V. Nikolaev <rshadow@rambler.ru>
+
+=head1 AUTHORS
+
+Copyright (C) 2008 Roman V. Nikolaev <rshadow@rambler.ru>
+
+=head1 LICENSE
+
+This program is free software: you can redistribute  it  and/or  modify  it
+under the terms of the GNU General Public License as published by the  Free
+Software Foundation, either version 3 of the License, or (at  your  option)
+any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even  the  implied  warranty  of  MERCHANTABILITY  or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public  License  for
+more details.
+
+You should have received a copy of the GNU  General  Public  License  along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+=cut

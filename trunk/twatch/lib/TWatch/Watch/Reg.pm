@@ -10,12 +10,6 @@ use TWatch::Config;
 
 TWatch::Watch::Reg - Модуль работы с регулярниками пользователя
 
-=head1 SYNOPSIS
-
-  use TWatch::Watch::Reg;
-
-=head1 DESCRIPTION
-
 =cut
 
 use constant DEFAULT_REG_TORRENT =>
@@ -59,9 +53,9 @@ sub param
     return $self->{$name};
 }
 
-=head2 match $content
+=head2 match $content, $type
 
-Parse content by regexp and return matches.
+Parse $content by regexp and return matches. Parsing depends of tracker $type.
 
 =cut
 
@@ -116,3 +110,28 @@ sub match
 }
 
 1;
+
+=head1 REQUESTS & BUGS
+
+Roman V. Nikolaev <rshadow@rambler.ru>
+
+=head1 AUTHORS
+
+Copyright (C) 2008 Roman V. Nikolaev <rshadow@rambler.ru>
+
+=head1 LICENSE
+
+This program is free software: you can redistribute  it  and/or  modify  it
+under the terms of the GNU General Public License as published by the  Free
+Software Foundation, either version 3 of the License, or (at  your  option)
+any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even  the  implied  warranty  of  MERCHANTABILITY  or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public  License  for
+more details.
+
+You should have received a copy of the GNU  General  Public  License  along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+=cut

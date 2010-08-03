@@ -107,7 +107,7 @@ sub param
     return $self->{$name};
 }
 
-=head2 get
+=head2 get $name
 
 Get completed tasks for $name watch
 
@@ -125,9 +125,9 @@ sub get
     return $self->{watches}{$name};
 }
 
-=head2 save
+=head2 save $project
 
-Save list completed tasks
+Save list completed tasks for $project
 
 =cut
 
@@ -181,6 +181,8 @@ sub save
     return 1;
 }
 
+1;
+
 =head1 REQUESTS & BUGS
 
 Roman V. Nikolaev <rshadow@rambler.ru>
@@ -205,5 +207,3 @@ You should have received a copy of the GNU  General  Public  License  along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 =cut
-
-1;

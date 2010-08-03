@@ -67,7 +67,7 @@ sub param
 
 =head2 reg
 
-return regular expression hash for user defined params.
+Return regular expression object for user defined params.
 
 =cut
 
@@ -75,16 +75,15 @@ sub reg { return shift()->{reg} }
 
 =head2 results
 
-Work with results
+Return results list object for task.
 
 =cut
 
 sub results { return shift()->{results} }
 
-
 =head2 filters
 
-Get filters for task.
+Return filters list object for task.
 
 =cut
 
@@ -92,11 +91,12 @@ sub filters { return shift()->{filters} }
 
 =head2 complete
 
-Return completed list object
+Return completed list object for task.
 
 =cut
 
 sub complete { return shift()->{complete} }
+
 
 =head1 DOWNLOAD METHODS
 
@@ -147,7 +147,7 @@ sub run
     if ($self->param('urlreg'))
     {
         # If tracker layout like this:
-        # - Torrent list
+        # - Torrents list
         #   |- Torrent 1 description
         #       |- Link to 1.torrent
         #   |- Torrent 2 description
@@ -426,6 +426,8 @@ sub download
     return $self->results->count;
 }
 
+1;
+
 =head1 REQUESTS & BUGS
 
 Roman V. Nikolaev <rshadow@rambler.ru>
@@ -450,5 +452,3 @@ You should have received a copy of the GNU  General  Public  License  along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 =cut
-
-1;
