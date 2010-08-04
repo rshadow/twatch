@@ -26,7 +26,7 @@ XML! If parameter value cosist ">" or "<" warp them as in example:
         <!--
             Url authtorization page (contain authtorization form).
             If match with project url you can miss it
-        ->
+        -->
         <url></url>
         <!--
             Parameters name and value for login on tracker.
