@@ -28,18 +28,23 @@ sub new
 {
     my ($class, %opts) = @_;
 
-#    die 'Need complete list object' unless $opts{complete};
+    # Get params
+    my ($reg, $xpath, $filters) = (
+        delete $opts{reg}, delete $opts{xpath}, delete $opts{filters},
+    );
+
+    die 'Need complete list object' unless
+        'TWatch::Watch::ResultList' eq ref $opts{complete};
 
     my $self = bless \%opts ,$class;
 
     # Replace oprs to objects
-    $self->{reg}     = TWatch::Watch::Reg->new( %{$self->{reg}} )
+    $self->{reg}     = TWatch::Watch::Reg->new( reg => $reg, xpath => $xpath)
         or die 'Can`t create regexp object';
     $self->{results} = TWatch::Watch::ResultList->new
         or die 'Can`t create result list object';
-    $self->{filters} = TWatch::Watch::FilterList->new(
-        filters => $self->{filters} )
-            or die 'Can`t create filter list object';
+    $self->{filters} = TWatch::Watch::FilterList->new( filters => $filters )
+        or die 'Can`t create filter list object';
 
     return $self;
 }
@@ -250,15 +255,15 @@ sub parse
     my ($self, $content) = @_;
 
     # Use users regexp to get fields
-    notify('Get data by user regexp');
+    notify('Get data by user regexp/xpath');
     my @result = $self->reg->match( $content, $self->param('type') );
 
     for my $result ( @result )
     {
         #   Skip if no fields found
         notify(
-            sprintf('Links not found. Wrong regexp?: %s', $self->reg->param('link')),
-            'warn'),
+            sprintf('Links not found. Wrong regexp?: %s',
+                $self->reg->rparam('link')), 'warn'),
         return
             unless $result->{link};
     }

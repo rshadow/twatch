@@ -4,6 +4,9 @@ use warnings;
 use strict;
 use utf8;
 
+use HTML::TreeBuilder;
+use HTML::TreeBuilder::XPath;
+
 use TWatch::Config;
 
 =head1 NAME
@@ -29,8 +32,10 @@ sub new
 
     my $self = bless \%opts ,$class;
 
-    $self->param('torrent', DEFAULT_REG_TORRENT) unless $self->param('torrent');
-    $self->param('link',    DEFAULT_REG_LINK)    unless $self->param('link');
+    $self->rparam('torrent', DEFAULT_REG_TORRENT)
+        unless $self->rparam('torrent');
+    $self->rparam('link',    DEFAULT_REG_LINK)
+        unless $self->rparam('link');
 
     return $self;
 }
@@ -39,35 +44,73 @@ sub new
 
 =cut
 
-=head2 param $name, $value
+=head2 rparam $name, $value
 
-Get or set new parameter value
+Get or set new regexp parameter value
 
 =cut
 
-sub param
+sub rparam
 {
     my ($self, $name, $value) = @_;
 
-    $self->{$name} = $value if defined $value;
-    return $self->{$name};
+    $self->{reg}{$name} = $value if defined $value;
+    return $self->{reg}{$name};
 }
 
-=head2 match $content, $type
+=head2 xparam $name, $value
+
+Get or set new xpath parameter value
+
+=cut
+
+sub xparam
+{
+    my ($self, $name, $value) = @_;
+
+    $self->{xpath}{$name} = $value if defined $value;
+    return $self->{xpath}{$name};
+}
+
+=head2 xkeys
+
+Get xpath params keys
+
+=cut
+
+sub xkeys
+{
+    my ($self) = @_;
+    return keys %{ $self->{xpath} };
+}
+
+=head2 rkeys
+
+Get regexp params keys
+
+=cut
+
+sub rkeys
+{
+    my ($self) = @_;
+    return keys %{ $self->{reg} };
+}
+
+=head2 rmatch $content, $type
 
 Parse $content by regexp and return matches. Parsing depends of tracker $type.
 
 =cut
 
-sub match
+sub rmatch
 {
     my ($self, $content, $type) = @_;
 
     my %result;
-    for my $name ( keys %{ $self } )
+    for my $name ( $self->rkeys )
     {
         # Get regexp and clean it
-        my $reg = $self->{$name};
+        my $reg = $self->rparam($name);
         s/^\s+//, s/\s+$// for $reg;
         # Use regexp on content. If tree set only first value
         my @value = ($type eq 'tree')
@@ -85,8 +128,9 @@ sub match
     {
         next if $count == scalar @{ $result{$name} };
         warn sprintf 'Data sizes for "%s" not match. Regexp corrupted.', $name;
+        $result{$name} = [(undef) x $count];
     }
-#DieDumper \%result;
+
     # Fix filenames unless it`s not *.torrent
     for my $torrent (@{ $result{torrent} })
     {
@@ -111,10 +155,49 @@ sub match
 
         push @result, \%res;
     }
+DieDumper \@result;
+    return @result if wantarray;
+    return \@result;
+}
+
+=head2 xmatch $content
+
+Parse $content by xpath and return matches. Parsing depends of tracker $type.
+
+=cut
+
+sub xmatch
+{
+    my ($self, $content) = @_;
+
+    my $tree = HTML::TreeBuilder::XPath->new_from_content( $content );
+    $tree->eof();
+    $tree->elementify();
+
+    my %result;
+    for my $name ( $self->xkeys )
+    {
+        my @value = $tree->findnodes( $self->xparam($name) );
+        next unless @value;
+
+        @value = map {$_->getValue} @value;
+
+        # Add values to result
+        push @{ $result{$name} }, @value;
+    }
+
+    DieDumper \%result;
+
+
+    $tree->delete();
+    # Transform to easy use form
+    my @result;
 
     return @result if wantarray;
     return \@result;
 }
+
+sub match{ return xmatch @_; }
 
 1;
 

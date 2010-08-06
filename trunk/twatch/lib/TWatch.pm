@@ -99,11 +99,11 @@ sub load
         my ($pname) = $pfile =~ m~^.*/(.*?)$~;
         my ($cfile) = grep {m~/$pname$~} @cfiles;
 
+        # If set --execute option, then skip project by filename
+        next if $execute and $pname ne $execute;
+
         # Load project
         my $project = TWatch::Project->new(file => $pfile, cfile => $cfile);
-
-        # If set execute param then skip projects, except named in execute param
-        next if $execute and $project->param('name') !~ m/^$execute$/i;
 
         # Add in hash
         $self->{project}{$project->param('name')} = $project;
