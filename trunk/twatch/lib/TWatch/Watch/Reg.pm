@@ -80,6 +80,13 @@ sub match
         push @{ $result{$name} }, @value;
     }
 
+    my $count = scalar @{ $result{torrent} };
+    for my $name ( keys %result )
+    {
+        next if $count == scalar @{ $result{$name} };
+        warn sprintf 'Data sizes for "%s" not match. Regexp corrupted.', $name;
+    }
+#DieDumper \%result;
     # Fix filenames unless it`s not *.torrent
     for my $torrent (@{ $result{torrent} })
     {
