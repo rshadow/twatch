@@ -17,16 +17,20 @@
         <watch>
             <name>Naruto</name>
             <url><![CDATA[http://kinozal.tv/browse.php?s=%CD%E0%F0%F3%F2%EE&c=20&v=0&y=&t=0&a=0&o=0]]></url>
-            <urlreg><![CDATA[(\/details\.php\?id=\d+)]]></urlreg>
-            <order>0</order>
+            <tree><![CDATA[//table[@class="mn"]//td[@class="templ"]/a[starts-with(@href,"/details.php")]/@href]]></tree>
+            <order>2</order>
+            <xpath>
+                <link>   <![CDATA[//a[starts-with(@title,'Скачать')]/@href]]></link>
+                <season> <![CDATA[//b[starts-with(text(),'Оригинальное название:')]/following-sibling::text()[1]]]></season>
+                <series> <![CDATA[//a[starts-with(@href,"/details.php")]//text()]]></series>
+                <quality><![CDATA[//b[starts-with(text(),'Качество:')]/following-sibling::text()[1]]]></quality>
+                <translate><![CDATA[//b[starts-with(text(),'Перевод:')]/following-sibling::text()[1]]]></translate>
+            </xpath>
             <reg>
-                <title><![CDATA[>\s*Название:\s*<.*?>\s*(.*?)\s*<br]]></title>
-                <season><![CDATA[(2)]]></season>
-                <series><![CDATA[\(\s*(\d+)\s*серия\s*\)]]></series>
-                <info><![CDATA[<td class="templ">\s*(<.*?>Качество.*?)</td>]]></info>
-                <rating><![CDATA[общая\s+оценка:\s*<b>(\d+(?:.\d+)?)<\/b>]]></rating>
-                <quality><![CDATA[>\s*Качество:\s*<.*?>\s*(.*?)\s*<]]></quality>
-                <translate><![CDATA[>\s*Перевод:\s*<.*?>\s*(.*?)\s*<]]></translate>
+                <series><![CDATA[\((\d+)]]></series>
+                <quality><![CDATA[^\s*(\S.*\S)\s*$]]></quality>
+                <translate><![CDATA[^\s*(\S.*\S)\s*$]]></translate>
+                <season><![CDATA[^\s*(\S.*\S)\s*$]]></season>
             </reg>
             <filters>
                 <filter>
@@ -44,14 +48,20 @@
         <watch>
             <name>Игромания</name>
             <url><![CDATA[http://kinozal.tv/browse.php?s=%C8%E3%F0%EE%EC%E0%ED%E8%FF+%B9+%E8%E7+12&c=41&v=0&y=&t=1&a=0&o=0]]></url>
-            <urlreg><![CDATA[(\/details\.php\?id=\d+)]]></urlreg>
+            <tree><![CDATA[//table[@class="mn"]//td[@class="templ"]/a[starts-with(@href,"/details.php")]/@href]]></tree>
             <order>1</order>
+            <xpath>
+                <link>   <![CDATA[//a[starts-with(@title,'Скачать')]/@href]]></link>
+                <title> <![CDATA[//b[starts-with(text(),'Оригинальное название:')]/following-sibling::text()[1]]]></title>
+                <num> <![CDATA[//a[starts-with(@href,"/details.php")]//text()]]></num>
+                <year><![CDATA[//b[starts-with(text(),'Год издания:')]/following-sibling::text()[1]]]></year>
+                <format><![CDATA[//b[starts-with(text(),'Формат:')]/following-sibling::text()[1]]]></format>
+            </xpath>
             <reg>
-                <title><![CDATA[>\s*Оригинальное название:\s*<.*?>\s*(.*?)\s*<br]]></title>
-                <num><![CDATA[(№\d+\(\d+\))]]></num>
-                <year><![CDATA[>\s*Год издания:\s*<.*?>\s*(.*?)\s*<br]]></year>
-                <rating><![CDATA[общая\s+оценка:\s*<b>(\d+(?:.\d+)?)<\/b>]]></rating>
-                <format><![CDATA[>\s*Формат:\s*<.*?>\s*(.*?)\s*<br]]></format>
+                <num><![CDATA[№(\d+)]]></num>
+                <title><![CDATA[^\s*(\S.*\S)\s*$]]></title>
+                <year><![CDATA[^\s*(\S.*\S)\s*$]]></year>
+                <format><![CDATA[^\s*(\S.*\S)\s*$]]></format>
             </reg>
             <filters>
                 <filter>

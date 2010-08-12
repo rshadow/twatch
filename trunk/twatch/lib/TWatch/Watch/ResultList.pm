@@ -27,20 +27,20 @@ sub new
 
 =cut
 
-=head2 delete $torrent
+=head2 delete $link
 
-Delete from results list by $torrent name.
+Delete from results list by $link name.
 
 =cut
 
 sub delete
 {
-    my ($self, $torrent) = @_;
+    my ($self, $link) = @_;
 
     warn 'No result for delete'
-        unless $self->{result}{ $torrent };
+        unless $self->{result}{ $link };
 
-    delete $self->{result}{ $torrent };
+    delete $self->{result}{ $link };
 }
 
 =head2 get $param
@@ -56,39 +56,39 @@ sub add
 
     if( 'HASH' eq ref $param )
     {
-        $self->{result}{ $param->{torrent} } = $param;
+        $self->{result}{ $param->{link} } = $param;
         return $self->{result}{$param};
     }
     elsif( 'ARRAY' eq ref $param )
     {
-        $self->{result}{ $_->{torrent} } = $_ for @$param;
+        $self->{result}{ $_->{link} } = $_ for @$param;
         return scalar @$param;
     }
 }
 
-=head2 get $torrent
+=head2 get $link
 
-Get result by $torrent name
+Get result by $link
 
 =cut
 
 sub get
 {
-    my ($self, $torrent) = @_;
-    return %{ $self->{result} } if wantarray and !defined $torrent;
-    return $self->{result}{$torrent};
+    my ($self, $link) = @_;
+    return %{ $self->{result} } if wantarray and !defined $link;
+    return $self->{result}{$link};
 }
 
-=head2 exists $torrent
+=head2 exists $link
 
-Return true if result by $torrent name exists.
+Return true if result by $link exists.
 
 =cut
 
 sub exists
 {
-    my ($self, $torrent) = @_;
-    return exists $self->{result}{$torrent};
+    my ($self, $link) = @_;
+    return exists $self->{result}{$link};
 }
 
 =head2 count
@@ -103,22 +103,22 @@ sub count
     return scalar keys %{ $self->{result} };
 }
 
-=head2 param $torrent, $name, $value
+=head2 param $link, $name, $value
 
-Get parameter by $name from $torrent name. If set $value, then it`s apply first.
+Get parameter by $name from $link name. If set $value, then it`s apply first.
 
 =cut
 
 sub param
 {
-    my ($self, $torrent, $name, $value) = @_;
+    my ($self, $link, $name, $value) = @_;
 
-    if(defined $torrent)
+    if(defined $link)
     {
-        die 'Result not set' unless exists $self->{result}{$torrent};
+        die 'Result not set' unless exists $self->{result}{$link};
 
-        $self->{result}{$torrent}{$name} = $value if defined $value;
-        return $self->{result}{$torrent}{$name};
+        $self->{result}{$link}{$name} = $value if defined $value;
+        return $self->{result}{$link}{$name};
     }
     elsif( defined $value )
     {

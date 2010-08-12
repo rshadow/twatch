@@ -8,11 +8,16 @@
             <name>The Big Bang Theory</name>
             <url>http://rutor.org/search/0/0/000/0/Теория большого взрыва</url>
             <order>1</order>
+            <xpath>
+                <link>   <![CDATA[//div[@id='index']//a[@class='downgif']/@href]]></link>
+                <season> <![CDATA[//div[@id='index']//a[starts-with(@href,'/torrent/')]/text()]]></season>
+                <series> <![CDATA[//div[@id='index']//a[starts-with(@href,'/torrent/')]/text()]]></series>
+                <quality> <![CDATA[//div[@id='index']//a[starts-with(@href,'/torrent/')]/text()]]></quality>
+            </xpath>
             <reg>
-                <torrent><![CDATA[<a[^>]*?class="downgif"[^>]*?href="(/download/\d+)"]]></torrent>
-                <link><![CDATA[<a[^>]*?class="downgif"[^>]*?href="(/download/\d+)"]]></link>
-                <season><![CDATA[\[(\d+)x\d+\]]]></season>
-                <series><![CDATA[\[\d+x(\d+)\]]]></series>
+                <season><![CDATA[\[(\d+)[xх]\d+\]]]></season>
+                <series><![CDATA[\[\d+[xх](\d+)\]]]></series>
+                <quality><![CDATA[(HDTVRip)]]></quality>
             </reg>
             <filters>
                 <filter>
@@ -25,17 +30,25 @@
                     <value>17</value>
                     <method><![CDATA[>=]]></method>
                 </filter>
+                <filter>
+                    <name>quality</name>
+                    <value>HDTVRip</value>
+                    <method><![CDATA[eq]]></method>
+                </filter>
             </filters>
         </watch>
         <watch>
             <name>How I Met Your Mother</name>
             <url>http://rutor.org/search/Как я встретил вашу маму</url>
             <order>2</order>
+            <xpath>
+                <link>   <![CDATA[//div[@id='index']//a[@class='downgif']/@href]]></link>
+                <season> <![CDATA[//div[@id='index']//a[starts-with(@href,'/torrent/')]/text()]]></season>
+                <series> <![CDATA[//div[@id='index']//a[starts-with(@href,'/torrent/')]/text()]]></series>
+            </xpath>
             <reg>
-                <torrent><![CDATA[<a[^>]*?class="downgif"[^>]*?href="(/download/\d+)"]]></torrent>
-                <link><![CDATA[<a[^>]*?class="downgif"[^>]*?href="(/download/\d+)"]]></link>
-                <season><![CDATA[\[(\d+)x\d+\]]]></season>
-                <series><![CDATA[\[\d+x(\d+)\]]]></series>
+                <season><![CDATA[\[(\d+)[xх]\d+\]]]></season>
+                <series><![CDATA[\[\d+[xх](\d+)\]]]></series>
             </reg>
             <filters>
                 <filter>

@@ -67,27 +67,28 @@ XML! If parameter value cosist ">" or "<" warp them as in example:
             <!-- Sort index. Any digits or characters. -->
             <order>0</order>
             <!--
-               List of user make parameters with regular expressions for
-               extraction them from html page.
-               Optional (if not specified try find link on *.torrent):
-                    torrent     - torrent file name
-                    link        - link to download this torrent file
-               Reserved:
-                    datetime    - reserved: download data
-               All rested parameters not required. You can define them and
-               use for filters and additional information in email.
-               This is example of parameters list.
+                List of extraction XPath expressions to get params.
+                Optional (if not specified try find link on *.torrent):
+                        link        - link to download this torrent file
+                Reserved:
+                    datetime    - download data
+                    page        - page from
+                All rested parameters not required. You can define them and
+                use for filters and additional information in email.
+                This is example of parameters list.
+            -->
+            <xpath>
+                <link>   <![CDATA[//div[@class='mid']/div[contains(@class,'t_row')]//td/a[@class='a_download']/@href]]></link>
+                <season> <![CDATA[//div[@class='mid']/div[contains(@class,'t_row')]//td/a[@class='a_download']/@href]]></season>
+                <series> <![CDATA[//div[@class='mid']/div[contains(@class,'t_row')]//td/a[@class='a_download']/@href]]></series>
+            </xpath>
+            <!--
+               List of user make regular expressions for local
+               extraction data from attributes, derived by XPath expression.
             -->
             <reg>
-                <torrent><![CDATA[<a href=".*?/(House\.M\.D.*?\.torrent)"[^>]*?class="a_download"]]></torrent>
-                <link><![CDATA[<a href="([^<]*?House\.M\.D.*?)"[^>]*?class="a_download"]]></link>
-                <title><![CDATA[<td class="t_episode_title".*?>(.*?)\s*<]]></title>
-                <season><![CDATA[<a href=".*?House\.M\.D\.s?(\d*?)\D.*?" class="a_download"]]></season>
-                <series><![CDATA[<a href=".*?House\.M\.D\.s?\d*?\D(\d*?)\D.*?" class="a_download"]]></series>
-                <rating><![CDATA[<td class="t_episode_rating".*?<b>(.*?)</b>.*?/td>]]></rating>
-                <video><![CDATA[<td class="t_cell">.*?Видео:\s*(.*?);.*?</td>]]></video>
-                <translate><![CDATA[<td class="t_cell">.*?Перевод:\s*(.*?);.*?</td>]]></translate>
-                <size><![CDATA[<td class="t_cell">.*?Размер:\s*(.*?);.*?</td>]]></size>
+                <season><![CDATA[\.s(\d+)]]></season>
+                <series><![CDATA[\.s\d+e(\d+)\.]]></series>
             </reg>
             <!--
                 List of filters for section <reg>.
@@ -104,7 +105,7 @@ XML! If parameter value cosist ">" or "<" warp them as in example:
                 <filter>
                     <name>season</name>
                     <value>6</value>
-                    <method>>=</method>
+                    <method><![CDATA[>=]]></method>
                 </filter>
             </filters>
         </watch>

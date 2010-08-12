@@ -29,9 +29,12 @@ sub new
     my ($class, %opts) = @_;
 
     # Get params
-    my ($reg, $xpath, $filters) = (
+    my ($reg, $xpath, $filters, $tree) = (
         delete $opts{reg}, delete $opts{xpath}, delete $opts{filters},
+        delete $opts{tree}
     );
+
+    $opts{tree} = 1 if $tree;
 
     die 'Need complete list object' unless
         'TWatch::Watch::ResultList' eq ref $opts{complete};
@@ -39,12 +42,39 @@ sub new
     my $self = bless \%opts ,$class;
 
     # Replace oprs to objects
-    $self->{reg}     = TWatch::Watch::Reg->new( reg => $reg, xpath => $xpath)
-        or die 'Can`t create regexp object';
+    $self->{reg}     = TWatch::Watch::Reg->new(
+        reg => $reg, xpath => $xpath, tree => $tree)
+            or die 'Can`t create regexp object';
     $self->{results} = TWatch::Watch::ResultList->new
         or die 'Can`t create result list object';
     $self->{filters} = TWatch::Watch::FilterList->new( filters => $filters )
         or die 'Can`t create filter list object';
+
+    # Set type of tracker
+
+    # If tracker layout like this:
+    # - Torrents list
+    #   |- Torrent 1 description
+    #       |- Link to 1.torrent
+    #   |- Torrent 2 description
+    #       |- Link to 2.torrent
+    #   |- Torrent 3 description
+    #       |- Link to 3.torrent
+    #
+    # this is tree type. List of torrents contain links to description
+    # page. Then description page have link to torrent file.
+    # This is main trackers layout. Example: thepiratebay.org, torrents.ru
+
+    # If tracker layout like this:
+    # - Torrent description
+    #   |- Link to 1.torrent
+    #   |- Link to 2.torrent
+    #   |- Link to 3.torrent
+    #
+    # this is linear type. Torrent have one description page and many
+    # *.torrents links on it.
+    # This trackers typically for series. Example: lostfilm.tv
+    ($tree) ?$self->param('type', 'tree') :$self->param('type', 'linear');
 
     return $self;
 }
@@ -149,39 +179,13 @@ sub run
 
     # Define torrent type (tree or linear) and get links for torrent description
     my @links;
-    if ($self->param('urlreg'))
+    if ($self->param('type') eq 'tree')
     {
-        # If tracker layout like this:
-        # - Torrents list
-        #   |- Torrent 1 description
-        #       |- Link to 1.torrent
-        #   |- Torrent 2 description
-        #       |- Link to 2.torrent
-        #   |- Torrent 3 description
-        #       |- Link to 3.torrent
-        #
-        # this is tree type. List of torrents contain links to description
-        # page. Then description page have link to torrent file.
-        # This is main trackers layout. Example: thepiratebay.org, torrents.ru
-        $self->param('type', 'tree');
-
         # Parse links to description pages
-        my $reg = $self->param('urlreg');
-        @links = $content =~ m/$reg/sgi;
+        @links = $self->reg->url( $content );
     }
     else
     {
-        # If tracker layout like this:
-        # - Torrent description
-        #   |- Link to 1.torrent
-        #   |- Link to 2.torrent
-        #   |- Link to 3.torrent
-        #
-        # this is linear type. Torrent have one description page and many
-        # *.torrents links on it.
-        # This trackers typically for series. Example: lostfilm.tv
-        $self->param('type', 'linear');
-
         # Current page contain links.
         @links = ($self->param('url'));
     }
@@ -378,44 +382,45 @@ sub download
         my $result = $self->results->get( $key );
 
         # Download torrent
-        {{
-            # Set path to store
-            my $save = config->get('Save').'/'.$result->{torrent};
-            # Skip already dowloaded
-            last if -f $save or -s _;
-            # Download
-            $browser->get( $result->{link}, ':content_file' => $save);
-        }}
+        $browser->get( $result->{link} );
 
         # If download complete store result in completed array
         if ($browser->success)
         {
-            # Put additional parameters
-            $result->{datetime} = POSIX::strftime(
-                "%Y-%m-%d %H:%M:%S", localtime(time));
+            # Get torrent file data
+            my $torrent  = $browser->content;
+            my $filename = $browser->response->filename;
 
-            # Move result to completed
-            $self->complete->add( $result );
-            $self->results->delete( $key );
+            # Set path to store
+            my $save = config->get('Save').'/'.$filename;
+            # Save file or skip already dowloaded
+            unless (-f $save or -s _)
+            {
+                open my $fh, '+>', $save    or die $!;
+                print $fh $torrent          or die $!;
+                close $fh                   or die $!;
 
-            # Add message
-            if( -f _ or -s _ )
-            {
-                notify( sprintf 'Already exists. Skip download: %s/%s',
-                    config->get('Save'), $result->{torrent} );
-            }
-            else
-            {
-                notify( sprintf 'Download complete: %s/%s',
-                    config->get('Save'), $result->{torrent} );
+                notify( sprintf 'Download complete: %s', $save );
 
                 # Add message about this completed result
                 message->add(
                     level   => 'info',
-                    message => sprintf('Download complete: %s',
-                                       $result->{torrent}),
+                    message => sprintf('Download complete: %s', $save),
                     data    => $result);
             }
+            else
+            {
+                notify( sprintf 'Already exists. Skip download: %s', $save );
+            }
+
+            # Put additional parameters
+            $result->{datetime} = POSIX::strftime(
+                "%Y-%m-%d %H:%M:%S", localtime(time));
+            $result->{torrent} = $filename;
+
+            # Move result to completed
+            $self->complete->add( $result );
+            $self->results->delete( $key );
         }
         # If download fail add message about it
         else

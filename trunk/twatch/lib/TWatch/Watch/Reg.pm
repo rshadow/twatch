@@ -15,10 +15,7 @@ TWatch::Watch::Reg - Модуль работы с регулярниками п�
 
 =cut
 
-use constant DEFAULT_REG_TORRENT =>
-    q{<a[^>]*href=["']?[^>'"]*/([^>'"]*\.torrent)["']?};
-use constant DEFAULT_REG_LINK    =>
-    q{<a[^>]*href=["']?([^>'"]*\.torrent)["']?};
+use constant DEFAULT_XPATH_LINK     => '//a[contains(@href, ".torrent")]/@href';
 
 
 
@@ -32,10 +29,9 @@ sub new
 
     my $self = bless \%opts ,$class;
 
-    $self->rparam('torrent', DEFAULT_REG_TORRENT)
-        unless $self->rparam('torrent');
-    $self->rparam('link',    DEFAULT_REG_LINK)
-        unless $self->rparam('link');
+    # Set defaul params if not set
+    $self->xparam('link',    DEFAULT_XPATH_LINK)
+        unless $self->xparam('link');
 
     return $self;
 }
@@ -96,52 +92,75 @@ sub rkeys
     return keys %{ $self->{reg} };
 }
 
-=head2 rmatch $content, $type
+=head2 tparam $value
 
-Parse $content by regexp and return matches. Parsing depends of tracker $type.
+Get or set new xpath parameter for tree mode
 
 =cut
 
-sub rmatch
+sub tparam
 {
-    my ($self, $content, $type) = @_;
+    my ($self, $value) = @_;
+
+    $self->{tree} = $value if defined $value;
+    return $self->{tree};
+}
+
+=head2 xmatch $content
+
+Parse $content by xpath and return matches. Parsing depends of tracker $type.
+
+=cut
+
+sub match
+{
+    my ($self, $content) = @_;
+
+    my $tree = HTML::TreeBuilder::XPath->new_from_content( $content );
+    $tree->eof();
+    $tree->elementify();
 
     my %result;
-    for my $name ( $self->rkeys )
+    for my $name ( $self->xkeys )
     {
+        my @value = $tree->findnodes( $self->xparam($name) );
+
+        unless( @value )
+        {
+            push @{ $result{$name} }, ();
+            next;
+        }
+
+        @value = map {$_->getValue} @value;
+
+        # Try to apply regexp to value if it exist
+
         # Get regexp and clean it
-        my $reg = $self->rparam($name);
+        my $reg = $self->rparam($name) || '';
         s/^\s+//, s/\s+$// for $reg;
-        # Use regexp on content. If tree set only first value
-        my @value = ($type eq 'tree')
-            ? $content =~ m/$reg/si
-            : $content =~ m/$reg/sgi;
-        # All digits to decimal.
-        # (Many sites start write digits from zero)
-        (m/^\d+$/)  ?$_ = int($_)   :next   for @value;
+        if($reg)
+        {
+            for my $value ( @value )
+            {
+                ($value) = $value =~ m/$reg/si;
+                next unless $value;
+                $value = int $value if $value =~ m/^\d+$/;
+            }
+        }
+
         # Add values to result
         push @{ $result{$name} }, @value;
     }
 
-    my $count = scalar @{ $result{torrent} };
-    for my $name ( keys %result )
+    my $count = scalar @{ $result{link} };
+    for my $name ( $self->xkeys )
     {
         next if $count == scalar @{ $result{$name} };
-        warn sprintf 'Data sizes for "%s" not match. Regexp corrupted.', $name;
+        warn sprintf 'Data sizes for "%s" not match. XPath corrupted.', $name;
         $result{$name} = [(undef) x $count];
     }
 
-    # Fix filenames unless it`s not *.torrent
-    for my $torrent (@{ $result{torrent} })
-    {
-        # Skip if canonical
-        next if $torrent =~ m~^[^\/]\.torrent$~i;
-        # Remove special sybmols
-        s~^[\/*?]~~, s~[\/*?]$~~, s~[\/*?]~_~g for $torrent;
-        # Add file extension
-        $torrent .= '.torrent' unless $torrent =~ m~\.torrent$~i;
-    }
-
+    $tree->delete();
     # Transform to easy use form
     my @result;
     while (@{ $result{link} })
@@ -155,18 +174,21 @@ sub rmatch
 
         push @result, \%res;
     }
-DieDumper \@result;
+
+    printf "Debug (Find params):\n%s\n", Dumper \@result
+        if config->get('debug');
+
     return @result if wantarray;
     return \@result;
 }
 
-=head2 xmatch $content
+=head2 url
 
-Parse $content by xpath and return matches. Parsing depends of tracker $type.
+Get url fro tree
 
 =cut
 
-sub xmatch
+sub url
 {
     my ($self, $content) = @_;
 
@@ -174,31 +196,20 @@ sub xmatch
     $tree->eof();
     $tree->elementify();
 
-    my %result;
-    for my $name ( $self->xkeys )
-    {
-        my @value = $tree->findnodes( $self->xparam($name) );
-        next unless @value;
-
-        @value = map {$_->getValue} @value;
-
-        # Add values to result
-        push @{ $result{$name} }, @value;
-    }
-
-    DieDumper \%result;
-
-
-    $tree->delete();
-    # Transform to easy use form
     my @result;
+    {{
+        @result = $tree->findnodes( $self->tparam );
+        last unless @result;
+
+        @result = map {$_->getValue} @result;
+    }}
+
+    printf "Debug (Find url for Tree mode):\n%s\n", Dumper \@result
+        if config->get('debug');
 
     return @result if wantarray;
     return \@result;
 }
-
-sub match{ return xmatch @_; }
-
 1;
 
 =head1 REQUESTS & BUGS

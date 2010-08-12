@@ -20,19 +20,21 @@ use TWatch::Message;
 ################################################################################
 # Processing options
 ################################################################################
-my ($help, $verbose, $execute);
+my ($help, $verbose, $execute, $debug);
 GetOptions(
     'help|?'    => \$help,
     'verbose|?' => \$verbose,
     'execute=s' => \$execute,
+    'debug|?'   => \$debug,
 ) or pod2usage(2);
 pod2usage(1) if $help;
 
 # Disable output buffering if verbose
 $|=1 if $verbose;
 
-config->set(verbose      => $verbose);
-config->set(execute      => $execute);
+config->set(verbose => $verbose);
+config->set(execute => $execute);
+config->set(debug   => $debug);
 ################################################################################
 # Execute
 ################################################################################
@@ -71,6 +73,8 @@ twatch [options]
  Options:
     -v|--verbose            - Verbose output
     -h|--help               - Read this help and exit
+    -d|--debug              - Debug mode print all params derived and parsed
+                              from torrent tracker
     -e|--execute FILENAME   - Run project by it`s FILENAME
 
 =head1 DESCRIPTION
