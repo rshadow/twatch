@@ -69,6 +69,16 @@
                     <value>PDF</value>
                     <method>eq</method>
                 </filter>
+                <filter>
+                    <name>year</name>
+                    <value>2010</value>
+                    <method><![CDATA[>=]]></method>
+                </filter>
+                <filter>
+                    <name>num</name>
+                    <value>7</value>
+                    <method><![CDATA[>=]]></method>
+                </filter>
             </filters>
         </watch>
     </watches>
