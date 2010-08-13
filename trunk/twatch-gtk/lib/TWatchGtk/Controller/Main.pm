@@ -159,6 +159,12 @@ sub show_delete
     $model->remove ($iter);
 }
 
+sub click_refresh
+{
+    my ($self, $item, $param) = @_;
+    #$self->build_project_tree;
+}
+
 # Логика #######################################################################
 =head2 build_project_tree
 

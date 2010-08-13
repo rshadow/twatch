@@ -21,10 +21,10 @@
             <order>2</order>
             <xpath>
                 <link>   <![CDATA[//a[starts-with(@title,'Скачать')]/@href]]></link>
-                <season> <![CDATA[//b[starts-with(text(),'Оригинальное название:')]/following-sibling::text()[1]]]></season>
+                <season> <![CDATA[//div/b[starts-with(text(),'Оригинальное название:')]/following-sibling::text()[1]]]></season>
                 <series> <![CDATA[//a[starts-with(@href,"/details.php")]//text()]]></series>
-                <quality><![CDATA[//b[starts-with(text(),'Качество:')]/following-sibling::text()[1]]]></quality>
-                <translate><![CDATA[//b[starts-with(text(),'Перевод:')]/following-sibling::text()[1]]]></translate>
+                <quality><![CDATA[//div/b[starts-with(text(),'Качество:')]/following-sibling::text()[1]]]></quality>
+                <translate><![CDATA[//div/b[starts-with(text(),'Перевод:')]/following-sibling::text()[1]]]></translate>
             </xpath>
             <reg>
                 <series><![CDATA[\((\d+)]]></series>
@@ -52,10 +52,10 @@
             <order>1</order>
             <xpath>
                 <link>   <![CDATA[//a[starts-with(@title,'Скачать')]/@href]]></link>
-                <title> <![CDATA[//b[starts-with(text(),'Оригинальное название:')]/following-sibling::text()[1]]]></title>
+                <title> <![CDATA[//div/b[starts-with(text(),'Оригинальное название:')]/following-sibling::text()[1]]]></title>
                 <num> <![CDATA[//a[starts-with(@href,"/details.php")]//text()]]></num>
-                <year><![CDATA[//b[starts-with(text(),'Год издания:')]/following-sibling::text()[1]]]></year>
-                <format><![CDATA[//b[starts-with(text(),'Формат:')]/following-sibling::text()[1]]]></format>
+                <year><![CDATA[//div/b[starts-with(text(),'Год издания:')]/following-sibling::text()[1]]]></year>
+                <format><![CDATA[//div/b[starts-with(text(),'Формат:')]/following-sibling::text()[1]]]></format>
             </xpath>
             <reg>
                 <num><![CDATA[№(\d+)]]></num>

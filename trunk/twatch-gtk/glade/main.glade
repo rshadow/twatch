@@ -243,6 +243,7 @@
                 <property name="label" translatable="yes">Refresh</property>
                 <property name="use_underline">True</property>
                 <property name="icon_name">view-refresh</property>
+                <signal name="clicked" handler="click_refresh"/>
               </object>
               <packing>
                 <property name="expand">False</property>
