@@ -1,5 +1,4 @@
 Source: twatch
-Section: net
 Priority: optional
 Maintainer: Roman V. Nikolaev <rshadow@rambler.ru>
 Build-Depends: cdbs, debhelper (>= 7)
@@ -8,6 +7,7 @@ Homepage: http://twatch.rshadow.ru/
 
 Package: twatch
 Architecture: all
+Section: net
 Depends: ${misc:Depends}, ${perl:Depends}, libtwatch-perl, logrotate
 Suggests: rtorrent
 Description: watch torrent trackers and automatically download new torrents
@@ -17,6 +17,7 @@ Description: watch torrent trackers and automatically download new torrents
 
 Package: libtwatch-perl
 Architecture: all
+Section: perl
 Depends: ${misc:Depends}, ${perl:Depends}, libxml-simple-perl,
  libwww-mechanize-perl, libmime-lite-perl, libfile-path-perl, libhtml-tree-perl,
  libhtml-treebuilder-xpath-perl
