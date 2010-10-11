@@ -96,6 +96,11 @@ mail:
 		   build/twatch_$(VERSION).orig.tar.gz \
 		-- dimka@uvw.ru
 
+# Sent to mentors.debian.net
+.PHONY: mentors
+mentors:
+	@cd build/ && dput mentors twatch_$(VERSION)*.changes
+
 # Get source from svn. After usage delete this file because in created twatch
 # directory has one and newest.
 .PHONY: src

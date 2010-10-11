@@ -1,12 +1,14 @@
 Source: twatch
 Section: net
-Priority: extra
+Priority: optional
 Maintainer: Roman V. Nikolaev <rshadow@rambler.ru>
-Standards-Version: 3.8.3
+Build-Depends: cdbs, debhelper (>= 7)
+Standards-Version: 3.9.1
+Homepage: http://twatch.rshadow.ru/
 
 Package: twatch
 Architecture: all
-Depends: ${perl:Depends}, libtwatch-perl, logrotate
+Depends: ${misc:Depends}, ${perl:Depends}, libtwatch-perl, logrotate
 Suggests: rtorrent
 Description: watch torrent trackers and automatically download new torrents
  twatch is a simple and flexible watcher torrent trackers, based on regular
@@ -15,8 +17,8 @@ Description: watch torrent trackers and automatically download new torrents
 
 Package: libtwatch-perl
 Architecture: all
-Depends: ${perl:Depends}, libxml-simple-perl, libwww-mechanize-perl,
- libmime-lite-perl, libfile-path-perl, libhtml-tree-perl,
+Depends: ${misc:Depends}, ${perl:Depends}, libxml-simple-perl,
+ libwww-mechanize-perl, libmime-lite-perl, libfile-path-perl, libhtml-tree-perl,
  libhtml-treebuilder-xpath-perl
 Description: watch torrent trackers and automatically download new torrents
  twatch is a simple and flexible watcher torrent trackers, based on regular
