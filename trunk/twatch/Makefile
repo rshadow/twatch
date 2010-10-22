@@ -59,7 +59,7 @@ orig:
 build:
 	@echo "*** Create deb package ***"
 	@cd build/ && chmod -R a+x twatch-$(VERSION)/debian/rules
-	@cd build/ && cd twatch-$(VERSION) && dpkg-buildpackage
+	@cd build/ && cd twatch-$(VERSION) && debuild -sa
 
 # Clear all files in build/ directory
 .PHONY: clean

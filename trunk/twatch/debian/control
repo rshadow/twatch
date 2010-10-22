@@ -1,4 +1,5 @@
 Source: twatch
+Section: net
 Priority: optional
 Maintainer: Roman V. Nikolaev <rshadow@rambler.ru>
 Build-Depends: cdbs, debhelper (>= 7)
