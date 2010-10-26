@@ -317,7 +317,7 @@ sub get_auth_browser
 
         if( !$browser->success or ($@ and $@ =~ m/Can't connect/) )
         {
-            warn sprintf 'Can`t connect to link: %s.', $self->param('url');
+            notify( sprintf 'Can`t connect to link: %s.', $self->param('url'));
             return undef;
         }
     }
@@ -331,7 +331,8 @@ sub get_auth_browser
         eval{ $browser->get( $self->auth('url') ); };
         if( !$browser->success or ($@ and $@ =~ m/Can't connect/) )
         {
-            warn sprintf 'Can`t connect to auth link: %s.', $self->auth('url');
+            notify(
+                sprintf 'Can`t connect to auth link: %s.', $self->auth('url'));
             return undef;
         }
     }
@@ -348,8 +349,8 @@ sub get_auth_browser
         # Skip if can`t find authtorization form
         unless( $form )
         {
-            warn sprintf 'Can`t find authtorization form in "%s" project.',
-                $self->param('name');
+            notify( sprintf 'Can`t find authtorization form in "%s" project.',
+                $self->param('name') );
             return undef;
         }
 
@@ -373,8 +374,8 @@ sub get_auth_browser
             ($@ and $@ =~ m/Can't connect/) or
             !$browser->is_html() )
         {
-            warn sprintf 'Can`t authtorize in "%s" project.',
-                $self->param('name');
+            notify( sprintf 'Can`t authtorize in "%s" project.',
+                $self->param('name'));
             return undef;
         }
     }
