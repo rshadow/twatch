@@ -1,0 +1,149 @@
+<?xml version='1.0' standalone='yes'?>
+<project>
+    <name>LostFilm</name>
+    <url>http://lostfilm.tv</url>
+    <order>10</order>
+    <authtorization>
+        <login>
+            <name>FormLogin</name>
+            <value>rshadow</value>
+        </login>
+        <password>
+            <name>FormPassword</name>
+            <value>0jX0lET21r</value>
+        </password>
+    </authtorization>
+    <watches>
+        <watch>
+            <name>Star Wars: The Clone Wars</name>
+            <url>http://www.lostfilm.tv/browse.php?cat=96</url>
+            <order>1</order>
+            <xpath>
+                <link>   <![CDATA[//div[@class='mid']/div[contains(@class,'t_row')]//td/a[@class='a_download']/@href]]></link>
+                <season> <![CDATA[//div[@class='mid']/div[contains(@class,'t_row')]//td/a[@class='a_download']/@href]]></season>
+                <series> <![CDATA[//div[@class='mid']/div[contains(@class,'t_row')]//td/a[@class='a_download']/@href]]></series>
+            </xpath>
+            <reg>
+                <season><![CDATA[\.s(\d+)]]></season>
+                <series><![CDATA[\.s\d+e(\d+)\.]]></series>
+            </reg>
+            <filters>
+                <filter>
+                    <name>season</name>
+                    <value>2</value>
+                    <method><![CDATA[>=]]></method>
+                </filter>
+            </filters>
+        </watch>
+        <watch>
+            <name>House M.D.</name>
+            <url>http://www.lostfilm.tv/browse.php?cat=51</url>
+            <order>2</order>
+            <xpath>
+                <link>   <![CDATA[//div[@class='mid']/div[contains(@class,'t_row')]//td/a[@class='a_download']/@href]]></link>
+                <season> <![CDATA[//div[@class='mid']/div[contains(@class,'t_row')]//td/a[@class='a_download']/@href]]></season>
+                <series> <![CDATA[//div[@class='mid']/div[contains(@class,'t_row')]//td/a[@class='a_download']/@href]]></series>
+            </xpath>
+            <reg>
+                <season><![CDATA[\.s(\d+)]]></season>
+                <series><![CDATA[\.s\d+e(\d+)\.]]></series>
+            </reg>
+            <filters>
+                <filter>
+                    <name>season</name>
+                    <value>6</value>
+                    <method><![CDATA[>=]]></method>
+                </filter>
+            </filters>
+        </watch>
+        <watch>
+            <name>Stargate Universe</name>
+            <url>http://www.lostfilm.tv/browse.php?cat=109</url>
+            <order>3</order>
+            <xpath>
+                <link>   <![CDATA[//div[@class='mid']/div[contains(@class,'t_row')]//td/a[@class='a_download']/@href]]></link>
+                <season> <![CDATA[//div[@class='mid']/div[contains(@class,'t_row')]//td/a[@class='a_download']/@href]]></season>
+                <series> <![CDATA[//div[@class='mid']/div[contains(@class,'t_row')]//td/a[@class='a_download']/@href]]></series>
+            </xpath>
+            <reg>
+                <season><![CDATA[\.s(\d+)]]></season>
+                <series><![CDATA[\.s\d+e(\d+)\.]]></series>
+            </reg>
+            <filters>
+                <filter>
+                    <name>season</name>
+                    <value>1</value>
+                    <method><![CDATA[>=]]></method>
+                </filter>
+                <filter>
+                    <name>series</name>
+                    <value>4</value>
+                    <method><![CDATA[>]]></method>
+                </filter>
+            </filters>
+        </watch>
+        <watch>
+            <name>The IT Crowd</name>
+            <url>http://www.lostfilm.tv/browse.php?cat=46</url>
+            <order>4</order>
+            <xpath>
+                <link>   <![CDATA[//div[@class='mid']/div[contains(@class,'t_row')]//td/a[@class='a_download']/@href]]></link>
+                <season> <![CDATA[//div[@class='mid']/div[contains(@class,'t_row')]//td/a[@class='a_download']/@href]]></season>
+                <series> <![CDATA[//div[@class='mid']/div[contains(@class,'t_row')]//td/a[@class='a_download']/@href]]></series>
+            </xpath>
+            <reg>
+                <season><![CDATA[\.s(\d+)]]></season>
+                <series><![CDATA[\.s\d+e(\d+)\.]]></series>
+            </reg>
+            <filters>
+                <filter>
+                    <name>season</name>
+                    <value>3</value>
+                    <method><![CDATA[>]]></method>
+                </filter>
+            </filters>
+        </watch>
+        <watch>
+            <name>Eureka</name>
+            <url>http://www.lostfilm.tv/browse.php?cat=37</url>
+            <order>5</order>
+            <xpath>
+                <link>   <![CDATA[//div[@class='mid']/div[contains(@class,'t_row')]//td/a[@class='a_download']/@href]]></link>
+                <season> <![CDATA[//div[@class='mid']/div[contains(@class,'t_row')]//td/a[@class='a_download']/@href]]></season>
+                <series> <![CDATA[//div[@class='mid']/div[contains(@class,'t_row')]//td/a[@class='a_download']/@href]]></series>
+            </xpath>
+            <reg>
+                <season><![CDATA[\.s(\d+)]]></season>
+                <series><![CDATA[\.s\d+e(\d+)\.]]></series>
+            </reg>
+            <filters>
+                <filter>
+                    <name>season</name>
+                    <value>3</value>
+                    <method><![CDATA[>]]></method>
+                </filter>
+            </filters>
+        </watch>
+        <watch>
+            <name>Futurama</name>
+            <url>http://www.lostfilm.tv/browse.php?cat=127</url>
+            <order>6</order>
+            <xpath>
+                <link>   <![CDATA[//div[@class='mid']/div[contains(@class,'t_row')]//td/a[@class='a_download']/@href]]></link>
+                <season> <![CDATA[//div[@class='mid']/div[contains(@class,'t_row')]//td/a[@class='a_download']/@href]]></season>
+                <series> <![CDATA[//div[@class='mid']/div[contains(@class,'t_row')]//td/a[@class='a_download']/@href]]></series>
+            </xpath>
+            <reg>
+                <season><![CDATA[\.s(\d+)]]></season>
+                <series><![CDATA[\.s\d+e(\d+)\.]]></series>
+            </reg>
+            <filters>
+                <filter>
+                    <name>season</name>
+                    <value>3</value>
+                    <method><![CDATA[>]]></method>
+                </filter>
+            </filters>
+        </watch>
+    </watches>
+</project>
