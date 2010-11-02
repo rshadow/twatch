@@ -72,13 +72,8 @@
             <filters>
                 <filter>
                     <name>season</name>
-                    <value>1</value>
+                    <value>2</value>
                     <method><![CDATA[>=]]></method>
-                </filter>
-                <filter>
-                    <name>series</name>
-                    <value>4</value>
-                    <method><![CDATA[>]]></method>
                 </filter>
             </filters>
         </watch>

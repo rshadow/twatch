@@ -100,6 +100,10 @@ XML! If parameter value cosist ">" or "<" warp them as in example:
                               ... and all over logical perl operators.
                 Filters for this task unoun by logical AND.
                 Example below: download all series in 6 season and great.
+                Important! Be aware to set filters. Bad example: use season and
+                    series together. If you set >=6 season and >=3 series, then
+                    for 7 season also download just form third series.
+                    Good exapmle: use season or season and quality, ...
             -->
             <filters>
                 <filter>

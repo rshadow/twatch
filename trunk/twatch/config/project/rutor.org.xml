@@ -26,11 +26,6 @@
                     <method><![CDATA[>=]]></method>
                 </filter>
                 <filter>
-                    <name>series</name>
-                    <value>17</value>
-                    <method><![CDATA[>=]]></method>
-                </filter>
-                <filter>
                     <name>quality</name>
                     <value>HDTVRip</value>
                     <method><![CDATA[eq]]></method>
@@ -54,11 +49,6 @@
                 <filter>
                     <name>season</name>
                     <value>5</value>
-                    <method><![CDATA[>=]]></method>
-                </filter>
-                <filter>
-                    <name>series</name>
-                    <value>16</value>
                     <method><![CDATA[>=]]></method>
                 </filter>
             </filters>

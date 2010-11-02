@@ -40,7 +40,7 @@
                 </filter>
                 <filter>
                     <name>translate</name>
-                    <value>/.*голосый.*?Venom64.*/i</value>
+                    <value>/.*голосый.*?(Venom64|Ancord).*/i</value>
                     <method>=~</method>
                 </filter>
             </filters>
