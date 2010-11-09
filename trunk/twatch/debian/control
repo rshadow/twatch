@@ -21,7 +21,7 @@ Architecture: all
 Section: perl
 Depends: ${misc:Depends}, ${perl:Depends}, libxml-simple-perl,
  libwww-mechanize-perl, libmime-lite-perl, libfile-path-perl, libhtml-tree-perl,
- libhtml-treebuilder-xpath-perl
+ libhtml-treebuilder-xpath-perl, libmime-tools-perl
 Description: watch torrent trackers and automatically download new torrents
  twatch is a simple and flexible watcher torrent trackers, based on regular
  expressons. It can download new torrent files and information about them by
