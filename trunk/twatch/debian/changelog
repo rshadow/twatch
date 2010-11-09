@@ -1,6 +1,6 @@
 twatch (0.0.4-2) unstable; urgency=low
 
-  * Fix mime library depend
+  * Fix mime library depend. (Closes: #602915)
 
  -- Roman V. Nikolaev <rshadow@rambler.ru>  Tue, 09 Nov 2010 15:21:05 +0300
 
