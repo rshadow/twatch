@@ -13,7 +13,7 @@ Depends: ${misc:Depends}, ${perl:Depends}, libtwatch-perl, logrotate
 Suggests: rtorrent
 Description: watch torrent trackers and automatically download new torrents
  twatch is a simple and flexible watcher torrent trackers, based on regular
- expressons. It can download new torrent files and information about them by
+ expressions. It can download new torrent files and information about them by
  customizable filters.
 
 Package: libtwatch-perl
@@ -24,7 +24,7 @@ Depends: ${misc:Depends}, ${perl:Depends}, libxml-simple-perl,
  libhtml-treebuilder-xpath-perl, libmime-tools-perl
 Description: watch torrent trackers and automatically download new torrents
  twatch is a simple and flexible watcher torrent trackers, based on regular
- expressons. It can download new torrent files and information about them by
+ expressions. It can download new torrent files and information about them by
  customizable filters.
  .
  This package contains libraries for twatch

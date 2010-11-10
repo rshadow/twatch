@@ -6,7 +6,7 @@ TWatch - track for links on tracker and download new torrents.
 
 =cut
 
-our $VERSION = '0.0.4';
+our $VERSION = '0.0.5';
 
 use strict;
 use warnings;

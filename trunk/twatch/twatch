@@ -6,7 +6,7 @@ use utf8;
 use open qw(:utf8 :std);
 
 use vars qw($VERSION $PROGRAM);
-$VERSION    = '0.0.4';
+$VERSION    = '0.0.5';
 $PROGRAM    = 'twatch';
 
 use Getopt::Long;
@@ -80,7 +80,7 @@ twatch [options]
 =head1 DESCRIPTION
 
 twatch is a simple and flexible watcher torrent trackers, based on regular
-expressons. It can download new torrent files and information about them by
+expressions. It can download new torrent files and information about them by
 customizable filters.
 
 =head1 REQUESTS & BUGS
