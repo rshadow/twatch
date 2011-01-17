@@ -12,6 +12,7 @@ use utf8;
 
 use XML::Simple;
 use WWW::Mechanize;
+use HTTP::Cookies;
 
 use TWatch::Config;
 use TWatch::Watch;
@@ -115,6 +116,18 @@ sub auth
     return $self->{authtorization};
 }
 
+=head2 cookies $name
+
+Get additional cookies from config.
+
+=cut
+
+sub cookies
+{
+    my ($self) = @_;
+    return values %{$self->{cookies}};
+}
+
 =head2 watches $param
 
 Get/Set task $param. If $param not set, then return list of watches
@@ -180,7 +193,7 @@ sub load
             'watches'   => 'watch',
             'complete'  => 'result',
             'filters'   => 'filter',
-        }
+        },
     );
     my $project = $xs->XMLin( $self->param('file') );
     return unless $project;
@@ -298,14 +311,32 @@ sub get_auth_browser
 {
     my ($self) = @_;
 
-    return undef unless $self->{url};
+    return undef unless $self->param('url');
+
+    # Get domain from url
+    my ($domain) =  $self->param('url') =~ m{^(?:\w+://)?(.*?)(?:/|$)};
+
+    # Set cookie if exists
+    my $cookie_jar = HTTP::Cookies->new;
+    $cookie_jar->set_cookie(
+        $_->{version}   || undef,
+        $_->{name},
+        $_->{value},
+        $_->{path}      || '/',
+        $_->{domain}    || $domain || '*',
+        $_->{port}      || undef,
+        $_->{path_spec} || 1,
+        $_->{secure}    || undef,
+        $_->{maxage}    || 86400,
+        $_->{discard}   || undef)
+            for $self->cookies;
 
     # Create browser object
     my $browser = WWW::Mechanize->new(
         agent       => 'Mozilla/5.0'.
             ' (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.1)'.
             ' Gecko/20090715 Firefox/3.5.1',
-        cookie_jar  => {},
+        cookie_jar  => $cookie_jar,
         noproxy     => config->get('NoProxy'),
     );
 
