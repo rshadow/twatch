@@ -35,8 +35,8 @@
             <filters>
                 <filter>
                     <name>quality</name>
-                    <value>HDTVRip</value>
-                    <method>eq</method>
+                    <value>/HDTVRip/i</value>
+                    <method>=~</method>
                 </filter>
                 <filter>
                     <name>translate</name>
