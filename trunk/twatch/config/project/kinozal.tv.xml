@@ -71,12 +71,7 @@
                 </filter>
                 <filter>
                     <name>year</name>
-                    <value>2010</value>
-                    <method><![CDATA[>=]]></method>
-                </filter>
-                <filter>
-                    <name>num</name>
-                    <value>7</value>
+                    <value>2011</value>
                     <method><![CDATA[>=]]></method>
                 </filter>
             </filters>
