@@ -311,10 +311,10 @@ sub parse
             # For all filters
             for my $name ( $self->filters->keys )
             {
-#                printf "FILTER name: %s, value: %s, method: %s\n",
-#                    $name, $self->filters->param($name, 'value'),
-#                    $self->filters->param($name, 'method');
-#                printf "DATA: %s\n", $result->{$name};
+                printf "FILTER name: %s, value: %s, method: %s\n",
+                    $name, $self->filters->param($name, 'value'),
+                    $self->filters->param($name, 'method');
+                printf "DATA: %s\n", $result->{$name};
 
                 # Remove result if no filters for them
                 $flag = 0, last unless $result->{$name};
@@ -326,10 +326,14 @@ sub parse
 
                 if($method eq '=~' or $method eq '!~')
                 {
-                    $flag &&= $sandbox->reval(qq{"$left" $method $right});
+                    # Eval filter
+                    $flag &&= $sandbox->reval(qq{"$left" $method $right})
                 }
                 else
                 {
+                    # Add squares for non digit values to prevent warnings
+                    $_ = ($_ =~ m/^\d+$/ ) ?$_ :'"'.$_.'"' for $left, $right;
+                    # Eval filter
                     $flag &&= $sandbox->reval(qq{$left $method $right});
                 }
 
