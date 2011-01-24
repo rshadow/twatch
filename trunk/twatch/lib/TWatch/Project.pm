@@ -338,10 +338,12 @@ sub get_auth_browser
             ' Gecko/20090715 Firefox/3.5.1',
         cookie_jar  => $cookie_jar,
         noproxy     => config->get('NoProxy'),
+        quiet       => (config->get('verbose')) ?0 :1,
     );
 
     if( $self->param('url') )
     {
+        notify('Go to main page');
         # Many sites have protection from outside coming.
         # So go to main page first.
         eval{ $browser->get( $self->param('url') ); };
@@ -359,6 +361,7 @@ sub get_auth_browser
         $self->auth('url') !~ m/^\s*$/     and
         $self->auth('url') ne $self->param('url')   )
     {
+        notify('Go to authtorization page');
         eval{ $browser->get( $self->auth('url') ); };
         if( !$browser->success or ($@ and $@ =~ m/Can't connect/) )
         {
@@ -372,6 +375,7 @@ sub get_auth_browser
     if($self->auth('login_name')  and $self->auth('password_name') and
        $self->auth('login_value') and $self->auth('password_value'))
     {
+        notify('Make authtorization');
         # Find authtorization form (it`s set to default form)
         my $form = $browser->form_with_fields(
             $self->auth('login_name'),

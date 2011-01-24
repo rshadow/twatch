@@ -62,7 +62,7 @@ sub run
         notify(sprintf 'Watches: %d', scalar $project->watches);
 
         $project->run
-            or warn sprintf 'Project aborted!';
+            or warn sprintf 'Project "%s" aborted!', $project->param('name');
 
         notify('Project complete');
     }
