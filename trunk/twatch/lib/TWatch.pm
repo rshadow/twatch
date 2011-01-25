@@ -6,7 +6,7 @@ TWatch - track for links on tracker and download new torrents.
 
 =cut
 
-our $VERSION = '0.0.6';
+our $VERSION = '0.0.7';
 
 use strict;
 use warnings;
@@ -176,28 +176,6 @@ sub add_project
     }
 
     $self->{project}{ $new->param('name') } = $new;
-}
-
-#=head2 save_proj
-#
-#Сохранение файла проекта
-#
-#=cut
-#
-sub save_project
-{
-#    my ($self, $name) = @_;
-#
-#    # Получим проект
-#    my $project = $self->get($name);
-#    my $watch   = $self->watches($name);
-#
-#    $watch->{$_} = {
-#        name        => $_,
-#        ($watch->{$_}{complete})
-#            ?(complete => { result => $watch->{$_}{complete} })
-#            :(),
-#    } for keys %$watch;
 }
 
 1;

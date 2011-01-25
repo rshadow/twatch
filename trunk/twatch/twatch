@@ -6,7 +6,7 @@ use utf8;
 use open qw(:utf8 :std);
 
 use vars qw($VERSION $PROGRAM);
-$VERSION    = '0.0.6';
+$VERSION    = '0.0.7';
 $PROGRAM    = 'twatch';
 
 use Getopt::Long;
