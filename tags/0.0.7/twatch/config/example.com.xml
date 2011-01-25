@@ -1,0 +1,150 @@
+<?xml version='1.0' standalone='yes'?>
+<!--
+This project file example for torrent tracker LostFilm.tv
+Just copy this file in project directory (default: ~/.twatch/project) and
+change parameters as you wish.
+
+This file can be base for write new own project files. See more about parameters
+in manual ($man twatch).
+
+XML! If parameter value cosist ">" or "<" warp them as in example:
+<![CDATA[you_value]]>.
+-->
+<project>
+
+    <!-- Common project parameters -->
+
+    <!--  Project name. Required. -->
+    <name>LostFilm</name>
+    <!-- Main page. Required. -->
+    <url>http://lostfilm.tv</url>
+    <!-- Sort index. Any digits or characters. -->
+    <order>0</order>
+
+    <!-- Authtarization parameters -->
+    <authtorization>
+        <!--
+            Url authtorization page (contain authtorization form).
+            If match with project url you can miss it
+        -->
+        <url></url>
+        <!--
+            Parameters name and value for login on tracker.
+            Required:
+                login       - user login
+                password    - user password
+            You can add new own parameters but, as a rule, this not need.
+            Programm send really form from tracker with all parameters in
+            authtorization form.
+        -->
+        <login>
+            <!-- Login parameter name in authtorization form. -->
+            <name>FormLogin</name>
+            <!-- Login. -->
+            <value>test_login</value>
+        </login>
+        <password>
+            <!-- Password parameter name in authtorization form. -->
+            <name>FormPassword</name>
+            <!-- Password. -->
+            <value>123456</value>
+        </password>
+    </authtorization>
+
+    <!--
+        Cookies parameters.
+        You can use it to set any cookie, even for authorization.
+        Required:
+            name
+            value
+    -->
+    <cookies>
+        <!-- Some cookie purpose (not send on server) -->
+        <bbcode>
+            <!-- Cookie name-->
+            <name>my_cookie</name>
+            <!-- Cookie value -->
+            <value>1234567890</value>
+            <!-- Cookie version. Default: 0 -->
+            <version></version>
+            <!-- Cookie version. Default: / -->
+            <path></path>
+            <!-- Cookie domain. Default: get from progect url or * -->
+            <domain></domain>
+            <!-- Cookie port. Default: not set (and not need) -->
+            <port></port>
+            <!-- I don`t know that is it. Default: 1 -->
+            <path_spec></path_spec>
+            <!-- I don`t know that is it. Default: not set -->
+            <secure></secure>
+            <!-- Cookie life time in seconds. Default: 86400 (one day) -->
+            <maxage></maxage>
+            <!-- I don`t know that is it. Default: not set -->
+            <discard></discard>
+        </bbcode>
+    </cookies>
+
+    <!-- Tasks parameters -->
+    <watches>
+        <watch>
+            <!-- Name. -->
+            <name>House M.D.</name>
+            <!-- Url for page with torrent list. -->
+            <url>http://www.lostfilm.tv/browse.php?cat=51</url>
+            <!--
+                Regular expression for search pages with torrents.
+                Typically use if previos parameter <url> contain list of urls
+                with pages wich description torrent.
+            -->
+            <urlreg></urlreg>
+            <!-- Sort index. Any digits or characters. -->
+            <order>0</order>
+            <!--
+                List of extraction XPath expressions to get params.
+                Optional (if not specified try find link on *.torrent):
+                        link        - link to download this torrent file
+                Reserved:
+                    datetime    - download data
+                    page        - page from
+                All rested parameters not required. You can define them and
+                use for filters and additional information in email.
+                This is example of parameters list.
+            -->
+            <xpath>
+                <link>   <![CDATA[//div[@class='mid']/div[contains(@class,'t_row')]//td/a[@class='a_download']/@href]]></link>
+                <season> <![CDATA[//div[@class='mid']/div[contains(@class,'t_row')]//td/a[@class='a_download']/@href]]></season>
+                <series> <![CDATA[//div[@class='mid']/div[contains(@class,'t_row')]//td/a[@class='a_download']/@href]]></series>
+            </xpath>
+            <!--
+               List of user make regular expressions for local
+               extraction data from attributes, derived by XPath expression.
+            -->
+            <reg>
+                <season><![CDATA[\.s(\d+)]]></season>
+                <series><![CDATA[\.s\d+e(\d+)\.]]></series>
+            </reg>
+            <!--
+                List of filters for section <reg>.
+                Parameters:
+                    name    - parameter name from <reg>
+                    value   - filter value
+                    method  - filter method:
+                              =~, !~, ==, >, >=, <, <=, !=, <=>, eq, gt, lt, ne,
+                              ... and all over logical perl operators.
+                Filters for this task unoun by logical AND.
+                Example below: download all series in 6 season and great.
+                Important! Be aware to set filters. Bad example: use season and
+                    series together. If you set >=6 season and >=3 series, then
+                    for 7 season also download just form third series.
+                    Good exapmle: use season or season and quality, ...
+            -->
+            <filters>
+                <filter>
+                    <name>season</name>
+                    <value>6</value>
+                    <method><![CDATA[>=]]></method>
+                </filter>
+            </filters>
+        </watch>
+    </watches>
+</project>

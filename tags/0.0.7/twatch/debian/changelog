@@ -1,0 +1,24 @@
+twatch (0.0.7) unstable; urgency=low
+
+  * New upstream bugfix release
+
+ -- Roman V. Nikolaev <rshadow@rambler.ru>  Tue, 25 Jan 2011 13:22:39 +0300
+
+twatch (0.0.6-1) unstable; urgency=low
+
+  * New upstream release
+    
+ -- Roman V. Nikolaev <rshadow@rambler.ru>  Tue, 18 Jan 2011 11:00:30 +0300
+
+twatch (0.0.5-1) unstable; urgency=low
+
+  * Fix mime library depend. (Closes: #602915)
+  * New upstream bugfix. (Closes: #602998)
+
+ -- Roman V. Nikolaev <rshadow@rambler.ru>  Tue, 09 Nov 2010 15:21:05 +0300
+
+twatch (0.0.4-1) unstable; urgency=low
+
+  * Initial release. (Closes: #562956)
+
+ -- Roman V. Nikolaev <rshadow@rambler.ru>  Wed, 04 Aug 2010 10:17:02 +0400
