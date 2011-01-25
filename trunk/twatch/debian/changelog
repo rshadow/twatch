@@ -1,8 +1,8 @@
-twatch (0.0.7) unstable; urgency=low
+twatch (0.0.7-1) unstable; urgency=low
 
   * New upstream bugfix release
 
- -- Roman V. Nikolaev <rshadow@rambler.ru>  Tue, 25 Jan 2011 13:22:39 +0300
+ -- Roman V. Nikolaev <rshadow@rambler.ru>  Tue, 25 Jan 2011 13:25:21 +0300
 
 twatch (0.0.6-1) unstable; urgency=low
 
