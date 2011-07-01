@@ -243,7 +243,7 @@ sub notify
     return unless config->get('verbose');
 
     # Highlight message
-    $level = lc $level || '';
+    $level = lc($level || '');
     if( $level eq 'good' )
         { $message = COLOR_GREEN    . $message . COLOR_CLEAR  }
     elsif( $level eq 'warn' )
