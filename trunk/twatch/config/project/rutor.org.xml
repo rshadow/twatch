@@ -12,23 +12,16 @@
                 <link>   <![CDATA[//div[@id='index']//a[@class='downgif']/@href]]></link>
                 <season> <![CDATA[//div[@id='index']//a[starts-with(@href,'/torrent/')]/text()]]></season>
                 <series> <![CDATA[//div[@id='index']//a[starts-with(@href,'/torrent/')]/text()]]></series>
-                <quality> <![CDATA[//div[@id='index']//a[starts-with(@href,'/torrent/')]/text()]]></quality>
             </xpath>
             <reg>
                 <season><![CDATA[\[(\d+)[xх]\d+\]]]></season>
                 <series><![CDATA[\[\d+[xх](\d+)\]]]></series>
-                <quality><![CDATA[(HDTVRip)]]></quality>
             </reg>
             <filters>
                 <filter>
                     <name>season</name>
                     <value>3</value>
                     <method><![CDATA[>=]]></method>
-                </filter>
-                <filter>
-                    <name>quality</name>
-                    <value>HDTVRip</value>
-                    <method><![CDATA[eq]]></method>
                 </filter>
             </filters>
         </watch>
