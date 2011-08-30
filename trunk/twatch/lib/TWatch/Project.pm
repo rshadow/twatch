@@ -341,6 +341,21 @@ sub get_auth_browser
         quiet       => (config->get('verbose')) ?0 :1,
     );
 
+    # Make refresh if needed
+    $browser->add_handler( response_done => sub {
+        my($response, $ua, $h) = @_;
+
+        my $refresh = $response->header('Refresh');
+        return unless $refresh;
+
+        my ($timeout, $url) = $refresh =~ m/^(\d+);\s*url=(.*)$/;
+        # Don`t use long timeout
+        $timeout = 10 if $timeout > 10;
+
+        sleep $timeout;
+        $ua->get( $url );
+    });
+
     if( $self->param('url') )
     {
         notify('Go to main page');
