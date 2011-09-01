@@ -76,5 +76,213 @@
                 </filter>
             </filters>
         </watch>
+        <watch>
+            <name>Futurama</name>
+            <url><![CDATA[http://kinozal.tv/browse.php?s=futurama+LostFilm&c=21&v=0&y=&t=0&a=0&o=0]]></url>
+            <tree><![CDATA[//table[@class="mn2"]//a[starts-with(@href,"/details.php")]/@href]]></tree>
+            <order>2</order>
+            <xpath>
+                <link>   <![CDATA[//a[starts-with(@title,'Скачать')]/@href]]></link>
+                <season> <![CDATA[//a[starts-with(@href,"/details.php")]//text()]]></season>
+                <series> <![CDATA[//a[starts-with(@href,"/details.php")]//text()]]></series>
+                <translate><![CDATA[//div/b[starts-with(text(),'Перевод:')]/following-sibling::text()[1]]]></translate>
+            </xpath>
+            <reg>
+                <series><![CDATA[\s+([0-9\-])+\s+серия]]></series>
+                <season><![CDATA[\((\d+)\s+сезон]]></season>
+            </reg>
+            <filters>
+                <filter>
+                    <name>translate</name>
+                    <value>/LostFilm/i</value>
+                    <method>=~</method>
+                </filter>
+                <filter>
+                    <name>season</name>
+                    <value>6</value>
+                    <method><![CDATA[>=]]></method>
+                </filter>
+            </filters>
+        </watch>
+        <watch>
+            <name>United States of Tara</name>
+            <url><![CDATA[http://kinozal.tv/browse.php?s=United+States+of+Tara&c=0&v=0&y=&t=0&a=0&o=0]]></url>
+            <tree><![CDATA[//table[@class="mn2"]//a[starts-with(@href,"/details.php")]/@href]]></tree>
+            <order>2</order>
+            <xpath>
+                <link>   <![CDATA[//a[starts-with(@title,'Скачать')]/@href]]></link>
+                <season> <![CDATA[//a[starts-with(@href,"/details.php")]//text()]]></season>
+            </xpath>
+            <reg>
+                <season><![CDATA[\((\d+)\s+сезон]]></season>
+            </reg>
+            <filters>
+                <filter>
+                    <name>season</name>
+                    <value>3</value>
+                    <method><![CDATA[>]]></method>
+                </filter>
+            </filters>
+        </watch>
+        <watch>
+            <name>Californication</name>
+            <url><![CDATA[http://kinozal.tv/browse.php?s=Californication&c=46&v=0&y=&t=0&a=0&o=0]]></url>
+            <tree><![CDATA[//table[@class="mn2"]//a[starts-with(@href,"/details.php")]/@href]]></tree>
+            <order>2</order>
+            <xpath>
+                <link>   <![CDATA[//a[starts-with(@title,'Скачать')]/@href]]></link>
+                <season> <![CDATA[//a[starts-with(@href,"/details.php")]//text()]]></season>
+            </xpath>
+            <reg>
+                <season><![CDATA[\((\d+)\s+сезон]]></season>
+            </reg>
+            <filters>
+                <filter>
+                    <name>season</name>
+                    <value>4</value>
+                    <method><![CDATA[>]]></method>
+                </filter>
+            </filters>
+        </watch>
+        <watch>
+            <name>Stargate Universe</name>
+            <url><![CDATA[http://kinozal.tv/browse.php?s=Stargate+Universe+LostFilm&c=46&v=0&y=&t=0&a=0&o=0]]></url>
+            <tree><![CDATA[//table[@class="mn2"]//a[starts-with(@href,"/details.php")]/@href]]></tree>
+            <order>2</order>
+            <xpath>
+                <link>   <![CDATA[//a[starts-with(@title,'Скачать')]/@href]]></link>
+                <season> <![CDATA[//a[starts-with(@href,"/details.php")]//text()]]></season>
+            </xpath>
+            <reg>
+                <season><![CDATA[\((\d+)\s+сезон]]></season>
+            </reg>
+            <filters>
+                <filter>
+                    <name>season</name>
+                    <value>2</value>
+                    <method><![CDATA[>]]></method>
+                </filter>
+            </filters>
+        </watch>
+        <watch>
+            <name>House M.D.</name>
+            <url><![CDATA[http://kinozal.tv/browse.php?s=House+M.D.+LostFilm&c=46&v=0&y=&t=0&a=0&o=0]]></url>
+            <tree><![CDATA[//table[@class="mn2"]//a[starts-with(@href,"/details.php")]/@href]]></tree>
+            <order>2</order>
+            <xpath>
+                <link>   <![CDATA[//a[starts-with(@title,'Скачать')]/@href]]></link>
+                <season> <![CDATA[//a[starts-with(@href,"/details.php")]//text()]]></season>
+            </xpath>
+            <reg>
+                <season><![CDATA[\((\d+)\s+сезон]]></season>
+            </reg>
+            <filters>
+                <filter>
+                    <name>season</name>
+                    <value>7</value>
+                    <method><![CDATA[>]]></method>
+                </filter>
+            </filters>
+        </watch>
+        <watch>
+            <name>Star Wars: The Clone Wars</name>
+            <url><![CDATA[http://kinozal.tv/browse.php?s=Star+Wars%3A+The+Clone+Wars&c=21&v=0&y=&t=0&a=0&o=0]]></url>
+            <tree><![CDATA[//table[@class="mn2"]//a[starts-with(@href,"/details.php")]/@href]]></tree>
+            <order>2</order>
+            <xpath>
+                <link>   <![CDATA[//a[starts-with(@title,'Скачать')]/@href]]></link>
+                <season> <![CDATA[//a[starts-with(@href,"/details.php")]//text()]]></season>
+            </xpath>
+            <reg>
+                <season><![CDATA[\((\d+)\s+сезон]]></season>
+            </reg>
+            <filters>
+                <filter>
+                    <name>season</name>
+                    <value>3</value>
+                    <method><![CDATA[>]]></method>
+                </filter>
+            </filters>
+        </watch>
+        <watch>
+            <name>The IT Crowd</name>
+            <url><![CDATA[http://kinozal.tv/browse.php?s=The+IT+Crowd&c=46&v=0&y=&t=0&a=0&o=0]]></url>
+            <tree><![CDATA[//table[@class="mn2"]//a[starts-with(@href,"/details.php")]/@href]]></tree>
+            <order>2</order>
+            <xpath>
+                <link>   <![CDATA[//a[starts-with(@title,'Скачать')]/@href]]></link>
+                <season> <![CDATA[//a[starts-with(@href,"/details.php")]//text()]]></season>
+            </xpath>
+            <reg>
+                <season><![CDATA[\((\d+)\s+сезон]]></season>
+            </reg>
+            <filters>
+                <filter>
+                    <name>season</name>
+                    <value>4</value>
+                    <method><![CDATA[>]]></method>
+                </filter>
+            </filters>
+        </watch>
+        <watch>
+            <name>Eureka</name>
+            <url><![CDATA[http://kinozal.tv/browse.php?s=Eureka+%2B+LostFilm&c=46&v=0&y=&t=0&a=0&o=0]]></url>
+            <tree><![CDATA[//table[@class="mn2"]//a[starts-with(@href,"/details.php")]/@href]]></tree>
+            <order>2</order>
+            <xpath>
+                <link>   <![CDATA[//a[starts-with(@title,'Скачать')]/@href]]></link>
+                <season> <![CDATA[//a[starts-with(@href,"/details.php")]//text()]]></season>
+            </xpath>
+            <reg>
+                <season><![CDATA[\((\d+)\s+сезон]]></season>
+            </reg>
+            <filters>
+                <filter>
+                    <name>season</name>
+                    <value>4</value>
+                    <method><![CDATA[>=]]></method>
+                </filter>
+            </filters>
+        </watch>
+        <watch>
+            <name>The Big Bang Theory</name>
+            <url><![CDATA[http://kinozal.tv/browse.php?s=The+Big+Bang+Theory+Kuraj-Bambey&c=46&v=0&y=&t=0&a=0&o=0]]></url>
+            <tree><![CDATA[//table[@class="mn2"]//a[starts-with(@href,"/details.php")]/@href]]></tree>
+            <order>2</order>
+            <xpath>
+                <link>   <![CDATA[//a[starts-with(@title,'Скачать')]/@href]]></link>
+                <season> <![CDATA[//a[starts-with(@href,"/details.php")]//text()]]></season>
+            </xpath>
+            <reg>
+                <season><![CDATA[\((\d+)\s+сезон]]></season>
+            </reg>
+            <filters>
+                <filter>
+                    <name>season</name>
+                    <value>4</value>
+                    <method><![CDATA[>]]></method>
+                </filter>
+            </filters>
+        </watch>
+        <watch>
+            <name>How I Met Your Mother</name>
+            <url><![CDATA[http://kinozal.tv/browse.php?s=How+I+Met+Your+Mother+Kuraj-Bambey&c=46&v=0&y=&t=0&a=0&o=0]]></url>
+            <tree><![CDATA[//table[@class="mn2"]//a[starts-with(@href,"/details.php")]/@href]]></tree>
+            <order>2</order>
+            <xpath>
+                <link>   <![CDATA[//a[starts-with(@title,'Скачать')]/@href]]></link>
+                <season> <![CDATA[//a[starts-with(@href,"/details.php")]//text()]]></season>
+            </xpath>
+            <reg>
+                <season><![CDATA[\((\d+)\s+сезон]]></season>
+            </reg>
+            <filters>
+                <filter>
+                    <name>season</name>
+                    <value>6</value>
+                    <method><![CDATA[>]]></method>
+                </filter>
+            </filters>
+        </watch>
     </watches>
 </project>
