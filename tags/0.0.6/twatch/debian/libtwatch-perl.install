@@ -1,4 +1,0 @@
-# Config
-config/twatch.conf /etc/twatch/
-# Library
-lib/* /usr/share/perl5/

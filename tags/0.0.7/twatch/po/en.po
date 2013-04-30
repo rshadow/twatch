@@ -1,3 +1,0 @@
-#: twatch: translate part: #1
-msgid ""
-msgstr ""
